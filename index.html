@@ -335,6 +335,20 @@
     display: block;
   }
 
+  /* Cradle lines flanking MOVIEMENT — structural, not decorative */
+  .hero-callout .hero-cradle {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: clamp(0.82rem, 1.4vw, 1.05rem);
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-indent: 0.42em;
+  }
+  .hero-callout .cradle-top { margin: clamp(1.5rem, 4vw, 2.5rem) 0 0; }
+  .hero-callout .cradle-bot { margin: 0 0 clamp(0.5rem, 1.5vw, 1rem); }
+  .hero-callout .word { padding: clamp(0.6rem, 1.5vw, 1rem) 0; }
+
   /* what it isn't block — starts below the fold */
   .hero-whatisnt-section {
     padding: clamp(3rem, 7vw, 5rem) 0 clamp(2rem, 5vw, 3.5rem);
@@ -778,7 +792,9 @@
 <section class="hero-type">
   <div class="hero-callout reveal">
     <hr class="callout-rule" />
+    <span class="hero-cradle cradle-top">A Civil Rights</span>
     <div class="word"><span class="m">M</span><span class="movie">OVIE</span><span class="ment">MENT</span></div>
+    <span class="hero-cradle cradle-bot">For the Soul</span>
     <p class="callout-caption">
       <span class="cap-line">“Movie” lives inside the word.</span>
       <span class="cap-line">That is not incidental.</span>
@@ -811,8 +827,6 @@
     <p class="intro-line reveal d1">
       The <span class="punch">“i”</span> is not a typo. It is the whole point. A <em>movement</em> expressed through <em>movie</em>, media, and culture — carried by the language of our time.
     </p>
-
-    <p class="intro-attrib reveal d2">Bret Warshawsky · Storylivingry Studio</p>
   </div>
 </section>
 
@@ -827,7 +841,7 @@
     <div class="prose-grid">
       <span class="mono reveal">Definition</span>
       <div class="prose reveal d1">
-        <p>A <strong>moviement</strong> is what a movement becomes when its primary carrier is story. It is a civil rights framework expressed through the dominant medium of its moment — and the dominant medium of <em>this</em> moment is the moving image.</p>
+        <p>A <strong>moviement</strong> is what a movement becomes when its primary carrier is story. It is a civil rights framework expressed through the dominant medium of its moment — and the dominant medium of <em>this</em> moment is love and creativity.</p>
         <p>Every civil rights movement in history has had a cultural instrument: the medium through which a people narrated themselves into being heard. Ours has <span class="hot">film, performance, and participatory media.</span> This is not branding. It is a choice about where the work actually lives.</p>
       </div>
     </div>
