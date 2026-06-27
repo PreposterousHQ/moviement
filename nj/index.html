@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Civil Rights MOVIEment — Storyboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#141B2E;
+    --paper:#F2EDE3;
+    --gold:#D9A441;
+    --green:#5A7D5A;
+    --red:#C2493D;
+    --teal:#3FB8AF;
+    --ink-60:rgba(20,27,46,.6);
+    --ink-30:rgba(20,27,46,.3);
+    --ink-12:rgba(20,27,46,.12);
+    --line:rgba(20,27,46,.14);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--ink);
+    color:var(--ink);
+    font-family:Inter,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 18px 120px}
+
+  /* ---------- Back nav ---------- */
+  .back-nav{
+    padding:18px 0 0;
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  }
+  .back-nav a{
+    color:rgba(242,237,227,.5);text-decoration:none;
+    border-bottom:1px solid rgba(242,237,227,.2);
+    transition:.15s;
+  }
+  .back-nav a:hover{color:var(--gold);border-color:var(--gold)}
+
+  /* ---------- Title card ---------- */
+  header.title{
+    color:var(--paper);
+    padding:54px 0 30px;
+    text-align:center;
+  }
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--gold);margin:0 0 16px;
+  }
+  .filmtitle{
+    font-family:Fraunces,Georgia,serif;
+    font-weight:800;font-size:clamp(30px,6.2vw,52px);
+    line-height:1.02;margin:0;letter-spacing:-.01em;
+  }
+  .oldtitle{
+    display:inline-block;margin-top:12px;
+    font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:400;
+    font-size:clamp(14px,2.6vw,18px);
+    color:rgba(242,237,227,.5);
+    text-decoration:line-through;text-decoration-color:var(--red);
+  }
+  .meta{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;
+    color:rgba(242,237,227,.55);margin-top:16px;letter-spacing:.04em;
+  }
+  .logline{
+    max-width:620px;margin:26px auto 0;
+    font-family:Fraunces,Georgia,serif;font-size:clamp(16px,2.8vw,20px);
+    font-weight:400;line-height:1.45;color:rgba(242,237,227,.92);
+    border-top:1px solid rgba(217,164,65,.35);
+    border-bottom:1px solid rgba(217,164,65,.35);
+    padding:20px 6px;
+  }
+
+  /* ---------- Controls ---------- */
+  .controls{
+    position:sticky;top:0;z-index:30;
+    background:rgba(20,27,46,.94);backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(242,237,227,.12);
+    margin:0 -18px;padding:12px 18px;
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;
+  }
+  .toggle{
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;
+    text-transform:uppercase;color:rgba(242,237,227,.7);
+    border:1px solid rgba(242,237,227,.22);border-radius:999px;
+    padding:7px 13px;user-select:none;transition:.18s;
+  }
+  .toggle:hover{border-color:rgba(242,237,227,.45);color:var(--paper)}
+  .toggle .dot{width:8px;height:8px;border-radius:50%;background:transparent;border:1.5px solid currentColor}
+  .toggle.on{color:var(--ink);background:var(--gold);border-color:var(--gold)}
+  .toggle.on .dot{background:var(--ink);border-color:var(--ink)}
+  .toggle.on.reframe{background:var(--teal);border-color:var(--teal)}
+
+  /* ---------- Act band ---------- */
+  .act{margin-top:46px}
+  .act-head{
+    color:var(--paper);display:flex;align-items:baseline;gap:14px;
+    padding-bottom:14px;border-bottom:1px solid rgba(242,237,227,.18);
+  }
+  .act-num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--gold);letter-spacing:.1em}
+  .act-name{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:clamp(20px,3.6vw,27px);margin:0}
+  .act-sub{font-family:"IBM Plex Mono",monospace;font-size:11px;color:rgba(242,237,227,.5);margin-left:auto;white-space:nowrap}
+
+  /* ---------- Scene strip ---------- */
+  .strip{position:relative;padding-left:64px}
+  .strip::before{
+    content:"";position:absolute;left:26px;top:8px;bottom:8px;width:2px;
+    background:rgba(242,237,227,.14);
+  }
+  .scene{position:relative;margin-top:14px}
+  .tick{
+    position:absolute;left:-64px;top:16px;width:56px;text-align:right;
+  }
+  .tc{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--gold);display:block}
+  .arc{
+    position:absolute;left:-39px;top:18px;width:14px;height:14px;border-radius:50%;
+    background:var(--paper);border:3px solid var(--ink);box-shadow:0 0 0 2px rgba(242,237,227,.2);
+    z-index:2;
+  }
+  .arc.harm{background:var(--red)}
+  .arc.hope{background:var(--green)}
+  .arc.turn{background:var(--gold)}
+  .arc.neutral{background:rgba(242,237,227,.7)}
+
+  .card{
+    background:var(--paper);border-radius:12px;padding:15px 17px;
+    border:1px solid var(--line);cursor:pointer;transition:.18s;
+  }
+  .card:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,0,0,.22)}
+  .card.reframe-hit{box-shadow:inset 4px 0 0 var(--teal)}
+  .scene-title{font-weight:600;font-size:15.5px;margin:0;letter-spacing:-.01em}
+  .scene-screen{font-size:13.5px;color:var(--ink-60);margin:5px 0 0}
+  .people{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px}
+  .chip{
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.02em;
+    background:rgba(20,27,46,.06);border:1px solid var(--ink-12);
+    padding:2px 7px;border-radius:5px;color:var(--ink-60);
+  }
+
+  .backlog{display:none;margin-top:11px;border-top:1px dashed var(--ink-30);padding-top:10px}
+  body.show-backlog .backlog{display:block}
+  .backlog-row{display:flex;gap:7px;align-items:flex-start;font-size:12.5px;color:var(--ink-60);margin-top:5px}
+  .badge{
+    flex:none;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.08em;
+    text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-top:1px;color:#fff;
+  }
+  .badge.perm{background:var(--red)}
+  .badge.foot{background:var(--ink)}
+  .badge.dec{background:var(--gold);color:var(--ink)}
+  .badge.new{background:var(--teal);color:var(--ink)}
+
+  .reframe-note{display:none;margin-top:10px;font-size:12.5px;color:var(--teal);
+    background:rgba(63,184,175,.1);border:1px solid rgba(63,184,175,.4);
+    border-radius:8px;padding:9px 11px;line-height:1.45}
+  body.show-reframe .scene.has-reframe .reframe-note{display:block}
+  .reframe-note b{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#0c5a55;display:block;margin-bottom:3px}
+
+  .legend{
+    color:rgba(242,237,227,.6);font-family:"IBM Plex Mono",monospace;font-size:11px;
+    display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:40px;
+    padding-top:22px;border-top:1px solid rgba(242,237,227,.12);
+  }
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .foot-note{color:rgba(242,237,227,.4);font-size:11.5px;text-align:center;margin-top:18px;font-style:italic}
+
+  @media(max-width:560px){
+    .strip{padding-left:50px}
+    .strip::before{left:18px}
+    .tick{left:-50px;width:44px}
+    .arc{left:-39px}
+    .act-sub{display:none}
+  }
+</style>
+</head>
+<body class="">
+<div class="wrap">
+
+  <p class="back-nav"><a href="/">← moviement.productions</a></p>
+
+  <header class="title">
+    <p class="eyebrow">Documentary Short · 12 min · working storyboard</p>
+    <h1 class="filmtitle">A Civil Rights MOVIEment<br>for the Soul of New Jersey</h1>
+    <span class="oldtitle">Mistaken for Madness</span>
+    <p class="meta">v. 6/27/26 · spine extracted from Janet's visual treatment</p>
+    <p class="logline">When divine whispers are mistaken for madness, a spiritual awakening can lead to a locked ward — and a movement of shared support can lead the way out.</p>
+  </header>
+
+  <div class="controls">
+    <span id="t-backlog" class="toggle"><span class="dot"></span>Production notes</span>
+    <span id="t-reframe" class="toggle reframe"><span class="dot"></span>Civil-rights reframe</span>
+  </div>
+
+  <div id="board"></div>
+
+  <div class="legend">
+    <span><i style="background:var(--red)"></i>system harm</span>
+    <span><i style="background:var(--gold)"></i>turning point</span>
+    <span><i style="background:var(--green)"></i>hope / model</span>
+    <span><i style="background:rgba(242,237,227,.7)"></i>setup</span>
+  </div>
+  <p class="foot-note">Timecodes are a provisional budget, not a lock. The colored spine is the emotional arc: dark → light.</p>
+
+</div>
+
+<script>
+const ACTS = [
+  { num:"00", name:"Opening", sub:"~1:00 · the descent",
+    scenes:[
+      { t:"0:00", arc:"neutral", title:"Cold open — a spiritual experience",
+        screen:"Dark, out-of-focus. Josh describes his 2006 experience; ethereal imagery.",
+        people:["Josh Roberts"],
+        reframe:"Civil-rights framing title card could land here — set the film's thesis before the descent.",
+        backlog:[["dec","Bookend: confirm Josh opens (vs Janet / Bret)"]] },
+      { t:"0:30", arc:"harm", title:"The jarring turn",
+        screen:"Police, forced hospitalization, unwanted meds. Rapid ER / ward flashes.",
+        people:[], backlog:[] },
+      { t:"0:45", arc:"turn", title:"The recurring faces (1980s)",
+        screen:"Quick intros of people we'll follow — and the one who was supported instead.",
+        people:["Jim Gottstein","Claire Bien","Mija Bradford","David Lukoff"],
+        reframe:"Seed Janet 1979 + Rev Gil here as the NJ civil-rights root.",
+        backlog:[] },
+    ]},
+  { num:"01", name:"Laying the Groundwork", sub:"1970s–90s · ~3:00",
+    scenes:[
+      { t:"1:00", arc:"hope", title:"Freehold origin — the Career Club",
+        screen:"Mark Duffy + a veteran meet at First Methodist Church; Shore Area Council of Churches. CSPNJ is born, 1985.",
+        people:["Mark Duffy"],
+        reframe:"★ Mark Duffy 1970s photos — the faith-community origin is your civil-rights anchor.",
+        backlog:[["foot","Archival: First Methodist Church photos, early gatherings"]] },
+      { t:"1:45", arc:"turn", title:"Calvin's awakening (1981)",
+        screen:"Chatlos's first psychosis at Bellevue — not hospitalized — redirects his psychiatry. Humanistic medicine, 1974–78.",
+        people:["Calvin Chatlos"], backlog:[] },
+      { t:"2:15", arc:"harm", title:"1980 — the paradigm shifts",
+        screen:"DSM-III as the turning point. Whitaker calls it 'the bible.' Prozac covers; the system tilts to diagnosis + meds.",
+        people:["Robert Whitaker"], backlog:[] },
+      { t:"2:45", arc:"hope", title:"Peer support takes root",
+        screen:"Duffy + Swarbrick montage; CSPNJ grows. Narrated by Vesper Moore.",
+        people:["Vesper Moore","Peggy Swarbrick"],
+        backlog:[["perm","VESPER: find the video & get permission"]] },
+      { t:"3:30", arc:"turn", title:"1994 — a door opens",
+        screen:"DSM-IV adds 'Religious or Spiritual Problems.' A first acknowledgment.",
+        people:["David Lukoff","Francis Lu"], backlog:[] },
+    ]},
+  { num:"02", name:"The Rise of Peer Power", sub:"1990s–mid 2000s · ~3:00",
+    scenes:[
+      { t:"4:00", arc:"hope", title:"8 Dimensions of Wellness",
+        screen:"Swarbrick on the spiritual dimension; wellness-center montage.",
+        people:["Peggy Swarbrick"], backlog:[] },
+      { t:"4:30", arc:"hope", title:"Lived experience to leadership",
+        screen:"Heather Simms — a 2001 visitor in crisis — becomes Deputy Director.",
+        people:["Heather Simms"], backlog:[] },
+      { t:"5:00", arc:"turn", title:"The counter-evidence",
+        screen:"Gottstein (Zyprexa Papers), Wipond (his father's harm), and Koenig's research on religion + mental health.",
+        people:["Jim Gottstein","Rob Wipond","Harold Koenig"], backlog:[] },
+      { t:"5:45", arc:"harm", title:"Janet, 2005",
+        screen:"Re-hospitalization echoes the opening. A Wall Street advocate, undone by 'past misdiagnosis.' How can this keep happening?",
+        people:["Janet Werner"],
+        backlog:[["perm","Permission: Deb Visconi"]] },
+      { t:"6:15", arc:"turn", title:"Validated, not labeled (2022)",
+        screen:"Chatlos + Janet introduced by Debra Wentz. 'She is not Bipolar.' Calvin becomes an investor.",
+        people:["Calvin Chatlos","Janet Werner","Debra Wentz"], backlog:[] },
+      { t:"6:45", arc:"hope", title:"Respites open",
+        screen:"New Brunswick 2014, Haledon 2014, Newark 2018. DSM-5: the category's there, but 'no one's listening.'",
+        people:[], backlog:[] },
+    ]},
+  { num:"03", name:"Awakening Awareness", sub:"2019–present · ~3:00",
+    scenes:[
+      { t:"7:00", arc:"turn", title:"Breaking the silence (2019)",
+        screen:"Janet at Rutgers (Michael Garbe). Chatlos's 'soul' column; WPA Jerusalem; WPA position statement.",
+        people:["Janet Werner","Calvin Chatlos"], backlog:[] },
+      { t:"7:45", arc:"hope", title:"988 arrives (2022)",
+        screen:"The new lifeline aims to reduce police involvement. Gottstein + Wipond on rights.",
+        people:[], backlog:[] },
+      { t:"8:15", arc:"hope", title:"AWARE is born (Nov 2023)",
+        screen:"Rutgers Urban MH conference (Levounis/APA, McGreevey). NJ A.W.A.R.E. launches — a clergy + mental-health coalition. Filming at Bethel AME, Freehold.",
+        people:["Calvin Chatlos","Janet Werner","Petros Levounis","Rev. Sparks"],
+        reframe:"★ Dale Caldwell / Faith Action Center thread enters here — the present-day faith-and-civil-rights arm.",
+        backlog:[] },
+      { t:"9:00", arc:"hope", title:"The national & global chorus",
+        screen:"Claire Bien (ISPS), Mija (Soul Ascending), Mary Fulp (AK), Ernie Stevens (TX), Olivia Johnson (IL), Josh (CA).",
+        people:[], backlog:[] },
+      { t:"9:45", arc:"hope", title:"The NJ model, assembled",
+        screen:"MCORT + wellness centers; Carlito Cabelin; Centenary; MHA Monmouth (Achille DeJean); state-hospital visits — Greystone, Trenton, Ancora; Postcards From Home; Chaplain Wilcox.",
+        people:["Dale Caldwell","Anne Smullen Thieling"],
+        reframe:"★ Dale + FAC + 'ongoing filming of the moviement in episodes' — the forward / serial arc.",
+        backlog:[["perm","Permission to film on state-hospital grounds (Greystone)"]] },
+      { t:"10:30", arc:"turn", title:"Call to action",
+        screen:"Chatlos's NAMI keynote: 'The time for awareness is over. The time for action is now.'",
+        people:["Calvin Chatlos"], backlog:[] },
+    ]},
+  { num:"04", name:"The Model Vision", sub:"conclusion · ~1:00",
+    scenes:[
+      { t:"11:00", arc:"hope", title:"The model in action",
+        screen:"Josh redux. His mother calls 988. A crisis team — not police — arrives. Calm, no judgment. He chooses the peer respite. Eleven days later he leaves, bright, for a new job.",
+        people:["Josh Roberts"],
+        backlog:[["dec","Bookend: who closes — Josh, Bret, or Janet?"]] },
+    ]},
+  { num:"05", name:"A Shared Ascent", sub:"final scene · ~0:30",
+    scenes:[
+      { t:"11:45", arc:"hope", title:"Shared ascent",
+        screen:"CSPNJ HQ celebration. A drone rises — Freehold → NJ → the U.S. → the globe — and settles on the New Brunswick respite garden.",
+        people:[], backlog:[] },
+    ]},
+];
+
+const board = document.getElementById('board');
+ACTS.forEach(act=>{
+  const wrap = document.createElement('section');
+  wrap.className='act';
+  wrap.innerHTML = `
+    <div class="act-head">
+      <span class="act-num">${act.num}</span>
+      <h2 class="act-name">${act.name}</h2>
+      <span class="act-sub">${act.sub}</span>
+    </div>
+    <div class="strip"></div>`;
+  const strip = wrap.querySelector('.strip');
+  act.scenes.forEach(s=>{
+    const hasReframe = !!s.reframe;
+    const el = document.createElement('div');
+    el.className = 'scene' + (hasReframe?' has-reframe':'');
+    el.innerHTML = `
+      <div class="tick"><span class="tc">${s.t}</span></div>
+      <div class="arc ${s.arc}"></div>
+      <div class="card ${hasReframe?'reframe-hit':''}">
+        <p class="scene-title">${s.title}</p>
+        <p class="scene-screen">${s.screen}</p>
+        ${s.people.length?`<div class="people">${s.people.map(p=>`<span class="chip">${p}</span>`).join('')}</div>`:''}
+        ${hasReframe?`<div class="reframe-note"><b>Where the reframe attaches</b>${s.reframe}</div>`:''}
+        ${s.backlog.length?`<div class="backlog">${s.backlog.map(b=>`<div class="backlog-row"><span class="badge ${b[0]}">${({perm:'permission',foot:'footage',dec:'decision',new:'new'})[b[0]]}</span><span>${b[1]}</span></div>`).join('')}</div>`:''}
+      </div>`;
+    strip.appendChild(el);
+  });
+  board.appendChild(wrap);
+});
+
+function bind(id, cls){
+  const btn=document.getElementById(id);
+  btn.addEventListener('click',()=>{
+    btn.classList.toggle('on');
+    document.body.classList.toggle(cls, btn.classList.contains('on'));
+  });
+}
+bind('t-backlog','show-backlog');
+bind('t-reframe','show-reframe');
+</script>
+</body>
+</html>
