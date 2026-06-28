@@ -540,6 +540,7 @@ async function switchToBoard(id) {
   cardEls.forEach(el=>el.remove()); cardEls.clear();
   renderAll(); buildRail(); applyTransform();
   updateBoardBtn();
+  window.dispatchEvent(new CustomEvent('scenius:boardswitch', { detail: { id: board.id } }));
 }
 
 function updateBoardBtn() {
@@ -1110,6 +1111,58 @@ boot().catch(err=>{
   allBoards=[bSummary(seed)];
   renderAll(); buildRail(); applyTransform(); fitAll(); updateBoardBtn();
 });
+
+/* ============================================================
+   SCENIUS BOARD ADAPTER — public API consumed by board-ai.js
+   ============================================================ */
+window.SceniusBoard = {
+  getBoardId() { return activeBoard?.id || null; },
+  get() {
+    if (!state) return { cards: [], links: [] };
+    return {
+      cards: state.cards.map(c => ({
+        id: c.id, lane: c.lane, type: c.type,
+        t: c.t, b: c.b,
+        note: c.note || '', mine: c.mine || '', star: !!c.star,
+      })),
+      links: state.links.map(l => [...l]),
+    };
+  },
+  createCard(card) {
+    if (!state) return null;
+    const spread = 80;
+    const c = {
+      id:    mkCardId(),
+      lane:  card.lane  || 'device',
+      type:  card.type  || 'note',
+      t:     card.t     || 'New card',
+      b:     card.b     || '',
+      note:  card.note  || '',
+      mine:  card.mine  || '',
+      links: card.links || [],
+      x: card.x !== undefined ? card.x
+           : (innerWidth  / 2 - view.px) / view.z + (Math.random() - .5) * spread,
+      y: card.y !== undefined ? card.y
+           : (innerHeight / 2 - view.py) / view.z + (Math.random() - .5) * spread,
+      star: false, moved: true,
+    };
+    state.cards.push(c);
+    renderCard(c); applyFilter(); save();
+    return c.id;
+  },
+  updateCard(id, set) {
+    const c = byId(id); if (!c) return;
+    Object.assign(c, set);
+    renderCard(c); applyFilter(); save();
+  },
+  linkCards(a, b) {
+    if (!state) return;
+    if (!state.links.some(([x, y]) => (x===a&&y===b)||(x===b&&y===a))) {
+      state.links.push([a, b]); drawWires(); save();
+    }
+  },
+};
 </script>
+<script src="board-ai.js"></script>
 </body>
 </html>
