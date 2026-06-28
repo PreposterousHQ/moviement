@@ -191,6 +191,36 @@ body.scene-room .c-unfile{display:block}
 .sp-num{font-family:Fraunces,serif;font-size:18px;font-weight:800;color:var(--gold);line-height:1}
 .sp-theme{font-size:9px;color:rgba(242,237,227,.5);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px}
 .sp-cnt{font-family:"IBM Plex Mono",monospace;font-size:8px;color:rgba(242,237,227,.28)}
+/* panel title */
+.hm-panel-title{font-family:Fraunces,serif;font-size:16px;font-weight:700;color:var(--paper);background:transparent;border:none;border-bottom:1.5px solid rgba(242,237,227,.18);outline:none;width:180px;padding:2px 4px;cursor:text}
+.hm-panel-title:focus{border-bottom-color:var(--gold)}
+.hm-panel-title::placeholder{color:rgba(242,237,227,.3)}
+/* drag handle on hm cards */
+.hm-drag-handle{position:absolute;top:6px;left:3px;font-size:12px;color:rgba(20,27,46,.18);cursor:grab;line-height:1;padding:2px 3px;touch-action:none;user-select:none}
+.hm-drag-handle:hover{color:rgba(20,27,46,.5)}
+.hm-card-item.is-dragging{opacity:.3;outline:2px dashed rgba(20,27,46,.25);outline-offset:-2px}
+.hm-card-item.drop-target{outline:2.5px solid var(--gold);outline-offset:-2px;background:rgba(217,164,65,.07)}
+.hm-drag-ghost{position:fixed;pointer-events:none;z-index:999;opacity:.88;box-shadow:0 12px 32px rgba(0,0,0,.45);border-radius:10px;transform:rotate(2deg) scale(1.04);transition:none}
+/* visualizer */
+#visualizer{display:none;position:fixed;inset:0;z-index:75;background:rgba(8,10,18,.92);align-items:center;justify-content:center;flex-direction:column;gap:16px}
+#visualizer.open{display:flex}
+#viz-close{position:absolute;top:14px;right:16px;background:none;border:1px solid rgba(242,237,227,.2);color:rgba(242,237,227,.6);font-size:14px;border-radius:8px;padding:5px 12px;cursor:pointer;font-family:"IBM Plex Mono",monospace;z-index:2;touch-action:manipulation}
+#viz-close:hover{color:var(--paper);border-color:rgba(242,237,227,.5)}
+#viz-label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:rgba(242,237,227,.35);position:absolute;bottom:14px;left:50%;transform:translateX(-50%);white-space:nowrap}
+#viz-wrap{width:100%;flex:1;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab;perspective:1200px;perspective-origin:center center}
+#viz-wrap.grabbing{cursor:grabbing}
+#viz-prism{transform-style:preserve-3d;position:relative}
+.viz-face{position:absolute;backface-visibility:visible;border:1.5px solid rgba(217,164,65,.32);background:rgba(12,17,34,.88);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:border-color .2s;touch-action:none}
+.viz-face:hover{border-color:rgba(217,164,65,.75)}
+.viz-face-active{border:2px solid var(--gold);box-shadow:0 0 24px rgba(217,164,65,.35)}
+.vf-title{font-family:Fraunces,serif;font-size:14px;font-weight:800;color:var(--gold);padding:10px 12px 5px;line-height:1;border-bottom:1px solid rgba(242,237,227,.08);flex:0 0 auto}
+.vf-scene-dots{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:8px;flex:1}
+.vf-dot{background:rgba(242,237,227,.07);border:1px solid rgba(242,237,227,.12);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace;font-size:8px;color:rgba(242,237,227,.3);aspect-ratio:1}
+.vf-dot.has-cards{background:rgba(217,164,65,.2);border-color:rgba(217,164,65,.5);color:var(--gold)}
+.vf-card-list{flex:1;padding:6px 10px;overflow:hidden;display:flex;flex-direction:column;gap:3px}
+.vf-card-row{font-size:9px;color:rgba(242,237,227,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 0;border-bottom:1px solid rgba(242,237,227,.06)}
+.vf-more{font-family:"IBM Plex Mono",monospace;font-size:8px;color:rgba(242,237,227,.32);margin-top:2px}
+.vf-panel-idx{position:absolute;bottom:7px;right:9px;font-family:Fraunces,serif;font-size:20px;font-weight:800;color:rgba(217,164,65,.18);line-height:1}
 </style>
 </head>
 <body>
@@ -208,6 +238,7 @@ body.scene-room .c-unfile{display:block}
   <button class="btn ghost" id="b-stats">◴ Pulse</button>
   <button class="btn ghost" id="b-io">⇄ Save</button>
   <button class="btn on" id="b-mode">◈ Home</button>
+  <button class="btn ghost" id="b-viz">⬡ View</button>
 </div>
 
 <!-- scene room header bar -->
@@ -221,6 +252,13 @@ body.scene-room .c-unfile{display:block}
 
 <!-- home mode (panels view) -->
 <div id="home-mode" style="display:none"></div>
+
+<!-- 3D prism visualizer -->
+<div id="visualizer">
+  <button id="viz-close">✕ Close</button>
+  <div id="viz-wrap"><div id="viz-prism"></div></div>
+  <div id="viz-label">drag to spin · tap a panel to open it</div>
+</div>
 
 <!-- scene picker overlay -->
 <div id="scene-picker">
@@ -442,6 +480,8 @@ function ensureCardFields(c){
   if(c.sceneId===undefined)c.sceneId=null;
   if(c.sceneOrder===undefined)c.sceneOrder=0;
   if(c.subChunk===undefined)c.subChunk='';
+  if(c.hmOrder===undefined)c.hmOrder=null; // assigned in ensureScenes
+  if(c.lastHmOrder===undefined)c.lastHmOrder=null;
   return c;
 }
 
@@ -454,7 +494,15 @@ function ensureScenes(board){
   if(!board.masterView)board.masterView={...( board.view||{px:20,py:56,z:.55})};
   if(!board.sceneViews)board.sceneViews={};
   if(!board.lastView)board.lastView={type:'master',sceneId:null};
+  if(!board.panelTitles)board.panelTitles={};
   board.cards.forEach(ensureCardFields);
+  // Assign hmOrder to unfiled cards that don't have one
+  const unf=board.cards.filter(c=>c.sceneId==null);
+  const unordered=unf.filter(c=>c.hmOrder==null);
+  if(unordered.length){
+    const maxO=unf.reduce((m,c)=>Math.max(m,c.hmOrder??-1),-1);
+    unordered.forEach((c,i)=>{c.hmOrder=maxO+i+1;});
+  }
 }
 
 function layoutUnfiled(cards){
@@ -1314,18 +1362,19 @@ let homeDetailScene=null;
 let spTargetCardId=null;
 let hmSwipeSetup=false;
 
+/* ── card drag-to-reorder state ── */
+let hmDrag=null; // {c, el, ghost, page}
+let hmDragOver=null;
+
 function switchMode(mode){
   appMode=mode;
   const hm=document.getElementById('home-mode');
-  const st=document.getElementById('stage');
-  const zw=document.getElementById('zoomwrap');
-  const hi=document.getElementById('hint');
   const btn=document.getElementById('b-mode');
   if(mode==='home'){
     hm.style.display='flex';
-    st.style.display='none';
-    zw.style.display='none';
-    hi.style.display='none';
+    document.getElementById('stage').style.display='none';
+    document.getElementById('zoomwrap').style.display='none';
+    document.getElementById('hint').style.display='none';
     document.getElementById('scene-room-bar').classList.remove('open');
     document.body.classList.remove('scene-room');
     btn.textContent='⚡ Miro';btn.classList.add('on');
@@ -1333,9 +1382,9 @@ function switchMode(mode){
     buildHomePanels();
   } else {
     hm.style.display='none';
-    st.style.display='';
-    zw.style.display='';
-    hi.style.display='';
+    document.getElementById('stage').style.display='';
+    document.getElementById('zoomwrap').style.display='';
+    document.getElementById('hint').style.display='';
     btn.textContent='◈ Home';btn.classList.remove('on');
     renderForCurrentView();applyTransform();
   }
@@ -1347,15 +1396,25 @@ function setupHomeSwipe(){
   let sx=null;
   hm.addEventListener('pointerdown',e=>{
     if(homeView!=='panels')return;
-    if(e.target.closest('button,input,a,.hm-nav,.hm-dot'))return;
+    if(hmDrag)return; // card drag in progress
+    if(e.target.closest('button,input,a,.hm-nav,.hm-dot,.hm-drag-handle'))return;
     sx=e.clientX;
   },{passive:true});
   hm.addEventListener('pointerup',e=>{
-    if(sx==null)return;
-    const dx=e.clientX-sx;sx=null;
-    if(Math.abs(dx)>55&&homeView==='panels')navigateHome(dx<0?1:-1);
+    if(sx==null)return;const dx=e.clientX-sx;sx=null;
+    if(Math.abs(dx)>55&&homeView==='panels'&&!hmDrag)navigateHome(dx<0?1:-1);
   },{passive:true});
   hm.addEventListener('pointercancel',()=>{sx=null;});
+}
+
+/* ── unfiled cards sorted by hmOrder ── */
+function sortedUnfiled(){
+  return (state?.cards||[]).filter(c=>c.sceneId==null).sort((a,b)=>(a.hmOrder??0)-(b.hmOrder??0));
+}
+
+/* ── normalize hmOrder to 0,1,2,... after reorder ── */
+function compactHmOrder(){
+  sortedUnfiled().forEach((c,i)=>{c.hmOrder=i;});
 }
 
 function buildHomePanels(){
@@ -1366,24 +1425,25 @@ function buildHomePanels(){
   document.getElementById('hm-next').addEventListener('click',()=>navigateHome(1));
   const track=document.getElementById('hm-track');
   track.appendChild(buildScenePanel());
-  const unfiled=(state?.cards||[]).filter(c=>c.sceneId==null);
-  if(unfiled.length===0){
-    track.appendChild(buildEmptyCardsPanel());
-  } else {
-    for(let i=0;i<unfiled.length;i+=20)
-      track.appendChild(buildCardPanel(unfiled.slice(i,i+20),Math.floor(i/20)+1));
-  }
+  const unfiled=sortedUnfiled();
+  if(unfiled.length===0){track.appendChild(buildEmptyCardsPanel());}
+  else{for(let i=0;i<unfiled.length;i+=20)track.appendChild(buildCardPanel(unfiled.slice(i,i+20),Math.floor(i/20)+1));}
   homePanel=Math.max(0,Math.min(homePanel,totalHomePanels()-1));
   applyHomePanelPosition(false);updateHomeDots();
 }
 
 function totalHomePanels(){
-  const u=(state?.cards||[]).filter(c=>c.sceneId==null).length;
+  const u=sortedUnfiled().length;
   return 1+Math.max(1,Math.ceil(u/20));
 }
 
 function buildScenePanel(){
   const panel=document.createElement('div');panel.className='hm-panel';
+  const pt=activeBoard?.panelTitles?.[0]||'';
+  const hdr=document.createElement('div');hdr.className='hm-card-header';
+  const ti=document.createElement('input');ti.className='hm-panel-title';ti.placeholder='Scenes';ti.value=pt;ti.maxLength=40;
+  ti.addEventListener('change',()=>{if(activeBoard){activeBoard.panelTitles=activeBoard.panelTitles||{};activeBoard.panelTitles[0]=ti.value.trim();save();}});
+  hdr.appendChild(ti);panel.appendChild(hdr);
   const grid=document.createElement('div');grid.className='hm-scene-grid';
   for(let id=1;id<=20;id++)grid.appendChild(buildHomeSceneItem(id));
   panel.appendChild(grid);return panel;
@@ -1413,24 +1473,85 @@ function buildEmptyCardsPanel(){
 
 function buildCardPanel(cards,pageNum){
   const panel=document.createElement('div');panel.className='hm-panel';
-  const total=(state?.cards||[]).filter(c=>c.sceneId==null).length;
+  const panelIdx=pageNum; // 1-based
+  const pt=activeBoard?.panelTitles?.[panelIdx]||'';
+  const total=sortedUnfiled().length;
   const hdr=document.createElement('div');hdr.className='hm-card-header';
-  hdr.innerHTML=`<span class="hm-panel-label">Unfiled — page ${pageNum}</span><span class="hm-panel-sub">${total} total unfiled</span>`;
-  panel.appendChild(hdr);
-  const grid=document.createElement('div');grid.className='hm-card-grid';
-  cards.forEach(c=>grid.appendChild(buildHomeCardItem(c)));
+  const ti=document.createElement('input');ti.className='hm-panel-title';ti.placeholder=`Panel ${panelIdx}`;ti.value=pt;ti.maxLength=40;
+  ti.addEventListener('change',()=>{if(activeBoard){activeBoard.panelTitles=activeBoard.panelTitles||{};activeBoard.panelTitles[panelIdx]=ti.value.trim();save();}});
+  const sub=document.createElement('span');sub.className='hm-panel-sub';sub.textContent=`${total} unfiled · page ${pageNum}`;
+  hdr.appendChild(ti);hdr.appendChild(sub);panel.appendChild(hdr);
+  const grid=document.createElement('div');grid.className='hm-card-grid';grid.dataset.page=panelIdx;
+  cards.forEach(c=>grid.appendChild(buildHomeCardItem(c,panelIdx)));
+  setupGridDrag(grid);
   panel.appendChild(grid);return panel;
 }
 
-function buildHomeCardItem(c){
-  const item=document.createElement('div');item.className='hm-card-item';
+function buildHomeCardItem(c,panelIdx){
+  const item=document.createElement('div');item.className='hm-card-item';item.dataset.id=c.id;
   item.style.setProperty('--c',TYPE_COLORS[c.type]||'#8A7F6E');
-  const lks=(c.links||[]).map(([l,u])=>u?`<a href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`:`<span>${esc(l)}</span>`).join('');
-  item.innerHTML=`<span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<button class="hm-file-btn">→ File in scene</button>`;
+  item.innerHTML=`<span class="hm-drag-handle" title="Drag to reorder">⠿</span><span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0 3px">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<button class="hm-file-btn">⤴ Send to scene</button>`;
   item.querySelector('.hm-edit').addEventListener('click',e=>{e.stopPropagation();openInspector(c.id);});
   item.querySelector('.hm-star').addEventListener('click',e=>{e.stopPropagation();c.star=!c.star;e.target.textContent=c.star?'★':'☆';e.target.classList.toggle('on',c.star);save();});
-  item.querySelector('.hm-file-btn').addEventListener('click',e=>{e.stopPropagation();openScenePicker(c.id);});
+  item.querySelector('.hm-file-btn').addEventListener('click',e=>{e.stopPropagation();openScenePicker(c.id,panelIdx);});
   return item;
+}
+
+/* ── drag-to-reorder within a card panel grid ── */
+function setupGridDrag(grid){
+  grid.addEventListener('pointerdown',e=>{
+    const handle=e.target.closest('.hm-drag-handle');if(!handle)return;
+    e.stopPropagation();e.preventDefault();
+    const el=handle.closest('.hm-card-item');if(!el)return;
+    const c=byId(el.dataset.id);if(!c)return;
+    const page=parseInt(grid.dataset.page)||1;
+    const rect=el.getBoundingClientRect();
+    const ghost=el.cloneNode(true);
+    ghost.className='hm-card-item hm-drag-ghost';
+    ghost.style.width=rect.width+'px';ghost.style.height=rect.height+'px';
+    ghost.style.left=rect.left+'px';ghost.style.top=rect.top+'px';
+    document.body.appendChild(ghost);
+    el.classList.add('is-dragging');
+    hmDrag={c,el,ghost,page,ox:e.clientX-rect.left,oy:e.clientY-rect.top};
+    hmDragOver=null;
+    grid.setPointerCapture(e.pointerId);
+  });
+  grid.addEventListener('pointermove',e=>{
+    if(!hmDrag)return;
+    hmDrag.ghost.style.left=(e.clientX-hmDrag.ox)+'px';
+    hmDrag.ghost.style.top=(e.clientY-hmDrag.oy)+'px';
+    // find drop target
+    document.querySelectorAll('.hm-card-item.drop-target').forEach(n=>n.classList.remove('drop-target'));
+    const items=[...grid.querySelectorAll('.hm-card-item:not(.is-dragging)')];
+    let best=null,bestDist=9999;
+    items.forEach(item=>{
+      const r=item.getBoundingClientRect();
+      const cx=r.left+r.width/2,cy=r.top+r.height/2;
+      const d=Math.hypot(e.clientX-cx,e.clientY-cy);
+      if(d<bestDist){bestDist=d;best=item;}
+    });
+    if(best){best.classList.add('drop-target');hmDragOver=best.dataset.id;}
+    else hmDragOver=null;
+  });
+  grid.addEventListener('pointerup',()=>{
+    if(!hmDrag)return;
+    hmDrag.ghost.remove();hmDrag.el.classList.remove('is-dragging');
+    document.querySelectorAll('.hm-card-item.drop-target').forEach(n=>n.classList.remove('drop-target'));
+    if(hmDragOver&&hmDragOver!==hmDrag.c.id){
+      const target=byId(hmDragOver);
+      if(target){
+        // swap hmOrder values between dragged and target
+        const tmp=hmDrag.c.hmOrder;hmDrag.c.hmOrder=target.hmOrder;target.hmOrder=tmp;
+        save();buildHomePanels();
+      }
+    }
+    hmDrag=null;hmDragOver=null;
+  });
+  grid.addEventListener('pointercancel',()=>{
+    if(!hmDrag)return;
+    hmDrag.ghost.remove();hmDrag.el.classList.remove('is-dragging');
+    hmDrag=null;hmDragOver=null;
+  });
 }
 
 function showHomeSceneDetail(sceneId){
@@ -1440,20 +1561,26 @@ function showHomeSceneDetail(sceneId){
   const cards=(state?.cards||[]).filter(c=>c.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
   hm.innerHTML='';
   const head=document.createElement('div');head.className='hm-detail-head';
-  head.innerHTML=`<button class="btn" id="hm-back">← All scenes</button><span class="hm-detail-num">${sceneId}</span><span class="hm-detail-theme">${esc(sc.theme||'untitled')}</span><span class="hm-detail-count">${cards.length} card${cards.length!==1?'s':''}</span>`;
+  head.innerHTML=`<button class="btn" id="hm-back">← Scenes</button><span class="hm-detail-num">${sceneId}</span><span class="hm-detail-theme">${esc(sc.theme||'untitled')}</span><span class="hm-detail-count">${cards.length} card${cards.length!==1?'s':''}</span>`;
   head.querySelector('#hm-back').addEventListener('click',()=>{homePanel=0;buildHomePanels();});
   hm.appendChild(head);
   const grid=document.createElement('div');grid.className='hm-detail-grid';
-  if(!cards.length)grid.innerHTML=`<div style="color:rgba(242,237,227,.32);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;padding:40px;grid-column:1/-1">No cards here yet — file them from the card panels</div>`;
+  if(!cards.length)grid.innerHTML=`<div style="color:rgba(242,237,227,.32);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;padding:40px;grid-column:1/-1">No cards here yet.<br>Use ⤴ Send to scene from card panels.</div>`;
   cards.forEach(c=>{
     const item=document.createElement('div');item.className='hm-card-item';
     item.style.setProperty('--c',TYPE_COLORS[c.type]||'#8A7F6E');
-    const lks=(c.links||[]).map(([l,u])=>u?`<a href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`:`<span>${esc(l)}</span>`).join('');
-    item.innerHTML=`<span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="hm-unfile-btn">↑ Back to wall</button><button class="hm-move-btn">→ Move scene</button></div>`;
+    item.innerHTML=`<span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0 3px">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="hm-unfile-btn">⤵ Eject to panel</button><button class="hm-move-btn">⤴ Move to scene</button></div>`;
     item.querySelector('.hm-edit').addEventListener('click',e=>{e.stopPropagation();openInspector(c.id);});
     item.querySelector('.hm-star').addEventListener('click',e=>{e.stopPropagation();c.star=!c.star;e.target.textContent=c.star?'★':'☆';e.target.classList.toggle('on',c.star);save();});
-    item.querySelector('.hm-unfile-btn').addEventListener('click',e=>{e.stopPropagation();unfileCard(c,true);showHomeSceneDetail(sceneId);});
-    item.querySelector('.hm-move-btn').addEventListener('click',e=>{e.stopPropagation();openScenePicker(c.id);});
+    item.querySelector('.hm-unfile-btn').addEventListener('click',e=>{
+      e.stopPropagation();
+      // restore to last known hmOrder, or append
+      const restoreOrder=c.lastHmOrder!=null?c.lastHmOrder:((sortedUnfiled().length>0?Math.max(...sortedUnfiled().map(x=>x.hmOrder))+1:0));
+      unfileCard(c,false);
+      c.hmOrder=restoreOrder;
+      save();showHomeSceneDetail(sceneId);
+    });
+    item.querySelector('.hm-move-btn').addEventListener('click',e=>{e.stopPropagation();openScenePicker(c.id,null);});
     grid.appendChild(item);
   });
   hm.appendChild(grid);
@@ -1483,7 +1610,7 @@ function updateHomeDots(){
   }
 }
 
-function openScenePicker(cardId){
+function openScenePicker(cardId,fromPanelPage){
   spTargetCardId=cardId;
   const picker=document.getElementById('scene-picker');
   const grid=document.getElementById('sp-grid');grid.innerHTML='';
@@ -1494,6 +1621,8 @@ function openScenePicker(cardId){
     btn.innerHTML=`<span class="sp-num">${id}</span>${sc.theme?`<span class="sp-theme">${esc(sc.theme)}</span>`:''}<span class="sp-cnt">${cnt||'—'}</span>`;
     btn.addEventListener('click',()=>{
       const c=byId(spTargetCardId);if(!c)return;
+      // save current position so eject can restore it
+      if(c.hmOrder!=null)c.lastHmOrder=c.hmOrder;
       fileCard(c,id,true);
       picker.classList.remove('open');
       if(homeView==='scene-detail')showHomeSceneDetail(homeDetailScene);
@@ -1511,7 +1640,123 @@ function refreshHomeView(){
 
 document.getElementById('b-mode').addEventListener('click',()=>switchMode(appMode==='home'?'miro':'home'));
 document.getElementById('sp-close').addEventListener('click',()=>document.getElementById('scene-picker').classList.remove('open'));
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('scene-picker').classList.remove('open');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('scene-picker').classList.remove('open');document.getElementById('visualizer').classList.remove('open');}});
+
+/* ============================================================
+   VISUALIZER — 3-D spinning prism
+   ============================================================ */
+let vizRotY=20,vizRotX=-12;
+let vizDragSx=0,vizDragSy=0,vizDragging=false;
+let vizVelX=0,vizVelY=0,vizRaf=null;
+let vizN=0; // number of prism faces (set in buildVizPrism)
+
+function getPanelDescriptors(){
+  const panels=[];
+  panels.push({type:'scenes',title:activeBoard?.panelTitles?.[0]||'Scenes'});
+  const unfiled=sortedUnfiled();
+  const pages=Math.max(1,Math.ceil(unfiled.length/20));
+  for(let p=0;p<pages;p++){
+    panels.push({type:'cards',panelIdx:p+1,title:activeBoard?.panelTitles?.[p+1]||`Panel ${p+1}`,cards:unfiled.slice(p*20,(p+1)*20)});
+  }
+  return panels;
+}
+
+function buildFaceContent(panel,i){
+  if(panel.type==='scenes'){
+    const dots=Array.from({length:20},(_,k)=>{
+      const cnt=(state?.cards||[]).filter(c=>c.sceneId===k+1).length;
+      const sc=(state?.scenes||[]).find(s=>s.id===k+1)||{};
+      return `<div class="vf-dot${cnt?' has-cards':''}" title="Scene ${k+1}: ${sc.theme||''}">${k+1}</div>`;
+    }).join('');
+    return `<div class="vf-title">${esc(panel.title||'Scenes')}</div><div class="vf-scene-dots">${dots}</div><div class="vf-panel-idx">0</div>`;
+  }
+  const rows=(panel.cards||[]).slice(0,9).map(c=>`<div class="vf-card-row">${esc(c.t)}</div>`).join('');
+  const more=(panel.cards||[]).length>9?`<div class="vf-more">+${(panel.cards||[]).length-9} more</div>`:'';
+  return `<div class="vf-title">${esc(panel.title||'Panel')}</div><div class="vf-card-list">${rows}${more}</div><div class="vf-panel-idx">${i}</div>`;
+}
+
+function buildVizPrism(){
+  const panels=getPanelDescriptors();
+  vizN=Math.min(panels.length,10);
+  const FW=Math.min(240,Math.min(window.innerWidth*.34,window.innerHeight*.42));
+  const r=(FW/2)/Math.tan(Math.PI/vizN);
+  const prism=document.getElementById('viz-prism');
+  prism.innerHTML='';
+  prism.style.width=FW+'px';prism.style.height=FW+'px';
+  for(let i=0;i<vizN;i++){
+    const panel=panels[i%panels.length];
+    const face=document.createElement('div');
+    face.className='viz-face';
+    face.style.cssText=`width:${FW}px;height:${FW}px;transform:rotateY(${360/vizN*i}deg) translateZ(${r}px);`;
+    face.innerHTML=buildFaceContent(panel,i);
+    const fi=i;
+    face.addEventListener('click',e=>{
+      if(Math.hypot(vizVelX,vizVelY)>3)return; // ignore clicks during spin
+      homePanel=fi%panels.length;
+      closeVisualizer();
+      buildHomePanels();
+    });
+    prism.appendChild(face);
+  }
+  updatePrismTransform();
+}
+
+function openVisualizer(){
+  const viz=document.getElementById('visualizer');
+  viz.classList.add('open');
+  buildVizPrism();
+}
+
+function closeVisualizer(){
+  document.getElementById('visualizer').classList.remove('open');
+  if(vizRaf){cancelAnimationFrame(vizRaf);vizRaf=null;}
+}
+
+function updatePrismTransform(){
+  const prism=document.getElementById('viz-prism');
+  if(prism)prism.style.transform=`rotateX(${vizRotX}deg) rotateY(${vizRotY}deg)`;
+}
+
+function vizStartDrag(e){
+  if(e.target.closest('#viz-close'))return;
+  vizDragging=true;vizDragSx=e.clientX;vizDragSy=e.clientY;vizVelX=vizVelY=0;
+  if(vizRaf){cancelAnimationFrame(vizRaf);vizRaf=null;}
+  document.getElementById('viz-wrap').classList.add('grabbing');
+  document.getElementById('viz-wrap').setPointerCapture(e.pointerId);
+}
+
+function vizMoveDrag(e){
+  if(!vizDragging)return;
+  const dx=e.clientX-vizDragSx,dy=e.clientY-vizDragSy;
+  vizDragSx=e.clientX;vizDragSy=e.clientY;
+  vizVelX=dx*.55;vizVelY=-dy*.35;
+  vizRotY+=vizVelX;
+  vizRotX=Math.max(-45,Math.min(45,vizRotX+vizVelY));
+  updatePrismTransform();
+}
+
+function vizEndDrag(){
+  if(!vizDragging)return;
+  vizDragging=false;
+  document.getElementById('viz-wrap').classList.remove('grabbing');
+  (function inertia(){
+    vizVelX*=.92;vizVelY*=.92;
+    vizRotY+=vizVelX;vizRotX=Math.max(-45,Math.min(45,vizRotX+vizVelY));
+    updatePrismTransform();
+    if(Math.abs(vizVelX)>.08||Math.abs(vizVelY)>.08)vizRaf=requestAnimationFrame(inertia);
+    else vizRaf=null;
+  })();
+}
+
+(function(){
+  const wrap=document.getElementById('viz-wrap');
+  wrap.addEventListener('pointerdown',vizStartDrag);
+  wrap.addEventListener('pointermove',vizMoveDrag);
+  wrap.addEventListener('pointerup',vizEndDrag);
+  wrap.addEventListener('pointercancel',vizEndDrag);
+  document.getElementById('viz-close').addEventListener('click',closeVisualizer);
+  document.getElementById('b-viz').addEventListener('click',openVisualizer);
+})();
 
 /* ============================================================
    SCENIUS BOARD ADAPTER
