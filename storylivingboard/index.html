@@ -221,6 +221,22 @@ body.scene-room .c-unfile{display:block}
 .vf-card-row{font-size:9px;color:rgba(242,237,227,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 0;border-bottom:1px solid rgba(242,237,227,.06)}
 .vf-more{font-family:"IBM Plex Mono",monospace;font-size:8px;color:rgba(242,237,227,.32);margin-top:2px}
 .vf-panel-idx{position:absolute;bottom:7px;right:9px;font-family:Fraunces,serif;font-size:20px;font-weight:800;color:rgba(217,164,65,.18);line-height:1}
+/* viz scenes faces (portrait, narrow) */
+.viz-face-scene{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;flex:1;padding:4px}
+.vf-scene-num{font-family:Fraunces,serif;font-size:26px;font-weight:800;color:var(--gold);line-height:1}
+.vf-scene-theme-mini{font-size:8px;color:rgba(242,237,227,.62);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px;width:100%}
+.vf-scene-cnt{font-family:"IBM Plex Mono",monospace;font-size:8px;color:rgba(242,237,227,.38)}
+/* Back button (ubiquitous in home mode) */
+#hm-back-btn{position:fixed;bottom:62px;left:12px;z-index:36;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;display:none;padding:7px 13px;background:rgba(20,27,46,.8);border:1px solid rgba(242,237,227,.2);color:rgba(242,237,227,.75);border-radius:9px;cursor:pointer;touch-action:manipulation;transition:.15s}
+#hm-back-btn:hover:not(:disabled){color:var(--paper);border-color:rgba(242,237,227,.5)}
+#hm-back-btn:disabled{opacity:.28;cursor:default}
+/* card linking in home mode */
+.hm-link-btn{display:inline-flex;align-items:center;gap:2px;font-size:10px;color:rgba(20,27,46,.3);cursor:pointer;padding:2px 5px;border-radius:4px;background:none;border:none;touch-action:manipulation;margin-top:4px}
+.hm-link-btn:hover{color:var(--ink);background:rgba(20,27,46,.08)}
+.hm-link-btn .link-cnt{font-family:"IBM Plex Mono",monospace;font-size:8px;color:rgba(20,27,46,.5)}
+.hm-card-item.hm-link-src{outline:2px dashed var(--gold);outline-offset:-2px;background:rgba(217,164,65,.07)}
+.hm-card-item.hm-link-tgt{outline:2px solid rgba(63,184,175,.7);outline-offset:-2px;cursor:pointer}
+.hm-card-item.hm-link-tgt:hover{background:rgba(63,184,175,.06)}
 </style>
 </head>
 <body>
@@ -252,6 +268,8 @@ body.scene-room .c-unfile{display:block}
 
 <!-- home mode (panels view) -->
 <div id="home-mode" style="display:none"></div>
+
+<button id="hm-back-btn" disabled>← Back</button>
 
 <!-- 3D prism visualizer -->
 <div id="visualizer">
@@ -1158,6 +1176,14 @@ document.getElementById('b-tidy').onclick=()=>{
    EMERGENT
    ============================================================ */
 document.getElementById('b-emergent').onclick=()=>{
+  if(appMode==='home'){
+    // In home mode: jump to a random panel
+    const total=totalHomePanels();
+    const pick=Math.floor(Math.random()*total);
+    if(homeView!=='panels'){buildHomePanels();}
+    homePanel=pick;applyHomePanelPosition(true);updateHomeDots();
+    return;
+  }
   const vis=state.cards.filter(c=>{
     const el=cardEls.get(c.id);
     return el&&el.style.display!=='none'&&!el.classList.contains('dim');
@@ -1361,6 +1387,8 @@ let homeView='panels'; // 'panels' | 'scene-detail'
 let homeDetailScene=null;
 let spTargetCardId=null;
 let hmSwipeSetup=false;
+let prevHomeState=null; // {type:'panels',panel:N} — for Back button
+let hmLinkSrc=null;    // card id being linked from
 
 /* ── card drag-to-reorder state ── */
 let hmDrag=null; // {c, el, ghost, page}
@@ -1379,12 +1407,14 @@ function switchMode(mode){
     document.body.classList.remove('scene-room');
     btn.textContent='⚡ Miro';btn.classList.add('on');
     if(!hmSwipeSetup){hmSwipeSetup=true;setupHomeSwipe();}
+    document.getElementById('hm-back-btn').style.display='';
     buildHomePanels();
   } else {
     hm.style.display='none';
     document.getElementById('stage').style.display='';
     document.getElementById('zoomwrap').style.display='';
     document.getElementById('hint').style.display='';
+    document.getElementById('hm-back-btn').style.display='none';
     btn.textContent='◈ Home';btn.classList.remove('on');
     renderForCurrentView();applyTransform();
   }
@@ -1418,7 +1448,8 @@ function compactHmOrder(){
 }
 
 function buildHomePanels(){
-  homeView='panels';
+  homeView='panels';prevHomeState=null;clearLinkMode();
+  const bb=document.getElementById('hm-back-btn');if(bb)bb.disabled=true;
   const hm=document.getElementById('home-mode');
   hm.innerHTML='<div id="hm-track"></div><button class="hm-nav" id="hm-prev">‹</button><button class="hm-nav" id="hm-next">›</button><div id="hm-dots"></div>';
   document.getElementById('hm-prev').addEventListener('click',()=>navigateHome(-1));
@@ -1490,10 +1521,13 @@ function buildCardPanel(cards,pageNum){
 function buildHomeCardItem(c,panelIdx){
   const item=document.createElement('div');item.className='hm-card-item';item.dataset.id=c.id;
   item.style.setProperty('--c',TYPE_COLORS[c.type]||'#8A7F6E');
-  item.innerHTML=`<span class="hm-drag-handle" title="Drag to reorder">⠿</span><span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0 3px">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<button class="hm-file-btn">⤴ Send to scene</button>`;
+  const lkCnt=(state?.links||[]).filter(([a,b])=>a===c.id||b===c.id).length;
+  item.innerHTML=`<span class="hm-drag-handle" title="Drag to reorder">⠿</span><span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:5px"><span class="c-type">${esc(c.type)}</span><button class="hm-file-btn">⤴ Scene</button><button class="hm-link-btn" title="Link cards">⤳${lkCnt?`<span class="link-cnt">${lkCnt}</span>`:''}</button></div><p class="c-title" style="margin:0 0 3px">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}`;
   item.querySelector('.hm-edit').addEventListener('click',e=>{e.stopPropagation();openInspector(c.id);});
   item.querySelector('.hm-star').addEventListener('click',e=>{e.stopPropagation();c.star=!c.star;e.target.textContent=c.star?'★':'☆';e.target.classList.toggle('on',c.star);save();});
   item.querySelector('.hm-file-btn').addEventListener('click',e=>{e.stopPropagation();openScenePicker(c.id,panelIdx);});
+  item.querySelector('.hm-link-btn').addEventListener('click',e=>{e.stopPropagation();hmTapLink(c.id,item);});
+  item.addEventListener('click',()=>{if(hmLinkSrc&&hmLinkSrc!==c.id)commitLink(c.id);});
   return item;
 }
 
@@ -1555,7 +1589,10 @@ function setupGridDrag(grid){
 }
 
 function showHomeSceneDetail(sceneId){
+  if(homeView!=='scene-detail'||homeDetailScene!==sceneId)prevHomeState={type:'panels',panel:homePanel};
   homeView='scene-detail';homeDetailScene=sceneId;
+  clearLinkMode();
+  const bb=document.getElementById('hm-back-btn');if(bb){bb.disabled=false;}
   const hm=document.getElementById('home-mode');
   const sc=(state?.scenes||[]).find(s=>s.id===sceneId)||{id:sceneId,theme:''};
   const cards=(state?.cards||[]).filter(c=>c.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
@@ -1569,9 +1606,12 @@ function showHomeSceneDetail(sceneId){
   cards.forEach(c=>{
     const item=document.createElement('div');item.className='hm-card-item';
     item.style.setProperty('--c',TYPE_COLORS[c.type]||'#8A7F6E');
-    item.innerHTML=`<span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0 3px">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="hm-unfile-btn">⤵ Eject to panel</button><button class="hm-move-btn">⤴ Move to scene</button></div>`;
+    const lkCnt=(state?.links||[]).filter(([a,b])=>a===c.id||b===c.id).length;
+    item.innerHTML=`<span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0 3px">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="hm-unfile-btn">⤵ Eject</button><button class="hm-move-btn">⤴ Move</button><button class="hm-link-btn" title="Link cards">⤳${lkCnt?`<span class="link-cnt">${lkCnt}</span>`:''}</button></div>`;
     item.querySelector('.hm-edit').addEventListener('click',e=>{e.stopPropagation();openInspector(c.id);});
     item.querySelector('.hm-star').addEventListener('click',e=>{e.stopPropagation();c.star=!c.star;e.target.textContent=c.star?'★':'☆';e.target.classList.toggle('on',c.star);save();});
+    item.querySelector('.hm-link-btn').addEventListener('click',e=>{e.stopPropagation();hmTapLink(c.id,item);});
+    item.addEventListener('click',()=>{if(hmLinkSrc&&hmLinkSrc!==c.id)commitLink(c.id);});
     item.querySelector('.hm-unfile-btn').addEventListener('click',e=>{
       e.stopPropagation();
       // restore to last known hmOrder, or append
@@ -1640,15 +1680,51 @@ function refreshHomeView(){
 
 document.getElementById('b-mode').addEventListener('click',()=>switchMode(appMode==='home'?'miro':'home'));
 document.getElementById('sp-close').addEventListener('click',()=>document.getElementById('scene-picker').classList.remove('open'));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('scene-picker').classList.remove('open');document.getElementById('visualizer').classList.remove('open');}});
+document.getElementById('hm-back-btn').addEventListener('click',()=>{
+  if(!prevHomeState)return;
+  const ps=prevHomeState;prevHomeState=null;
+  if(ps.type==='panels'){homePanel=ps.panel||0;buildHomePanels();}
+  else if(ps.type==='scene'){showHomeSceneDetail(ps.sceneId);}
+});
+function clearLinkMode(){
+  hmLinkSrc=null;
+  document.querySelectorAll('.hm-card-item.hm-link-src,.hm-card-item.hm-link-tgt').forEach(el=>el.classList.remove('hm-link-src','hm-link-tgt'));
+}
+function hmTapLink(cardId,itemEl){
+  if(!hmLinkSrc){
+    hmLinkSrc=cardId;
+    document.querySelectorAll('.hm-card-item').forEach(el=>{
+      if(el===itemEl)el.classList.add('hm-link-src');
+      else el.classList.add('hm-link-tgt');
+    });
+  } else if(hmLinkSrc===cardId){
+    clearLinkMode();
+  } else {
+    commitLink(cardId);
+  }
+}
+function commitLink(targetId){
+  const a=hmLinkSrc,b=targetId;
+  if(a&&b&&a!==b){
+    if(!state.links.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a))){state.links.push([a,b]);drawWires();save();}
+  }
+  clearLinkMode();refreshHomeView();
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.getElementById('scene-picker').classList.remove('open');
+    closeVisualizer();
+    clearLinkMode();
+  }
+});
 
 /* ============================================================
-   VISUALIZER — 3-D spinning prism
+   VISUALIZER — 3-D spinning prism (cycles: panels → scenes → off)
    ============================================================ */
 let vizRotY=20,vizRotX=-12;
 let vizDragSx=0,vizDragSy=0,vizDragging=false;
 let vizVelX=0,vizVelY=0,vizRaf=null;
-let vizN=0; // number of prism faces (set in buildVizPrism)
+let vizMode=null; // null | 'panels' | 'scenes'
 
 function getPanelDescriptors(){
   const panels=[];
@@ -1666,7 +1742,7 @@ function buildFaceContent(panel,i){
     const dots=Array.from({length:20},(_,k)=>{
       const cnt=(state?.cards||[]).filter(c=>c.sceneId===k+1).length;
       const sc=(state?.scenes||[]).find(s=>s.id===k+1)||{};
-      return `<div class="vf-dot${cnt?' has-cards':''}" title="Scene ${k+1}: ${sc.theme||''}">${k+1}</div>`;
+      return `<div class="vf-dot${cnt?' has-cards':''}" title="${k+1}: ${sc.theme||''}">${k+1}</div>`;
     }).join('');
     return `<div class="vf-title">${esc(panel.title||'Scenes')}</div><div class="vf-scene-dots">${dots}</div><div class="vf-panel-idx">0</div>`;
   }
@@ -1677,24 +1753,43 @@ function buildFaceContent(panel,i){
 
 function buildVizPrism(){
   const panels=getPanelDescriptors();
-  vizN=Math.min(panels.length,10);
+  const N=Math.min(panels.length,10);
   const FW=Math.min(240,Math.min(window.innerWidth*.34,window.innerHeight*.42));
-  const r=(FW/2)/Math.tan(Math.PI/vizN);
+  const r=(FW/2)/Math.tan(Math.PI/N);
   const prism=document.getElementById('viz-prism');
-  prism.innerHTML='';
-  prism.style.width=FW+'px';prism.style.height=FW+'px';
-  for(let i=0;i<vizN;i++){
+  prism.innerHTML='';prism.style.width=FW+'px';prism.style.height=FW+'px';
+  for(let i=0;i<N;i++){
     const panel=panels[i%panels.length];
-    const face=document.createElement('div');
-    face.className='viz-face';
-    face.style.cssText=`width:${FW}px;height:${FW}px;transform:rotateY(${360/vizN*i}deg) translateZ(${r}px);`;
+    const face=document.createElement('div');face.className='viz-face';
+    face.style.cssText=`width:${FW}px;height:${FW}px;transform:rotateY(${360/N*i}deg) translateZ(${r}px);`;
     face.innerHTML=buildFaceContent(panel,i);
     const fi=i;
-    face.addEventListener('click',e=>{
-      if(Math.hypot(vizVelX,vizVelY)>3)return; // ignore clicks during spin
-      homePanel=fi%panels.length;
-      closeVisualizer();
-      buildHomePanels();
+    face.addEventListener('click',()=>{
+      if(Math.hypot(vizVelX,vizVelY)>3)return;
+      homePanel=fi%panels.length;closeVisualizer();buildHomePanels();
+    });
+    prism.appendChild(face);
+  }
+  updatePrismTransform();
+}
+
+function buildVizScenes(){
+  const N=20;
+  const FW=Math.max(90,Math.min(120,(window.innerWidth*.8)/(N)*1.8));
+  const FH=Math.min(200,window.innerHeight*.36);
+  const r=(FW/2)/Math.tan(Math.PI/N);
+  const prism=document.getElementById('viz-prism');
+  prism.innerHTML='';prism.style.width=FW+'px';prism.style.height=FH+'px';
+  for(let id=1;id<=N;id++){
+    const sc=(state?.scenes||[]).find(s=>s.id===id)||{id,theme:''};
+    const cards=(state?.cards||[]).filter(c=>c.sceneId===id);
+    const face=document.createElement('div');face.className='viz-face';
+    face.style.cssText=`width:${FW}px;height:${FH}px;transform:rotateY(${360/N*(id-1)}deg) translateZ(${r}px);`;
+    if(cards.length)face.style.borderColor='rgba(217,164,65,.6)';
+    face.innerHTML=`<div class="vf-title" style="font-size:10px;padding:6px 6px 2px;border-bottom:1px solid rgba(242,237,227,.07)">${esc(sc.theme||'—')}</div><div class="viz-face-scene"><span class="vf-scene-num">${id}</span><span class="vf-scene-cnt">${cards.length||'—'}</span></div>`;
+    face.addEventListener('click',()=>{
+      if(Math.hypot(vizVelX,vizVelY)>3)return;
+      closeVisualizer();showHomeSceneDetail(id);
     });
     prism.appendChild(face);
   }
@@ -1702,13 +1797,15 @@ function buildVizPrism(){
 }
 
 function openVisualizer(){
-  const viz=document.getElementById('visualizer');
-  viz.classList.add('open');
-  buildVizPrism();
+  document.getElementById('visualizer').classList.add('open');
+  document.getElementById('b-viz').classList.add('on');
+  if(vizMode==='scenes')buildVizScenes();else buildVizPrism();
 }
 
 function closeVisualizer(){
   document.getElementById('visualizer').classList.remove('open');
+  document.getElementById('b-viz').classList.remove('on');
+  vizMode=null;
   if(vizRaf){cancelAnimationFrame(vizRaf);vizRaf=null;}
 }
 
@@ -1724,17 +1821,14 @@ function vizStartDrag(e){
   document.getElementById('viz-wrap').classList.add('grabbing');
   document.getElementById('viz-wrap').setPointerCapture(e.pointerId);
 }
-
 function vizMoveDrag(e){
   if(!vizDragging)return;
   const dx=e.clientX-vizDragSx,dy=e.clientY-vizDragSy;
   vizDragSx=e.clientX;vizDragSy=e.clientY;
   vizVelX=dx*.55;vizVelY=-dy*.35;
-  vizRotY+=vizVelX;
-  vizRotX=Math.max(-45,Math.min(45,vizRotX+vizVelY));
+  vizRotY+=vizVelX;vizRotX=Math.max(-45,Math.min(45,vizRotX+vizVelY));
   updatePrismTransform();
 }
-
 function vizEndDrag(){
   if(!vizDragging)return;
   vizDragging=false;
@@ -1755,7 +1849,11 @@ function vizEndDrag(){
   wrap.addEventListener('pointerup',vizEndDrag);
   wrap.addEventListener('pointercancel',vizEndDrag);
   document.getElementById('viz-close').addEventListener('click',closeVisualizer);
-  document.getElementById('b-viz').addEventListener('click',openVisualizer);
+  document.getElementById('b-viz').addEventListener('click',()=>{
+    if(vizMode===null){vizMode='panels';openVisualizer();}
+    else if(vizMode==='panels'){vizMode='scenes';openVisualizer();}
+    else{closeVisualizer();}
+  });
 })();
 
 /* ============================================================
