@@ -13,21 +13,28 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family:Inter,system-ui,sans-serif;color:var(--paper);overscroll-behavior:none}
 
-/* bar */
+/* top bar */
 #bar{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;gap:8px;align-items:center;padding:9px 12px;background:rgba(20,27,46,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(242,237,227,.12);flex-wrap:wrap}
 .brand{font-family:Fraunces,serif;font-weight:800;font-size:16px;letter-spacing:-.01em;white-space:nowrap;margin-right:2px}
 .brand small{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);display:block;margin-top:-2px}
-.brand a{color:inherit;text-decoration:none}
-.brand a:hover{color:var(--gold)}
+.brand a{color:inherit;text-decoration:none}.brand a:hover{color:var(--gold)}
 #b-boards{max-width:160px}
 #board-name-display{display:inline-block;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
 #search{flex:1 1 150px;min-width:120px;background:rgba(242,237,227,.07);border:1px solid rgba(242,237,227,.16);color:var(--paper);border-radius:9px;padding:8px 11px;font-size:14px;font-family:inherit}
 #search::placeholder{color:rgba(242,237,227,.42)}
 .btn{background:rgba(242,237,227,.08);border:1px solid rgba(242,237,227,.18);color:var(--paper);border-radius:9px;padding:8px 11px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;display:inline-flex;align-items:center;gap:5px;user-select:none;touch-action:manipulation}
-.btn:active{transform:translateY(1px)}
-.btn.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
-.btn.ghost{background:transparent}
-.btn:disabled{opacity:.38;cursor:default;pointer-events:none}
+.btn:active{transform:translateY(1px)}.btn.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}.btn.ghost{background:transparent}.btn:disabled{opacity:.38;cursor:default;pointer-events:none}
+
+/* scene room bar */
+#scene-room-bar{display:none;position:fixed;top:52px;left:0;right:0;z-index:38;height:46px;background:rgba(17,22,40,.96);backdrop-filter:blur(10px);border-bottom:2px solid rgba(217,164,65,.35);align-items:center;gap:10px;padding:0 14px}
+#scene-room-bar.open{display:flex}
+#srb-back{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.05em;cursor:pointer;color:var(--gold);background:none;border:none;padding:4px 8px;border-radius:6px}
+#srb-back:hover{background:rgba(217,164,65,.15)}
+#srb-num{font-family:Fraunces,serif;font-size:22px;font-weight:800;color:var(--gold);line-height:1}
+#srb-sep{color:rgba(242,237,227,.25);font-size:18px}
+#srb-theme{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(242,237,227,.2);color:var(--paper);font-family:Inter,sans-serif;font-size:13px;padding:3px 2px;outline:none}
+#srb-theme:focus{border-bottom-color:var(--gold)}
+#srb-count{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;color:rgba(242,237,227,.38);white-space:nowrap}
 
 /* canvas */
 #stage{position:absolute;inset:0;touch-action:none;cursor:grab;background:radial-gradient(circle at 30% 20%,rgba(60,72,110,.5),transparent 60%),radial-gradient(circle at 80% 80%,rgba(45,55,90,.4),transparent 55%),var(--ink)}
@@ -36,15 +43,19 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
 #wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 #wires line{stroke:var(--gold);stroke-width:1.6;stroke-opacity:.55;stroke-dasharray:2 5}
 
-/* scene containers */
-.scene-box{position:absolute;border:1.5px solid rgba(242,237,227,.14);border-radius:10px;background:rgba(20,27,46,.55);pointer-events:auto;z-index:1}
-.scene-box.drop-over{border-color:var(--gold);box-shadow:0 0 0 2px rgba(217,164,65,.25)}
-.scene-head{display:flex;align-items:center;gap:8px;padding:9px 11px;border-bottom:1px solid rgba(242,237,227,.1);border-radius:9px 9px 0 0;background:rgba(20,27,46,.8)}
-.scene-num{font-family:Fraunces,serif;font-size:20px;font-weight:800;color:var(--gold);min-width:26px;line-height:1}
-.scene-theme{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(242,237,227,.18);color:var(--paper);font-family:Inter,sans-serif;font-size:12px;padding:3px 2px;outline:none;min-width:0}
-.scene-theme::placeholder{color:rgba(242,237,227,.3)}
-.scene-theme:focus{border-bottom-color:var(--gold)}
-#drop-line{position:absolute;height:2px;background:var(--gold);box-shadow:0 0 6px rgba(217,164,65,.7);pointer-events:none;z-index:20;display:none;border-radius:1px}
+/* scene boxes (master wall) */
+.scene-box{position:absolute;width:268px;height:200px;border:1.5px solid rgba(242,237,227,.14);border-radius:10px;background:rgba(20,27,46,.55);pointer-events:auto;z-index:1;overflow:hidden;cursor:default}
+.scene-box.drop-over{border-color:var(--gold);box-shadow:0 0 0 2px rgba(217,164,65,.28)}
+.scene-head{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid rgba(242,237,227,.1);background:rgba(20,27,46,.8);cursor:pointer}
+.scene-head:hover .scene-num{color:#fff}
+.scene-num{font-family:Fraunces,serif;font-size:20px;font-weight:800;color:var(--gold);min-width:24px;line-height:1;pointer-events:none}
+.scene-theme-input{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(242,237,227,.18);color:var(--paper);font-family:Inter,sans-serif;font-size:12px;padding:2px 2px;outline:none;min-width:0;cursor:text}
+.scene-theme-input::placeholder{color:rgba(242,237,227,.28)}.scene-theme-input:focus{border-bottom-color:var(--gold)}
+.scene-count{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.08em;color:rgba(242,237,227,.38);white-space:nowrap;pointer-events:none}
+.scene-preview{padding:7px 9px;display:flex;flex-direction:column;gap:4px}
+.scene-mini{font-size:10.5px;color:rgba(242,237,227,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:6px;border-left:2.5px solid var(--accent,#8A7F6E)}
+.scene-more{font-family:"IBM Plex Mono",monospace;font-size:9px;color:rgba(242,237,227,.3);padding-left:6px;margin-top:2px}
+
 #unfiled-label{position:absolute;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(242,237,227,.13);pointer-events:none;text-align:center}
 
 /* cards */
@@ -59,8 +70,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
 @keyframes cpulse{0%{box-shadow:0 0 0 0 rgba(217,164,65,.9)}100%{box-shadow:0 0 0 26px rgba(217,164,65,0)}}
 .c-chunk{font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#1f8fa6;background:rgba(31,143,166,.1);padding:2px 6px;border-radius:4px;display:inline-block;margin-bottom:4px}
 .c-type{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--c,#8A7F6E);display:inline-block;padding:2px 6px;border-radius:4px;margin-bottom:6px}
-.c-star{position:absolute;top:9px;right:10px;font-size:14px;color:var(--ink-12);cursor:pointer}
-.c-star.on{color:var(--gold)}
+.c-star{position:absolute;top:9px;right:10px;font-size:14px;color:var(--ink-12);cursor:pointer}.c-star.on{color:var(--gold)}
 .c-title{font-family:Fraunces,serif;font-weight:600;font-size:14.5px;line-height:1.18;margin:0 0 4px}
 .c-body{font-size:11.5px;line-height:1.34;color:var(--ink-60)}
 .c-note{margin-top:7px;font-size:10.5px;line-height:1.3;color:#6b5a2c;background:rgba(217,164,65,.16);border-left:2px solid var(--gold);padding:5px 7px;border-radius:0 5px 5px 0}
@@ -93,21 +103,14 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
 .pop h4{font-family:Fraunces,serif;margin:0 0 4px;font-size:15px}
 .pop p{font-size:12px;line-height:1.45;color:var(--ink-60);margin:0 0 9px}
 .pop .row{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;padding:3px 0;border-bottom:1px solid var(--ink-12)}
-
-/* board popover */
 #boardpop{left:12px;right:auto;width:min(280px,88vw)}
 .board-item{display:flex;align-items:center;gap:6px;padding:7px 2px;border-bottom:1px solid var(--ink-12);cursor:pointer;border-radius:6px;margin:0 -2px;transition:.12s}
-.board-item:last-of-type{border-bottom:none}
-.board-item:hover{background:rgba(20,27,46,.05)}
-.board-item .b-dot{width:8px;height:8px;flex:none;border-radius:50%;background:var(--gold);opacity:0;transition:.12s}
-.board-item.active .b-dot{opacity:1}
-.board-item .b-name{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.board-item.active .b-name{font-weight:600}
-.board-item .bi{font-size:13px;color:var(--ink-40);cursor:pointer;padding:1px 4px;border-radius:4px;flex:none}
-.board-item .bi:hover{color:var(--ink);background:rgba(20,27,46,.08)}
+.board-item:last-of-type{border-bottom:none}.board-item:hover{background:rgba(20,27,46,.05)}
+.board-item .b-dot{width:8px;height:8px;flex:none;border-radius:50%;background:var(--gold);opacity:0;transition:.12s}.board-item.active .b-dot{opacity:1}
+.board-item .b-name{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.board-item.active .b-name{font-weight:600}
+.board-item .bi{font-size:13px;color:var(--ink-40);cursor:pointer;padding:1px 4px;border-radius:4px;flex:none}.board-item .bi:hover{color:var(--ink);background:rgba(20,27,46,.08)}
 .board-sep{height:1px;background:var(--ink-12);margin:9px 0}
-.board-action{display:flex;align-items:center;gap:6px;padding:7px 2px;font-size:12.5px;cursor:pointer;color:var(--ink-60);border-radius:6px;margin:0 -2px;transition:.12s}
-.board-action:hover{color:var(--ink);background:rgba(20,27,46,.05)}
+.board-action{display:flex;align-items:center;gap:6px;padding:7px 2px;font-size:12.5px;cursor:pointer;color:var(--ink-60);border-radius:6px;margin:0 -2px;transition:.12s}.board-action:hover{color:var(--ink);background:rgba(20,27,46,.05)}
 
 /* send starred */
 #send-overlay{display:none;position:fixed;inset:0;z-index:60;background:rgba(20,27,46,.65);backdrop-filter:blur(4px);align-items:center;justify-content:center}
@@ -116,11 +119,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
 #send-modal h4{font-family:Fraunces,serif;margin:0 0 14px;font-size:16px}
 #send-modal label.flabel{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-40);display:block;margin-bottom:5px}
 #send-dest{width:100%;font-family:inherit;font-size:13px;color:var(--ink);background:#fff;border:1px solid var(--ink-12);border-radius:8px;padding:8px 9px;margin-bottom:14px}
-.radio-row{display:flex;gap:18px;margin-bottom:16px;font-size:13px}
-.radio-row label{display:flex;align-items:center;gap:5px;cursor:pointer}
+.radio-row{display:flex;gap:18px;margin-bottom:16px;font-size:13px}.radio-row label{display:flex;align-items:center;gap:5px;cursor:pointer}
 .send-actions{display:flex;gap:8px;justify-content:flex-end}
-.send-actions .btn{color:var(--ink);background:rgba(20,27,46,.06);border-color:var(--ink-12)}
-.send-actions .btn.go{background:var(--gold);border-color:var(--gold)}
+.send-actions .btn{color:var(--ink);background:rgba(20,27,46,.06);border-color:var(--ink-12)}.send-actions .btn.go{background:var(--gold);border-color:var(--gold)}
 
 /* hint / zoom */
 #hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:30;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.04em;color:rgba(242,237,227,.6);background:rgba(20,27,46,.7);border:1px solid rgba(242,237,227,.12);border-radius:20px;padding:7px 14px;pointer-events:none;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
@@ -135,40 +136,48 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
   <div class="brand"><a href="/">Scenius Wall</a><small>MOVIEment remix canvas</small></div>
   <button class="btn" id="b-boards">◈ <span id="board-name-display">…</span> ▾</button>
   <input id="search" placeholder="Search cards…" autocomplete="off">
-  <button class="btn" id="b-link" title="Link two cards">⤳ Link</button>
-  <button class="btn" id="b-star" title="Show starred only">★ Starred</button>
-  <button class="btn ghost" id="b-send" title="Send starred to another board">→ Send starred</button>
-  <button class="btn ghost" id="b-emergent" title="Surface a random card">✦ Emergent</button>
-  <button class="btn ghost" id="b-add" title="New card">＋ Card</button>
-  <button class="btn ghost" id="b-tidy" title="Snap free cards to grid">⊞ Tidy</button>
-  <button class="btn ghost" id="b-stats" title="Card balance by type">◴ Pulse</button>
-  <button class="btn ghost" id="b-io" title="Export / import">⇄ Save</button>
+  <button class="btn" id="b-link">⤳ Link</button>
+  <button class="btn" id="b-star">★ Starred</button>
+  <button class="btn ghost" id="b-send">→ Send starred</button>
+  <button class="btn ghost" id="b-emergent">✦ Emergent</button>
+  <button class="btn ghost" id="b-add">＋ Card</button>
+  <button class="btn ghost" id="b-tidy">⊞ Tidy</button>
+  <button class="btn ghost" id="b-stats">◴ Pulse</button>
+  <button class="btn ghost" id="b-io">⇄ Save</button>
+</div>
+
+<!-- scene room header bar -->
+<div id="scene-room-bar">
+  <button id="srb-back">← All scenes</button>
+  <span id="srb-num">1</span>
+  <span id="srb-sep">—</span>
+  <input id="srb-theme" placeholder="scene theme…" maxlength="60">
+  <span id="srb-count"></span>
 </div>
 
 <div id="stage">
   <div id="world">
     <svg id="wires"></svg>
-    <div id="drop-line"></div>
   </div>
 </div>
 
 <div id="zoomwrap">
   <button class="btn" id="z-out">−</button>
-  <button class="btn" id="z-fit" title="Fit all">⤢</button>
+  <button class="btn" id="z-fit">⤢</button>
   <button class="btn" id="z-in">+</button>
 </div>
 
-<div id="hint">hold a card to lift it · drag to scene column to file · tap to open</div>
+<div id="hint">tap a scene number to enter · hold a card to lift it · tap to open</div>
 
-<!-- inspector -->
 <aside id="insp">
   <div class="insp-head"><h3 id="i-h">Card</h3><span class="x" id="i-close">✕</span></div>
   <div class="insp-body">
     <div class="fld"><label>Title</label><input id="i-title"></div>
-    <div class="fld"><label>Body — the artifact or idea</label><textarea id="i-body"></textarea></div>
-    <div class="fld"><label>Janet's note / context</label><textarea id="i-note"></textarea></div>
+    <div class="fld"><label>Body</label><textarea id="i-body"></textarea></div>
+    <div class="fld"><label>Janet's note</label><textarea id="i-note"></textarea></div>
     <div class="fld"><label>My remix notes</label><textarea id="i-mine" placeholder="your thinking…"></textarea></div>
-    <div class="fld"><label>Sub-chunk label (within scene)</label><input id="i-chunk" placeholder="e.g. A, opener, archival…"></div>
+    <div class="fld"><label>Sub-chunk label</label><input id="i-chunk" placeholder="e.g. A, opener, archival…"></div>
+    <div class="fld"><label>Scene</label><select id="i-scene"></select></div>
     <div class="fld"><label>Links — one per line: Label | https://…</label><textarea id="i-links"></textarea></div>
     <div class="fld" style="display:flex;gap:8px">
       <div style="flex:1"><label>Lane (hidden)</label><select id="i-lane"></select></div>
@@ -182,7 +191,6 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
   </div>
 </aside>
 
-<!-- board popover -->
 <div class="pop" id="boardpop">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
     <h4 style="margin:0">Your Boards</h4><span class="x" id="boardpop-close">✕</span>
@@ -193,16 +201,14 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
   <div class="board-action" id="ba-dup">⊕ Duplicate this board</div>
 </div>
 
-<!-- stats popover -->
 <div class="pop" id="statpop">
   <h4>Pulse — card balance by type</h4>
-  <p id="stat-lead">Cards you've moved, starred, or annotated count as touched.</p>
+  <p id="stat-lead"></p>
   <div id="stat-rows"></div>
 </div>
 
-<!-- save/load popover -->
 <div class="pop" id="iopop">
-  <h4>Save & load</h4>
+  <h4>Save &amp; load</h4>
   <p>This board autosaves to IndexedDB. Export JSON to back up or share.</p>
   <div style="display:flex;flex-direction:column;gap:8px">
     <button class="btn" id="io-export-one" style="color:var(--ink);background:var(--gold);border-color:var(--gold);justify-content:center">⬇ Export this board</button>
@@ -212,7 +218,6 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
   </div>
 </div>
 
-<!-- send starred -->
 <div id="send-overlay">
   <div id="send-modal">
     <h4 id="send-title">Send starred cards</h4>
@@ -234,189 +239,99 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
    CONSTANTS
    ============================================================ */
 const GRID = 24;
+const CARD_W = 248;
 const SCENE_COUNT = 20, SCENE_COLS = 5, SCENE_ROWS = 4;
-const SCENE_W = 268, SCENE_COL_GAP = 16, SCENE_ROW_GAP = 24;
-const SCENE_HEADER_H = 64, SCENE_MIN_BODY = 100;
-const SCENE_COL_STEP = SCENE_W + SCENE_COL_GAP;           // 284
-const SCENE_ROW_STEP = SCENE_HEADER_H + SCENE_MIN_BODY + SCENE_ROW_GAP; // 188
+const SCENE_W = 268, SCENE_BOX_H = 200;
+const SCENE_COL_GAP = 16, SCENE_ROW_GAP = 20;
+const SCENE_COL_STEP = SCENE_W + SCENE_COL_GAP;     // 284
+const SCENE_ROW_STEP = SCENE_BOX_H + SCENE_ROW_GAP; // 220
+const UNFILED_Y = SCENE_ROWS * SCENE_ROW_STEP + 60; // 940
 
-// Unfiled area starts below scene grid
-const UNFILED_Y = SCENE_ROWS * SCENE_ROW_STEP + 60;       // ≈ 812
+// scene room card layout
+const SR_COLS = 2, SR_PAD = 28, SR_GAP_X = 20, SR_GAP_Y = 16;
+const SR_COL_STEP = CARD_W + SR_GAP_X; // 268
 
-function scenePos(id) {
-  const i = id - 1;
-  return { x: (i % SCENE_COLS) * SCENE_COL_STEP, y: Math.floor(i / SCENE_COLS) * SCENE_ROW_STEP };
-}
-function snap(v) { return Math.round(v / GRID) * GRID; }
+function scenePos(id){const i=id-1;return{x:(i%SCENE_COLS)*SCENE_COL_STEP,y:Math.floor(i/SCENE_COLS)*SCENE_ROW_STEP};}
+function snap(v){return Math.round(v/GRID)*GRID;}
 
-const TYPE_COLORS = {
-  person:'#5A7D9A', artifact:'#7C6BB0', beat:'#3FB8AF', note:'#8A7F6E',
-  question:'#C2557A', decision:'#C2493D', thought:'#4E9A5A', org:'#D9A441',
-  quote:'#C68A2E', concept:'#4F6BCE', pillar:'#7C6BB0', scriptbeat:'#3FB8AF',
-  quest:'#C2557A', device:'#1F8FA6',
+const TYPE_COLORS={
+  person:'#5A7D9A',artifact:'#7C6BB0',beat:'#3FB8AF',note:'#8A7F6E',
+  question:'#C2557A',decision:'#C2493D',thought:'#4E9A5A',org:'#D9A441',
+  quote:'#C68A2E',concept:'#4F6BCE',pillar:'#7C6BB0',scriptbeat:'#3FB8AF',
+  quest:'#C2557A',device:'#1F8FA6',
 };
-
-const LANES = [
-  {k:'meta',n:'Front Matter & Intent'},{k:'open',n:'Opening'},{k:'act1',n:'Act One'},
+const LANES=[
+  {k:'meta',n:'Front Matter'},{k:'open',n:'Opening'},{k:'act1',n:'Act One'},
   {k:'act2',n:'Act Two'},{k:'act3',n:'Act Three'},{k:'model',n:'Model Vision'},
   {k:'ascent',n:'Shared Ascent'},{k:'appendix',n:'Appendix'},
   {k:'pillar',n:'Pillars'},{k:'script',n:'Script'},{k:'quest',n:'Quest'},{k:'device',n:'Devices'},
 ];
-const TYPES = ['person','artifact','beat','note','question','decision','thought','org','quote','concept','pillar','scriptbeat','quest','device'];
+const TYPES=['person','artifact','beat','note','question','decision','thought','org','quote','concept','pillar','scriptbeat','quest','device'];
 
-function mkScenes() {
-  return Array.from({length:SCENE_COUNT}, (_,i) => ({id:i+1, theme:''}));
-}
+function mkScenes(){return Array.from({length:SCENE_COUNT},(_,i)=>({id:i+1,theme:''}));}
 
 /* ============================================================
    SEED CARDS
    ============================================================ */
-const SEED = [
-{id:'j01',lane:'meta',type:'decision',t:'Title change',b:'"Mistaken for Madness" → "A Civil Rights MOVIEment for the Soul of New Jersey."',note:'Issued to Bret 6/26. v. June 27/26.'},
-{id:'j02',lane:'meta',type:'note',t:'Civil-rights reframe additions',b:'Add Rev. Gil Caldwell & Dr. Martin Luther King Jr., Dale, Mark Duffy in the 1970s.',note:'The new connective tissue Janet wants woven in.'},
+const SEED=[
+{id:'j01',lane:'meta',type:'decision',t:'Title change',b:'"Mistaken for Madness" → "A Civil Rights MOVIEment for the Soul of New Jersey."',note:'Issued to Bret 6/26.'},
+{id:'j02',lane:'meta',type:'note',t:'Civil-rights reframe additions',b:'Add Rev. Gil Caldwell & Dr. Martin Luther King Jr., Dale, Mark Duffy in the 1970s.'},
 {id:'j03',lane:'meta',type:'note',t:'Chelsea — CSPNJ archive',b:'Chelsea helps source original CSPNJ videos & photos.'},
-{id:'j04',lane:'meta',type:'note',t:'Move into 2026 — the serial arc',b:'Add Dale & FAC; ongoing filming of the moviement in episodes.',note:'Janet pointing at the docuseries / forward vector.'},
+{id:'j04',lane:'meta',type:'note',t:'Move into 2026 — the serial arc',b:'Add Dale & FAC; ongoing filming of the moviement in episodes.'},
 {id:'j05',lane:'meta',type:'question',t:'Who narrates?',b:'Original: Mija. Open question.'},
-{id:'j06',lane:'meta',type:'decision',t:'Bookends',b:'Short intro: Josh opens, Janet closes. Margins repeatedly say replace Janet with Josh or Bret.',note:'Source contradicts itself — unresolved.'},
+{id:'j06',lane:'meta',type:'decision',t:'Bookends',b:'Short intro: Josh opens, Janet closes. Margins repeatedly say replace Janet with Josh or Bret.'},
 {id:'j07',lane:'meta',type:'question',t:'Geographic scope',b:'Freehold/Monmouth, or NJ, or Northeast to start?'},
 {id:'j08',lane:'meta',type:'thought',t:"Janet's 2006 message, coming true",b:'"When we change how we see madness, we change how we respond to the sacred in human experience."'},
 {id:'j09',lane:'meta',type:'thought',t:'The intent (the ask under the film)',b:'Influence the public to use peer wellness centers & respites. Fund a peer respite in every NJ county.'},
 {id:'j10',lane:'meta',type:'concept',t:'Log line',b:'When divine whispers are mistaken for madness, a spiritual awakening can lead to a locked ward — and a movement of shared support can lead the way out.'},
 {id:'j11',lane:'meta',type:'concept',t:'Summary / register',b:'An all-ages public-service documentary: illuminate the problem, present a solution, a community-driven path to transformation.'},
 {id:'j12',lane:'meta',type:'note',t:'Runtime budget',b:'Time it to 12 min; decide what goes to Part 2.'},
-{id:'j13',lane:'meta',type:'note',t:'Content relocated',b:'Janet/Freehold & NJ content moved from the Docuseries Demos into this NJ-focused cut.'},
-{id:'j14',lane:'meta',type:'question',t:'Restorative justice + moral injury',b:'How to add restorative justice & prevention of moral injury to the Ancora demo?'},
-{id:'j15',lane:'meta',type:'note',t:'Add Anne & veterans',b:'Add Anne & veterans with Postcards From Home.'},
-{id:'j20',lane:'open',type:'beat',t:'Cold open — a spiritual experience',b:'Dark, out of focus. Joshua Roberts describes his 2006 state; ethereal imagery. Jarring turn → police, forced hospitalization, unwanted meds.',note:'Margin: Josh replaces Janet at open/close.'},
+{id:'j20',lane:'open',type:'beat',t:'Cold open — a spiritual experience',b:'Dark, out of focus. Joshua Roberts describes his 2006 state; ethereal imagery. Jarring turn → police, forced hospitalization, unwanted meds.'},
 {id:'j21',lane:'open',type:'beat',t:'Shift to the 1980s',b:'A variety of people who immediately show what "spiritual experience" means.'},
 {id:'j22',lane:'open',type:'person',t:'Jim Gottstein (intro)',b:'Harvard law student; psychotic episode with spiritual elements from sleep deprivation.'},
 {id:'j23',lane:'open',type:'person',t:'Claire Bien (intro)',b:'Of Chinese descent; psychotic episode sparked by family tragedy → institutionalized at Yale New Haven.'},
 {id:'j24',lane:'open',type:'person',t:'Mija Bradford (intro)',b:'At 17 her parents hospitalize her, pathologizing experiences tied to her Haitian background.'},
 {id:'j25',lane:'open',type:'note',t:'Add Janet here',b:'Margin note — fold Janet into the opening cohort.'},
 {id:'j26',lane:'open',type:'person',t:'David Lukoff (contrast)',b:'Has a spiritual experience but avoids hospitalization entirely — friends & family provide the support that heals.'},
-{id:'j27',lane:'open',type:'person',t:'Rob Wipond as a teen (1970s)',b:'"What if we add Rob as a teen — could have been hospitalized."'},
 {id:'j30',lane:'act1',type:'beat',t:'Nascent peer support',b:'Early 1980s — the peer support movement begins, the seed of the solution.'},
 {id:'j31',lane:'act1',type:'person',t:'Mark Duffy — the origin',b:'Connects with a veteran with lived experience; informal group meets as a Career Club at First Methodist Church, Freehold.'},
 {id:'j32',lane:'act1',type:'person',t:'Calvin Chatlos — 1981 awakening',b:'Psychiatric residency at Bellevue NYC; first paranoid psychosis with religious underpinnings.'},
 {id:'j33',lane:'act1',type:'quote',t:'Calvin — humanistic medicine',b:'"Humanistic medicine was a big deal… very common for us to listen deeply, looking underneath the diagnosis."'},
 {id:'j34',lane:'act1',type:'beat',t:'1980 — DSM-III, the turn',b:'Chatlos: the DSM-III publication dramatically shifts psychiatry toward diagnosis + medication.'},
 {id:'j35',lane:'act1',type:'person',t:'Robert Whitaker',b:'Calls the DSM-III "the psychiatrists\' Bible." Archival Newsweek/NYT covers; the pharma boom of the 80s–90s.'},
-{id:'j36',lane:'act1',type:'person',t:'Dr. Stan Grof',b:'Listed — transpersonal / spiritual-emergency lineage figure.'},
 {id:'j37',lane:'act1',type:'beat',t:'CSPNJ is born — 1985',b:'Duffy + Peggy Swarbrick montage. Mark Duffy secures initial funding → official birth of CSPNJ.'},
-{id:'j38',lane:'act1',type:'thought',t:'Janet: thank you, pioneers',b:'"Impact on Janet learning what was happening while I was in corporate. Thank you, pioneers."'},
-{id:'j39',lane:'act1',type:'note',t:'Add Lynn Seaward as a teen',b:'Lynn as a teen with her dad, a Vietnam vet — impact / observations of veteran peer support.'},
 {id:'j40',lane:'act1',type:'person',t:'Janet Werner — NJ 1979',b:'Trenton Psychiatric Hospital. Her own door, set among the national cohort.'},
-{id:'j41',lane:'act1',type:'beat',t:'Mija — Chicago → Haiti',b:'1990s Chicago college years back to childhood in Haiti, where her spiritual gifts were nurtured by her grandmother.'},
-{id:'j42',lane:'act1',type:'person',t:'1990s national vignettes',b:'Short vignettes: Denise Maratos (CA), Jen Macdonald (Canada), Jen Gaita Siciliano (NY), Oryx Cohen (MA).'},
 {id:'j43',lane:'act1',type:'beat',t:'1994 — DSM-IV opens a door',b:'Dr. David Lukoff (now PhD) wins a new category: "Religious or Spiritual Problems."'},
 {id:'j50',lane:'act2',type:'beat',t:'Peer power blossoms',b:'Late 90s–early 2000s: 8 Dimensions of Wellness, shared experience, safety & care reshape the landscape.'},
-{id:'j51',lane:'act2',type:'note',t:'Sequence to build',b:'"Need sequence from original to current."'},
 {id:'j52',lane:'act2',type:'person',t:'Peggy Swarbrick — 8 Dimensions',b:'Articulates the spiritual dimension within the "8 Dimensions of Wellness."'},
 {id:'j53',lane:'act2',type:'person',t:'Heather Simms — lived→leader',b:'2001 visitor in crisis → becomes Deputy Director of Peer Advocacy & Community Initiatives at CSPNJ.'},
-{id:'j54',lane:'act2',type:'artifact',t:'CSPNJ Welcome Video (2017)',b:'Nostalgic CSPNJ clip for the montage.',links:[['CSPNJ Welcome Video (YouTube)',null]]},
-{id:'j55',lane:'act2',type:'person',t:'Lynn Seaward — file',b:'Dir. of Development & Community Based Services. FLACRA 2014–19; Lakeview MH 2004–14.'},
-{id:'j56',lane:'act2',type:'person',t:'Jim Gottstein — Zyprexa Papers',b:'Now a prominent voice against the harm of psychotropic meds.'},
-{id:'j57',lane:'act2',type:'person',t:'Rob Wipond — investigations',b:'Canadian journalist; forced hospitalization, stigma, psychiatric meds.'},
-{id:'j58',lane:'act2',type:'person',t:'Dr. Harold Koenig — the research',b:'Religion/spirituality ↔ reduced depression, anxiety, substance use.'},
 {id:'j59',lane:'act2',type:'beat',t:'Janet, 2005 — it happens again',b:'Re-hospitalization. A Wall Street advocate presenting to investors — undone by "past misdiagnosis."'},
 {id:'j60',lane:'act2',type:'beat',t:'2022 — "She is not Bipolar"',b:'Calvin Chatlos + Janet introduced by Debra Wentz (CEO, NJAMHAA). First validation by a psychiatrist.'},
-{id:'j61',lane:'act2',type:'org',t:'NJ Governor\'s Council on Anti-Stigma (2023)',b:'Debra Wentz (CEO, NJAMHAA) & Bridget Johnson (CEO, Care Plus).'},
 {id:'j62',lane:'act2',type:'beat',t:'Respites open',b:'First CSPNJ Peer Respite House — New Brunswick 2014; Haledon 2014; Newark 2018.'},
-{id:'j63',lane:'act2',type:'quote',t:'Chatlos — "no one was listening"',b:'On DSM-5: the Religious/Spiritual Problems section was still there "but it seemed like no one was truly listening."'},
-{id:'j64',lane:'act2',type:'note',t:'Add hospitalizations→advocates',b:'"2017 Ben — we may add another photo sequence of hospitalizations that lead to advocates."'},
 {id:'j70',lane:'act3',type:'beat',t:'Janet breaks the silence (2019)',b:'At Rutgers with doctoral student Michael Garbe.'},
-{id:'j71',lane:'act3',type:'quote',t:'Calvin — the word "soul"',b:'"Psychiatry plays a central role in exploring and treating the depths of human experience captured by the word \'soul\'…"'},
-{id:'j72',lane:'act3',type:'beat',t:'Calvin at WPA Jerusalem (2019)',b:'World Psychiatric Association Intl Congress on Spirituality, Religion & Mental Health.'},
 {id:'j73',lane:'act3',type:'beat',t:'988 arrives (July 2022)',b:'The new lifeline — aims to reduce police involvement, include MH professionals & peer support.'},
-{id:'j74',lane:'act3',type:'beat',t:'Rights vigilance & 988',b:'Jim Gottstein (PsychRights) + Rob Wipond on psychiatric rights inside the new lifeline.'},
 {id:'j75',lane:'act3',type:'beat',t:'AWARE is born (Nov 2 2023)',b:'Urban MH conference at Rutgers NJMS. NJ A.W.A.R.E. launches — clergy + MH coalition.'},
-{id:'j76',lane:'act3',type:'person',t:'Levounis & McGreevey',b:'Petros Levounis (APA President) with James McGreevey (Chair, NJ Reentry Corp).'},
-{id:'j77',lane:'act3',type:'quote',t:'Sean Blackwell — "a revelation"',b:'"It was a revelation to see a medical-school conference addressing spiritual awakening…"'},
-{id:'j78',lane:'act3',type:'quote',t:'"Are we ready for this?"',b:'John — "A standard of care that includes spiritual history is groundbreaking."'},
-{id:'j79',lane:'act3',type:'beat',t:'Webinars — clergy + first responders',b:'Chatlos & Janet host online webinars folding clergy into 988.'},
 {id:'j80',lane:'act3',type:'beat',t:'Filming in Freehold — Bethel AME',b:'Rev. Sparks & Calvin roughcut; Janet church testimony at Bethel AME.'},
-{id:'j81',lane:'act3',type:'person',t:'Ernie Stevens — Crisis Cops',b:'Retired police officer; differentiating spiritual experience from "hyper-religiosity."'},
-{id:'j82',lane:'act3',type:'person',t:'Dr. Olivia Johnson — Blue Wall',b:'Veteran & former police officer; advocates clergy in crisis response.'},
-{id:'j83',lane:'act3',type:'note',t:'APA / faith-based line',b:'Therapists must include faith-based strategies if the client requests it — APA has this line in.'},
-{id:'j84',lane:'act3',type:'artifact',t:'Webinar library',b:'April 5 2024 USA webinar; July 12 2024 First Responder Friday — "Moral injury in community crisis care."'},
-{id:'j85',lane:'act3',type:'beat',t:'AWARE meets CSPNJ',b:'Chatlos & Janet connect with peer-services for the first time; shown the New Brunswick respite.'},
-{id:'j86',lane:'act3',type:'person',t:'Anne Smullen Thieling & Juliet Quiles',b:'COO & Program Manager, CSPNJ. Postcards From Home™.'},
-{id:'j87',lane:'act3',type:'org',t:'WildFlower Alliance (MA)',b:'Jen audio of Massachusetts peer respites.'},
-{id:'j88',lane:'act3',type:'artifact',t:'Rob Wipond @ CSPNJ HQ',b:'Filming Rob Wipond at CSPNJ headquarters, April 13 2024.'},
-{id:'j89',lane:'act3',type:'beat',t:'National & global chorus',b:'Contact options: Claire Bien (DE) · Mija Bradford (Chicago) · Mary Fulp (AK) · Joshua Roberts (CA).'},
+{id:'j85',lane:'act3',type:'beat',t:'AWARE meets CSPNJ',b:'Chatlos & Janet connect with peer-services; shown the New Brunswick respite.'},
 {id:'j90',lane:'act3',type:'beat',t:'NJ model assembled',b:'Anne Smullen Thieling + Janet + Chatlos envision integrated 988 with peer support, wellness centers, respites.'},
-{id:'j91',lane:'act3',type:'person',t:'Carlito Cabelin — crisis counselor',b:'Certified Crisis Counselor; leads the AWARE initiative.'},
-{id:'j92',lane:'act3',type:'question',t:'Show colleges & universities?',b:'"Do we show movement at colleges & universities?"'},
-{id:'j93',lane:'act3',type:'person',t:'Dale Caldwell @ Centenary',b:'President of Centenary University & Pastor. "Centenary University mental health video v4."',links:[['YouTube','https://www.youtube.com/watch?v=L2TqjqUuzy4']]},
-{id:'j94',lane:'act3',type:'beat',t:'MCORT + county system',b:'Coordinated CSPNJ + county MH agencies; Mobile Crisis Outreach Response Teams.'},
-{id:'j95',lane:'act3',type:'person',t:'Coalition leaders',b:'Rev. Ron Sparks, Heather Simms, Rev. Akins, Achille DeJean (ED, Mental Health America Monmouth County).'},
-{id:'j96',lane:'act3',type:'beat',t:'MHA Monmouth @ JBJ Soul Kitchen',b:'2023 & 2024 — Mental Health America Monmouth County.'},
-{id:'j97',lane:'act3',type:'person',t:'Rev. Cynthia Wilcox — chaplain',b:'2024 — Janet visits a psych unit at Jersey Shore Medical Center escorted by Chaplain Wilcox.'},
-{id:'j98',lane:'act3',type:'beat',t:'State-hospital visits',b:'Chatlos & Janet visit Ancora, Greystone, Trenton — meeting patients.'},
-{id:'j99',lane:'act3',type:'beat',t:'AWARE training, in the room',b:'"I didn\'t know this!" · "I had a spiritual experience too."'},
-{id:'j100',lane:'act3',type:'person',t:'Lynn Seaward — Monmouth Behavioral Health',b:'Director of Behavioral Health, Monmouth County. Orientation Feb 20 2025.'},
-{id:'j101',lane:'act3',type:'person',t:'Shrabanee Shah — No Stigma Network',b:'Founder; vision now integrated into CSPNJ.'},
-{id:'j102',lane:'act3',type:'beat',t:'The whole crisis system, oriented',b:'Rev. Sparks, Rev. Akins, Lynn Seaward on Arrive Together, Link to Care, Stabilization Centers.'},
-{id:'j103',lane:'act3',type:'concept',t:'Open Dialogue',b:'From Finland / UK to NJ — the dialogic model entering the picture.'},
-{id:'j104',lane:'act3',type:'concept',t:'Public-service tools',b:'Rapid awareness tools: the HELP model; FEAR, HELP, Stop-Pause.'},
 {id:'j105',lane:'act3',type:'quote',t:'Call to action — Chatlos at NAMI',b:'"The time for awareness is over. The time for action is now."'},
 {id:'j110',lane:'model',type:'beat',t:'The model, working (Josh redux)',b:'Mirror of the opening — his mother calmly calls 988. MCORT (not police) arrives.'},
 {id:'j111',lane:'model',type:'beat',t:'Eleven days later',b:'Josh leaves the respite bright and hopeful — a celebratory hug about his new job.'},
 {id:'j120',lane:'ascent',type:'beat',t:'A Shared Ascent',b:'CSPNJ HQ celebration — everyone we met, holding hands. A drone rises: Freehold → NJ → US → world.'},
-{id:'j130',lane:'appendix',type:'artifact',t:'Equine Assisted Therapy',b:'Janet Werner with Brooke Lichter, LCSW, EAGALA-certified.'},
-{id:'j131',lane:'appendix',type:'beat',t:'Rutgers ScarletWell — UPLIFT',b:'University Peers for Leadership, Impact, Fortitude & Teamwork.'},
-{id:'j132',lane:'appendix',type:'beat',t:'Carrier Clinic / Hackensack Meridian',b:'Humanizing Care & Restraint Reduction, Raritan Bay Dec 2024.'},
-{id:'j133',lane:'appendix',type:'note',t:'Political engagement',b:'Commissioner (Freehold NJ); Prosecutor Raymond Santiago (Monmouth County).'},
-{id:'j134',lane:'appendix',type:'note',t:'NJ celebrities w/ MH history',b:'Idea card — NJ public figures with lived mental-health history.'},
-{id:'j135',lane:'appendix',type:'question',t:'NJ → coast → global good news',b:'How do we show NJ → West Coast → USA → global good news?'},
-{id:'j136',lane:'appendix',type:'question',t:'STE experts & moral injury',b:'How to pull together peer-support-evolution experts + STE experts?'},
-{id:'j137',lane:'appendix',type:'org',t:'Kiva Centers (national)',b:'Peer-run, trauma-informed: Worcester RLC; Kiva of New Mexico; Soteria Las Cruces.',links:[['kivacenters.org','https://www.kivacenters.org']]},
-{id:'j138',lane:'appendix',type:'org',t:'Bazelon Center — Vesper Moore',b:'"ADA at 35" series. Vesper Moore: peer support happens "at the barbershop, the hair salon."'},
 {id:'p01',lane:'pillar',type:'pillar',t:'Positive-sum is the operating system',b:'Stone Soup, Filmanthropy, regenerative production — all one move: converting zero-sum to positive-sum.'},
-{id:'p02',lane:'pillar',type:'pillar',t:'Dale: "we need a mental health movement"',b:'VERIFIED on camera (Centenary). The bridge from the 1960s movement to the moviement, in his mouth.',links:[['YouTube L2TqjqUuzy4','https://www.youtube.com/watch?v=L2TqjqUuzy4']]},
-{id:'p03',lane:'pillar',type:'pillar',t:'Free Tibet — awareness carried by culture',b:'Yauch (1996): change comes only through mass public awareness, carried by culture.'},
-{id:'p04',lane:'pillar',type:'pillar',t:'The day after',b:'Potts: "the most important day of our work was the day after the concerts."'},
-{id:'p05',lane:'pillar',type:'pillar',t:'Brookdale / Dr. Stout — the campus node',b:'Flagship install. Stout: PhD in health psychology + county MH board.'},
-{id:'p06',lane:'pillar',type:'pillar',t:'"We choose to" — positive-sum, on film',b:'The compass pillar. Kennedy gave the form; the deeper choice is which game you play.'},
-{id:'p07',lane:'pillar',type:'pillar',t:'Dale is already here',b:'Presence as the first ingredient. He didn\'t endorse the pillar — he helped pour it.'},
-{id:'p08',lane:'pillar',type:'pillar',t:'The process is the product',b:'Recursive / fractal. The making of the film is the first act of the moviement.'},
-{id:'p09',lane:'pillar',type:'pillar',t:'The network already exists',b:'The innovation is the assembly, not the wanting. The mycelium is vast and underground.'},
-{id:'p10',lane:'pillar',type:'pillar',t:'Documenting reality into existence',b:'A pitch plans; a dream gets declared, and reality rearranges around it.'},
-{id:'p11',lane:'pillar',type:'pillar',t:'Episode 1 is a founding utterance',b:'Not a roadmap. "I have a dream" has no plot — a build, a litany, a crescendo.'},
-{id:'p12',lane:'pillar',type:'pillar',t:'Making history = authoring the present',b:'Positive-sum history is authoring the present — abundant, additive.'},
-{id:'p13',lane:'pillar',type:'pillar',t:'Ritual / "we are the medicine"',b:'Not treatment — ceremony. The village as a ritual of friendship.'},
-{id:'p14',lane:'pillar',type:'pillar',t:'Wound as medicine / still alive',b:'"Failure is my medicine." 30 years later, still in it.'},
 {id:'p15',lane:'pillar',type:'pillar',t:'I AM THE USE CASE — keystone',b:'Not built for "them"; built by and for the people living it. Every other pillar serves this one.'},
 {id:'s0',lane:'script',type:'scriptbeat',t:'M0 · Cold open — the handshake',b:'Consecrated re-enactment: "We\'re going to make history together." Cut to black.'},
 {id:'s1',lane:'script',type:'scriptbeat',t:'M1 · Gratitude',b:'Open on Bret thanking Dale for the gift already given — his time, on camera.'},
 {id:'s2',lane:'script',type:'scriptbeat',t:'M2 · The Three Doors',b:'Janet ("1979") → ward footage. Dale ("my dad") → Rev. Gil + MLK. Bret → the wound.'},
-{id:'s3',lane:'script',type:'scriptbeat',t:'M3 · What\'s broken — Dale names it',b:'Draw out his own lines: written off too quickly; the zero-sum game.'},
-{id:'s4',lane:'script',type:'scriptbeat',t:'M4 · Reframe — movement → moviement',b:'Hand Dale the positive-sum world as the answer to his zero-sum line.'},
-{id:'s5',lane:'script',type:'scriptbeat',t:'M5 · The dreaming, conjured together',b:'Studio, Filmanthropy, village, NJ as HeartQuarters. Stay in the dream.'},
-{id:'s6',lane:'script',type:'scriptbeat',t:'M6 · The quest names itself + the ask',b:'Let it emerge so Dale half-says it. Season 1 = $5M cash + gifted resources.'},
-{id:'s7',lane:'script',type:'scriptbeat',t:'M7 · Threshold crossed — film opens',b:'Reveal: the meeting WAS the moviement happening. Turn outward.'},
 {id:'q1',lane:'quest',type:'quest',t:'Season 1 — Faith ($5M)',b:'26 episodes. Goal: $5M in cash AND gifted resources.'},
-{id:'q2',lane:'quest',type:'quest',t:'Season 2 — Function (the village)',b:'Build the pilot village — the $5M seed of the $90M model dreamed with Dale.'},
-{id:'q3',lane:'quest',type:'quest',t:'Season 3 — Culture (the concert)',b:'The Tibetan-Freedom-Concert lineage turned toward the soul.'},
-{id:'q4',lane:'quest',type:'quest',t:'Season 4 — Scale ($90M)',b:'The $90M village rises — the model the concert made thinkable.'},
-{id:'q5',lane:'quest',type:'quest',t:'Season 5 — System ($1B)',b:'A repeatable, fully-regenerative transmedium system scaling mental-health care across NJ.'},
-{id:'q6',lane:'quest',type:'quest',t:'The ladder + the big ask',b:'Faith → Function → Culture → Scale → System.'},
 {id:'d1',lane:'device',type:'device',t:'The conversation that contains the film',b:'The Dale meeting is the riverbed; everything else flows from what\'s said in the room.'},
-{id:'d2',lane:'device',type:'device',t:'"How in is he?" — the secret engine',b:'Dale\'s presence is the premise; his depth of yes is the reveal.'},
-{id:'d3',lane:'device',type:'device',t:'Archival as evidence, never timeline',b:'History never appears as "and then in 1985…" — it\'s summoned as testimony.'},
-{id:'d4',lane:'device',type:'device',t:'Fact + fiction = consecration',b:'Re-enact only what truly happened (the handshake), bounded by what Dale is willing to do.'},
-{id:'d5',lane:'device',type:'device',t:'Ambient capture / the AI co-editor',b:'Screens recording the real work — emails, typing — flowing to an editor.'},
-{id:'d6',lane:'device',type:'device',t:'The 4 leads as functions',b:'Bret = carrier. Janet = keeper. Dale = threshold. Ron = credibility.'},
-{id:'d7',lane:'device',type:'device',t:'Two images in one frame',b:'Zero-sum: locked ward + evaporating dollar. Positive-sum: full pot + key in the hand.'},
-{id:'d8',lane:'device',type:'device',t:'New-footage shopping list',b:'The 90-min Dale conversation · the consecrated handshake · a Bret solo piece-to-camera.'},
 {id:'d9',lane:'device',type:'device',t:'The crafty constraint',b:'Use only footage you already have + a few new minutes. Scarcity is the aesthetic.'},
-{id:'d10',lane:'device',type:'device',t:'Stone Synergy Soup — the assembly',b:'No one has the meal; everyone has an ingredient; the pot is more than the sum.'},
 ];
 
 /* ============================================================
-   PERSISTENCE — IndexedDB + localStorage fallback
+   PERSISTENCE
    ============================================================ */
-const IDB_NAME='sceniusDB', IDB_VER=1;
+const IDB_NAME='sceniusDB',IDB_VER=1;
 let idb=null;
 function idbOpen(){return new Promise((res,rej)=>{const req=indexedDB.open(IDB_NAME,IDB_VER);req.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('boards'))d.createObjectStore('boards',{keyPath:'id'});if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'k'})};req.onsuccess=e=>res(e.target.result);req.onerror=()=>rej(req.error)});}
 function idbOp(store,mode,fn){return new Promise((res,rej)=>{const tx=idb.transaction(store,mode),st=tx.objectStore(store),req=fn(st);req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error)});}
@@ -427,18 +342,22 @@ const idbAll=(s)=>idbOp(s,'readonly',st=>st.getAll());
 function lsGet(k){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null}catch(e){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
-
-async function persistBoard(board){if(idb){try{await idbPut('boards',board);return}catch(e){}}lsSet('sb_'+board.id,board);const idx=lsGet('sb_idx')||[];if(!idx.includes(board.id)){idx.push(board.id);lsSet('sb_idx',idx)}}
-async function removeBoard(id){if(idb){try{await idbDel('boards',id)}catch(e){}}lsDel('sb_'+id);lsSet('sb_idx',(lsGet('sb_idx')||[]).filter(x=>x!==id))}
+async function persistBoard(b){if(idb){try{await idbPut('boards',b);return}catch(e){}}lsSet('sb_'+b.id,b);const idx=lsGet('sb_idx')||[];if(!idx.includes(b.id)){idx.push(b.id);lsSet('sb_idx',idx)}}
+async function removeBoard(id){if(idb){try{await idbDel('boards',id)}catch(e){}}lsDel('sb_'+id);lsSet('sb_idx',(lsGet('sb_idx')||[]).filter(x=>x!==id));}
 async function fetchAllBoards(){if(idb){try{return await idbAll('boards')}catch(e){}}return(lsGet('sb_idx')||[]).map(id=>lsGet('sb_'+id)).filter(Boolean)}
 async function getActiveId(){if(idb){try{const r=await idbGet('meta','active');return r?.v}catch(e){}}return lsGet('sb_active')}
 async function setActiveId(id){if(idb){try{await idbPut('meta',{k:'active',v:id})}catch(e){}}lsSet('sb_active',id)}
 async function loadBoardById(id){if(idb){try{return await idbGet('boards',id)}catch(e){}}return lsGet('sb_'+id)}
 
 /* ============================================================
-   BOARD MANAGEMENT
+   VIEW STATE
    ============================================================ */
-let allBoards=[], activeBoard=null, state=null;
+let currentView='master'; // 'master' | 'scene'
+let activeSceneId=null;
+
+/* ============================================================
+   BOARD SCHEMA HELPERS
+   ============================================================ */
 function mkId(){return 'b'+Math.random().toString(36).slice(2,9)}
 function mkCardId(){return 'u'+Math.random().toString(36).slice(2,10)}
 function bSummary(b){return{id:b.id,name:b.name,updatedAt:b.updatedAt}}
@@ -449,18 +368,232 @@ function ensureCardFields(c){
   if(c.subChunk===undefined)c.subChunk='';
   return c;
 }
+
 function ensureScenes(board){
   if(!board.scenes||board.scenes.length<SCENE_COUNT){
     board.scenes=mkScenes();
     board.cards.forEach(c=>{c.sceneId=null;c.sceneOrder=0;c.subChunk='';});
-    // Relocate all cards to unfiled area
     layoutUnfiled(board.cards);
   }
+  if(!board.masterView)board.masterView={...( board.view||{px:20,py:56,z:.55})};
+  if(!board.sceneViews)board.sceneViews={};
+  if(!board.lastView)board.lastView={type:'master',sceneId:null};
   board.cards.forEach(ensureCardFields);
 }
 
+function layoutUnfiled(cards){
+  const COLS=5,CW=268,GX=16,GY=14;
+  const colY=Array(COLS).fill(UNFILED_Y);
+  cards.filter(c=>!c.sceneId).forEach((c,i)=>{
+    const col=i%COLS;c.x=col*(CW+GX);c.y=colY[col];colY[col]+=estHeight(c)+GY;
+  });
+}
+function estHeight(c){
+  let h=70;h+=Math.ceil((c.b||'').length/34)*15;
+  if(c.note)h+=26+Math.ceil(c.note.length/40)*13;
+  if(c.mine)h+=26+Math.ceil(c.mine.length/40)*13;
+  if(c.links&&c.links.length)h+=24;
+  return Math.max(96,h);
+}
+
+/* ============================================================
+   SCENE FILING / UNFILING
+   ============================================================ */
+function fileCard(c,sceneId,doSave=true){
+  const oldId=c.sceneId;
+  // remove from old scene
+  if(oldId!=null){
+    c.sceneId=null;
+    const oldMembers=state.cards.filter(x=>x.sceneId===oldId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
+    oldMembers.forEach((x,i)=>x.sceneOrder=i);
+    if(oldId!==sceneId)renderMasterSceneBox(oldId);
+  }
+  c.sceneId=sceneId;
+  // append after existing
+  const members=state.cards.filter(x=>x.sceneId===sceneId&&x.id!==c.id).sort((a,b)=>a.sceneOrder-b.sceneOrder);
+  c.sceneOrder=members.length;
+  // position in scene room layout grid
+  placeCardInSceneRoom(c,members.length);
+  if(doSave)save();
+  renderMasterSceneBox(sceneId);
+  if(currentView==='scene'&&activeSceneId===sceneId){
+    renderCard(c);
+    const el=cardEls.get(c.id);
+    if(el){el.style.display='';el.style.left=c.x+'px';el.style.top=c.y+'px';}
+    applyFilter();drawWires();updateSceneRoomBar();
+  }
+}
+
+function placeCardInSceneRoom(c,idx){
+  // 2-column grid in scene room coordinate space
+  c.x=snap(SR_PAD+(idx%SR_COLS)*SR_COL_STEP);
+  c.y=snap(SR_PAD+Math.floor(idx/SR_COLS)*200);
+}
+
+function unfileCard(c,doSave=true){
+  if(c.sceneId==null)return;
+  const old=c.sceneId;
+  c.sceneId=null;c.sceneOrder=0;
+  // Move to bottom of unfiled column
+  const unfiled=state.cards.filter(x=>!x.sceneId&&x.id!==c.id);
+  const col=0;
+  const colCards=unfiled.filter((_,i)=>i%SCENE_COLS===col);
+  const maxY=colCards.reduce((m,x)=>Math.max(m,x.y+estHeight(x)),-Infinity);
+  c.x=snap(col*(CARD_W+SR_GAP_X));
+  c.y=snap(isFinite(maxY)?maxY+SR_GAP_Y:UNFILED_Y);
+  // renumber remaining scene members
+  const remaining=state.cards.filter(x=>x.sceneId===old).sort((a,b)=>a.sceneOrder-b.sceneOrder);
+  remaining.forEach((x,i)=>x.sceneOrder=i);
+  renderMasterSceneBox(old);
+  if(doSave)save();
+}
+
+// Reorder scene after free drag in scene room
+function updateSceneOrderFromY(sceneId){
+  const cards=state.cards.filter(c=>c.sceneId===sceneId);
+  cards.sort((a,b)=>a.y===b.y?a.x-b.x:a.y-b.y);
+  cards.forEach((c,i)=>c.sceneOrder=i);
+  renderMasterSceneBox(sceneId);
+}
+
+// Layout tidy for scene room
+function layoutSceneRoomTidy(sceneId){
+  const cards=state.cards.filter(c=>c.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
+  cards.forEach((c,i)=>placeCardInSceneRoom(c,i));
+  if(currentView==='scene'&&activeSceneId===sceneId){
+    cards.forEach(c=>{
+      const el=cardEls.get(c.id);
+      if(el){el.style.left=c.x+'px';el.style.top=c.y+'px';}
+    });
+    drawWires();
+  }
+}
+
+// Hit test: which scene box is at client coords? (master view only)
+function hitSceneBox(clientX,clientY){
+  if(currentView!=='master')return null;
+  const wx=(clientX-view.px)/view.z,wy=(clientY-view.py)/view.z;
+  for(let id=1;id<=SCENE_COUNT;id++){
+    const pos=scenePos(id);
+    if(wx>=pos.x&&wx<=pos.x+SCENE_W&&wy>=pos.y&&wy<=pos.y+SCENE_BOX_H)return id;
+  }
+  return null;
+}
+
+/* ============================================================
+   ENTER / EXIT SCENE ROOM
+   ============================================================ */
+function enterSceneRoom(id){
+  // Save master view
+  activeBoard.masterView={...view};
+  currentView='scene';activeSceneId=id;
+  // Restore scene view or compute fit
+  const sv=activeBoard.sceneViews?.[id];
+  if(sv)Object.assign(view,sv);else computeSceneFit(id);
+  // Animate transition
+  world.style.transition='transform .34s cubic-bezier(.4,0,.2,1)';
+  applyTransform();
+  setTimeout(()=>{world.style.transition='';},380);
+  renderForCurrentView();
+  updateSceneRoomBar();
+  activeBoard.lastView={type:'scene',sceneId:id};
+  save();
+}
+
+function exitSceneRoom(){
+  // Save scene view
+  if(!activeBoard.sceneViews)activeBoard.sceneViews={};
+  activeBoard.sceneViews[activeSceneId]={...view};
+  // Restore master view
+  Object.assign(view,activeBoard.masterView||{px:20,py:56,z:.55});
+  currentView='master';activeSceneId=null;
+  world.style.transition='transform .34s cubic-bezier(.4,0,.2,1)';
+  applyTransform();
+  setTimeout(()=>{world.style.transition='';},380);
+  renderForCurrentView();
+  activeBoard.lastView={type:'master',sceneId:null};
+  save();
+}
+
+function computeSceneFit(sceneId){
+  const cards=state.cards.filter(c=>c.sceneId===sceneId);
+  if(!cards.length){view.px=60;view.py=100;view.z=1.1;return;}
+  const xs=cards.map(c=>c.x),ys=cards.map(c=>c.y);
+  const minx=Math.min(...xs)-40,maxx=Math.max(...xs)+CARD_W+40;
+  const miny=Math.min(...ys)-40,maxy=Math.max(...ys)+240;
+  const topBar=102; // #bar + #scene-room-bar
+  const z=clamp(Math.min((innerWidth-80)/(maxx-minx),(innerHeight-topBar-40)/(maxy-miny)),.2,1.5);
+  view.z=z;
+  view.px=(innerWidth-(maxx-minx)*z)/2-minx*z;
+  view.py=topBar+20-miny*z;
+}
+
+/* ============================================================
+   RENDER FOR CURRENT VIEW
+   ============================================================ */
+function renderForCurrentView(){
+  const sbar=document.getElementById('scene-room-bar');
+  const ufl=document.getElementById('unfiled-label');
+  if(currentView==='master'){
+    sbar.classList.remove('open');
+    if(ufl)ufl.style.display='';
+    // Show unfiled cards at their x,y; hide filed cards
+    cardEls.forEach((el,id)=>{
+      const c=byId(id);
+      if(!c||c.sceneId!=null){el.style.display='none';return;}
+      el.style.display='';
+      el.style.left=c.x+'px';el.style.top=c.y+'px';
+    });
+    // Show all scene boxes; update previews
+    document.querySelectorAll('.scene-box').forEach(el=>el.style.display='');
+    for(let id=1;id<=SCENE_COUNT;id++)renderMasterSceneBox(id);
+  } else {
+    sbar.classList.add('open');
+    if(ufl)ufl.style.display='none';
+    // Show only active scene cards at their x,y; hide everything else
+    cardEls.forEach((el,id)=>{
+      const c=byId(id);
+      if(!c||c.sceneId!==activeSceneId){el.style.display='none';return;}
+      el.style.display='';
+      el.style.left=c.x+'px';el.style.top=c.y+'px';
+    });
+    document.querySelectorAll('.scene-box').forEach(el=>el.style.display='none');
+    updateSceneRoomBar();
+  }
+  applyFilter();drawWires();
+}
+
+function renderMasterSceneBox(sceneId){
+  const box=document.getElementById('scene-'+sceneId);if(!box)return;
+  if(!state)return;
+  const cards=state.cards.filter(c=>c.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
+  const countEl=box.querySelector('.scene-count');
+  if(countEl)countEl.textContent=cards.length?(cards.length+' card'+(cards.length>1?'s':'')):'empty';
+  let prev=box.querySelector('.scene-preview');
+  if(!prev){prev=document.createElement('div');prev.className='scene-preview';box.appendChild(prev);}
+  const show=cards.slice(0,4);const rest=cards.length-show.length;
+  prev.innerHTML=show.map(c=>`<div class="scene-mini" style="--accent:${TYPE_COLORS[c.type]||'#8A7F6E'}">${esc(c.t)}</div>`).join('')+(rest>0?`<div class="scene-more">+ ${rest} more</div>`:'');
+}
+
+function updateSceneRoomBar(){
+  if(currentView!=='scene'||!activeSceneId)return;
+  const sc=state?.scenes?.find(s=>s.id===activeSceneId);
+  document.getElementById('srb-num').textContent=activeSceneId;
+  const ti=document.getElementById('srb-theme');
+  if(document.activeElement!==ti)ti.value=sc?.theme||'';
+  const n=state?.cards?.filter(c=>c.sceneId===activeSceneId).length||0;
+  document.getElementById('srb-count').textContent=n+' card'+(n===1?'':'s');
+}
+
+/* ============================================================
+   BOARD MANAGEMENT
+   ============================================================ */
+let allBoards=[],activeBoard=null,state=null;
+
 function freshBoard(name,cards=[],links=[],view={px:20,py:56,z:.55}){
-  return{id:mkId(),name,cards:cards.map(c=>({...c})),links:[...links],view:{...view},scenes:mkScenes(),updatedAt:Date.now()};
+  return{id:mkId(),name,cards:cards.map(c=>({...c})),links:[...links],
+    scenes:mkScenes(),masterView:{...view},sceneViews:{},lastView:{type:'master',sceneId:null},
+    view:{...view},updatedAt:Date.now()};
 }
 function freshSeedBoard(name='Main wall'){
   const cards=SEED.map(c=>({...c,x:0,y:0,star:false,moved:false,mine:'',sceneId:null,sceneOrder:0,subChunk:''}));
@@ -469,23 +602,49 @@ function freshSeedBoard(name='Main wall'){
 }
 
 async function switchToBoard(id){
-  const board=await loadBoardById(id);
-  if(!board)return;
+  const board=await loadBoardById(id);if(!board)return;
   ensureScenes(board);
-  activeBoard=board; state=board; view=board.view;
+  activeBoard=board;state=board;
+  // Restore view mode
+  const lv=board.lastView||{type:'master',sceneId:null};
+  if(lv.type==='scene'&&lv.sceneId){
+    currentView='scene';activeSceneId=lv.sceneId;
+    const sv=board.sceneViews?.[lv.sceneId];
+    view=sv?{...sv}:{...(board.masterView||{px:20,py:56,z:.55})};
+  } else {
+    currentView='master';activeSceneId=null;
+    view={...(board.masterView||board.view||{px:20,py:56,z:.55})};
+  }
   await setActiveId(id);
-  cardEls.forEach(el=>el.remove()); cardEls.clear();
+  cardEls.forEach(el=>el.remove());cardEls.clear();
   document.querySelectorAll('.scene-box').forEach(el=>el.remove());
-  renderAll(); renderSceneContainers(); applyTransform();
+  renderAll();renderSceneContainers();renderForCurrentView();applyTransform();
   updateBoardBtn();
   window.dispatchEvent(new CustomEvent('scenius:boardswitch',{detail:{id:board.id}}));
 }
-function updateBoardBtn(){const n=activeBoard?.name||'…';document.getElementById('board-name-display').textContent=n.length>18?n.slice(0,16)+'…':n}
+function updateBoardBtn(){const n=activeBoard?.name||'…';document.getElementById('board-name-display').textContent=n.length>18?n.slice(0,16)+'…':n;}
 
-async function createBoard(name,cards){const b=cards?freshBoard(name,cards):freshBoard(name);await persistBoard(b);allBoards=[...allBoards,bSummary(b)];await switchToBoard(b.id);return b}
-async function duplicateCurrentBoard(){const src=activeBoard;const b=freshBoard(src.name+' copy',src.cards,src.links,src.view);b.scenes=src.scenes.map(s=>({...s}));await persistBoard(b);allBoards=[...allBoards,bSummary(b)];await switchToBoard(b.id);closePops()}
-async function renameBoardById(id,name){if(!name.trim())return;const b=await loadBoardById(id);if(!b)return;b.name=name.trim();b.updatedAt=Date.now();await persistBoard(b);allBoards=allBoards.map(s=>s.id===id?bSummary(b):s);if(activeBoard.id===id){activeBoard.name=b.name;updateBoardBtn()}renderBoardList()}
-async function deleteBoardById(id){if(allBoards.length<=1){alert('You need at least one board.');return}if(!confirm('Delete "'+( allBoards.find(s=>s.id===id)?.name||'this board')+'"?'))return;await removeBoard(id);allBoards=allBoards.filter(s=>s.id!==id);if(activeBoard.id===id)await switchToBoard(allBoards[0].id);renderBoardList()}
+async function createBoard(name){const b=freshBoard(name||'New board');await persistBoard(b);allBoards=[...allBoards,bSummary(b)];await switchToBoard(b.id);return b;}
+async function duplicateCurrentBoard(){
+  const src=activeBoard;
+  const b=freshBoard(src.name+' copy',src.cards,src.links,src.masterView||src.view);
+  b.scenes=src.scenes.map(s=>({...s}));b.sceneViews={...src.sceneViews};
+  await persistBoard(b);allBoards=[...allBoards,bSummary(b)];await switchToBoard(b.id);closePops();
+}
+async function renameBoardById(id,name){
+  if(!name.trim())return;const b=await loadBoardById(id);if(!b)return;
+  b.name=name.trim();b.updatedAt=Date.now();await persistBoard(b);
+  allBoards=allBoards.map(s=>s.id===id?bSummary(b):s);
+  if(activeBoard.id===id){activeBoard.name=b.name;updateBoardBtn();}
+  renderBoardList();
+}
+async function deleteBoardById(id){
+  if(allBoards.length<=1){alert('You need at least one board.');return;}
+  if(!confirm('Delete "'+( allBoards.find(s=>s.id===id)?.name||'this board')+'"?'))return;
+  await removeBoard(id);allBoards=allBoards.filter(s=>s.id!==id);
+  if(activeBoard.id===id)await switchToBoard(allBoards[0].id);
+  renderBoardList();
+}
 
 /* ============================================================
    SAVE
@@ -496,188 +655,93 @@ function save(){
   saveT=setTimeout(()=>{
     if(!activeBoard)return;
     activeBoard.updatedAt=Date.now();
-    activeBoard.view={...view};
+    if(currentView==='master')activeBoard.masterView={...view};
+    else if(activeSceneId){if(!activeBoard.sceneViews)activeBoard.sceneViews={};activeBoard.sceneViews[activeSceneId]={...view};}
     persistBoard(activeBoard).catch(()=>{});
     allBoards=allBoards.map(s=>s.id===activeBoard.id?bSummary(activeBoard):s);
   },250);
 }
 
 /* ============================================================
-   LAYOUT — places cards in unfiled area (below scene grid)
-   ============================================================ */
-function estHeight(c){
-  let h=70;h+=Math.ceil((c.b||'').length/34)*15;
-  if(c.note)h+=26+Math.ceil(c.note.length/40)*13;
-  if(c.mine)h+=26+Math.ceil(c.mine.length/40)*13;
-  if(c.links&&c.links.length)h+=24;
-  return Math.max(96,h);
-}
-function layoutUnfiled(cards){
-  const COLS=5, CW=268, GAP_X=16, GAP_Y=14;
-  const colY=Array(COLS).fill(UNFILED_Y);
-  cards.filter(c=>!c.sceneId).forEach((c,i)=>{
-    const col=i%COLS;
-    c.x=col*(CW+GAP_X); c.y=colY[col]; colY[col]+=estHeight(c)+GAP_Y;
-  });
-}
-
-/* ============================================================
-   SCENE MANAGEMENT
-   ============================================================ */
-function layoutSceneCards(sceneId){
-  if(!state)return;
-  const pos=scenePos(sceneId);
-  const CARD_X=pos.x+8, GAP=8;
-  let yOff=pos.y+SCENE_HEADER_H+8;
-  state.cards.filter(c=>c.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder).forEach(c=>{
-    c.x=CARD_X; c.y=yOff;
-    const el=cardEls.get(c.id);
-    if(el){el.style.left=c.x+'px';el.style.top=c.y+'px';}
-    yOff+=estHeight(c)+GAP;
-  });
-  updateSceneBoxHeight(sceneId);
-}
-function updateSceneBoxHeight(sceneId){
-  const box=document.getElementById('scene-'+sceneId); if(!box)return;
-  const cards=state?.cards?.filter(c=>c.sceneId===sceneId)||[];
-  let h=SCENE_MIN_BODY;
-  cards.forEach(c=>h+=estHeight(c)+8);
-  box.style.height=(SCENE_HEADER_H+Math.max(SCENE_MIN_BODY,h+16))+'px';
-}
-function fileCard(c,sceneId,insertPos){
-  const oldId=c.sceneId;
-  // Remove from old scene
-  if(oldId!=null){
-    c.sceneId=null;
-    state.cards.filter(x=>x.sceneId===oldId).sort((a,b)=>a.sceneOrder-b.sceneOrder).forEach((x,i)=>x.sceneOrder=i);
-    if(oldId!==sceneId){layoutSceneCards(oldId);updateSceneBoxHeight(oldId);}
-  }
-  // Insert into target scene
-  const existing=state.cards.filter(x=>x.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
-  c.sceneId=sceneId;
-  const at=Math.min(typeof insertPos==='number'?insertPos:existing.length, existing.length);
-  existing.splice(at,0,c);
-  existing.forEach((x,i)=>x.sceneOrder=i);
-  layoutSceneCards(sceneId); save();
-}
-function unfileCard(c,doSave=true){
-  if(c.sceneId==null)return;
-  const old=c.sceneId; c.sceneId=null; c.sceneOrder=0;
-  state.cards.filter(x=>x.sceneId===old).sort((a,b)=>a.sceneOrder-b.sceneOrder).forEach((x,i)=>x.sceneOrder=i);
-  layoutSceneCards(old);
-  if(doSave)save();
-}
-function getInsertPos(sceneId,clientY){
-  const wy=(clientY-view.py)/view.z;
-  const sc=state.cards.filter(c=>c.sceneId===sceneId&&c.id!==dragging?.c?.id).sort((a,b)=>a.sceneOrder-b.sceneOrder);
-  for(let i=0;i<sc.length;i++){if(wy<sc[i].y+estHeight(sc[i])/2)return i;}
-  return sc.length;
-}
-function hitScene(clientX,clientY){
-  const wx=(clientX-view.px)/view.z, wy=(clientY-view.py)/view.z;
-  for(let id=1;id<=SCENE_COUNT;id++){
-    const pos=scenePos(id);
-    const box=document.getElementById('scene-'+id); if(!box)continue;
-    if(wx>=pos.x&&wx<=pos.x+SCENE_W&&wy>=pos.y&&wy<=pos.y+box.offsetHeight)return id;
-  }
-  return null;
-}
-function showDropLine(sceneId,insertPos,clientY){
-  const dl=document.getElementById('drop-line');
-  const pos=scenePos(sceneId);
-  const sc=state.cards.filter(c=>c.sceneId===sceneId&&c.id!==dragging?.c?.id).sort((a,b)=>a.sceneOrder-b.sceneOrder);
-  let lineY;
-  if(insertPos===0){lineY=pos.y+SCENE_HEADER_H+4;}
-  else if(insertPos>=sc.length&&sc.length>0){lineY=sc[sc.length-1].y+estHeight(sc[sc.length-1])+4;}
-  else if(sc[insertPos]){lineY=sc[insertPos].y-4;}
-  else{lineY=pos.y+SCENE_HEADER_H+4;}
-  dl.style.left=pos.x+'px'; dl.style.top=lineY+'px'; dl.style.width=SCENE_W+'px'; dl.style.display='block';
-}
-
-/* ============================================================
    RENDER
    ============================================================ */
-const stage=document.getElementById('stage'), world=document.getElementById('world'), wires=document.getElementById('wires');
+const stage=document.getElementById('stage'),world=document.getElementById('world'),wires=document.getElementById('wires');
 let view={px:20,py:56,z:.55};
 const cardEls=new Map();
 
-function renderAll(){
-  if(state)state.cards.forEach(renderCard);
-  applyTransform(); drawWires(); applyFilter();
-}
+function renderAll(){if(state)state.cards.forEach(renderCard);applyTransform();drawWires();}
 function renderCard(c){
   let el=cardEls.get(c.id);
   if(!el){el=document.createElement('div');el.className='card';el.dataset.id=c.id;world.appendChild(el);cardEls.set(c.id,el);}
-  const color=TYPE_COLORS[c.type]||'#8A7F6E';
-  el.style.setProperty('--c',color);
-  el.style.left=c.x+'px'; el.style.top=c.y+'px';
-  const links=(c.links||[]).map(([l,u])=>u?`<a href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`:`<span>${esc(l)}</span>`).join('');
-  el.innerHTML=`
-    <span class="c-star ${c.star?'on':''}" data-star>${c.star?'★':'☆'}</span>
-    ${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}
-    <span class="c-type">${esc(c.type)}</span>
-    <p class="c-title">${esc(c.t)}</p>
-    <div class="c-body">${esc(c.b||'')}</div>
-    ${c.note?`<div class="c-note"><b>Janet</b>${esc(c.note)}</div>`:''}
-    ${c.mine?`<div class="c-mine"><b>My remix</b>${esc(c.mine)}</div>`:''}
-    ${links?`<div class="c-links">${links}</div>`:''}`;
+  el.style.setProperty('--c',TYPE_COLORS[c.type]||'#8A7F6E');
+  el.style.left=c.x+'px';el.style.top=c.y+'px';
+  const lks=(c.links||[]).map(([l,u])=>u?`<a href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`:`<span>${esc(l)}</span>`).join('');
+  el.innerHTML=`<span class="c-star ${c.star?'on':''}" data-star>${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title">${esc(c.t)}</p><div class="c-body">${esc(c.b||'')}</div>${c.note?`<div class="c-note"><b>Janet</b>${esc(c.note)}</div>`:''}${c.mine?`<div class="c-mine"><b>My remix</b>${esc(c.mine)}</div>`:''}${lks?`<div class="c-links">${lks}</div>`:''}`;
 }
-function esc(s){return(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function esc(s){return(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
 
 function renderSceneContainers(){
   if(!state)return;
   for(let id=1;id<=SCENE_COUNT;id++){
     let box=document.getElementById('scene-'+id);
     if(!box){
-      box=document.createElement('div'); box.className='scene-box'; box.id='scene-'+id;
-      const head=document.createElement('div'); head.className='scene-head';
-      const num=document.createElement('span'); num.className='scene-num'; num.textContent=id;
-      const ti=document.createElement('input'); ti.className='scene-theme'; ti.placeholder='theme…'; ti.maxLength=60;
+      box=document.createElement('div');box.className='scene-box';box.id='scene-'+id;
+      const head=document.createElement('div');head.className='scene-head';
+      // Click on head (not input) → enter scene room
+      head.addEventListener('pointerdown',function(e){
+        if(e.target.tagName==='INPUT')return;
+        e.stopPropagation();
+      });
+      head.addEventListener('click',function(e){
+        if(e.target.tagName==='INPUT')return;
+        enterSceneRoom(id);
+      });
+      const num=document.createElement('span');num.className='scene-num';num.textContent=id;
+      const ti=document.createElement('input');ti.className='scene-theme-input';ti.placeholder='theme…';ti.maxLength=60;
+      ti.addEventListener('click',e=>e.stopPropagation());
+      ti.addEventListener('pointerdown',e=>e.stopPropagation());
       ti.addEventListener('input',(function(sid){return()=>{const sc=state?.scenes?.find(s=>s.id===sid);if(sc){sc.theme=ti.value;save();}}})(id));
-      head.appendChild(num); head.appendChild(ti); box.appendChild(head); world.appendChild(box);
+      const cnt=document.createElement('span');cnt.className='scene-count';cnt.textContent='empty';
+      head.append(num,ti,cnt);box.appendChild(head);world.appendChild(box);
     }
     const pos=scenePos(id);
-    box.style.left=pos.x+'px'; box.style.top=pos.y+'px'; box.style.width=SCENE_W+'px';
+    box.style.left=pos.x+'px';box.style.top=pos.y+'px';
     const sc=state?.scenes?.find(s=>s.id===id);
-    const ti=box.querySelector('.scene-theme');
+    const ti=box.querySelector('.scene-theme-input');
     if(ti&&sc&&document.activeElement!==ti)ti.value=sc.theme||'';
-    updateSceneBoxHeight(id);
   }
   // Unfiled label
   let ul=document.getElementById('unfiled-label');
   if(!ul){ul=document.createElement('div');ul.id='unfiled-label';world.appendChild(ul);}
   ul.textContent='↓  unfiled cards  ↓';
-  ul.style.left='0'; ul.style.top=(UNFILED_Y-36)+'px'; ul.style.width=(SCENE_COLS*SCENE_COL_STEP-SCENE_COL_GAP)+'px';
+  ul.style.left='0';ul.style.top=(UNFILED_Y-36)+'px';
+  ul.style.width=(SCENE_COLS*SCENE_COL_STEP-SCENE_COL_GAP)+'px';
 }
 
 function applyTransform(){world.style.transform=`translate(${view.px}px,${view.py}px) scale(${view.z})`;}
 
 /* ============================================================
-   PAN / ZOOM / DRAG (with 250ms hold-to-lift)
+   PAN / ZOOM / DRAG
    ============================================================ */
-const HOLD_MS=250, HOLD_PX=10;
+const HOLD_MS=250,HOLD_PX=10;
 const pointers=new Map();
-let panStart=null, pinchStart=null;
-let pendingCard=null, holdTimer=null;
-let dragging=null, dropTarget=null;
+let panStart=null,pinchStart=null;
+let pendingCard=null,holdTimer=null;
+let dragging=null,dropTarget=null;
 
 stage.addEventListener('pointerdown',e=>{
-  // Let native inputs work unmolested
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
   stage.setPointerCapture(e.pointerId);
   pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-
   const cardEl=e.target.closest('.card');
   if(linkMode&&cardEl){handleLink(cardEl.dataset.id);return;}
   if(e.target.closest('[data-star]'))return;
-
   if(cardEl&&pointers.size===1){
-    const c=byId(cardEl.dataset.id); if(!c)return;
+    const c=byId(cardEl.dataset.id);if(!c)return;
     pendingCard={el:cardEl,c,ox:e.clientX,oy:e.clientY,sx:c.x,sy:c.y};
     holdTimer=setTimeout(()=>{
       if(!pendingCard||pendingCard.el!==cardEl)return;
-      dragging={el:cardEl,c,ox:pendingCard.ox,oy:pendingCard.oy,sx:c.x,sy:c.y,moved:false,wasInScene:c.sceneId??null};
-      if(c.sceneId!=null)unfileCard(c,false);
+      dragging={el:cardEl,c,ox:pendingCard.ox,oy:pendingCard.oy,sx:c.x,sy:c.y,moved:false};
       cardEl.classList.add('drag','armed');
       pendingCard=null;
     },HOLD_MS);
@@ -690,7 +754,6 @@ stage.addEventListener('pointerdown',e=>{
 stage.addEventListener('pointermove',e=>{
   if(!pointers.has(e.pointerId))return;
   pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-
   if(pendingCard){
     if(Math.hypot(e.clientX-pendingCard.ox,e.clientY-pendingCard.oy)>HOLD_PX){
       clearTimeout(holdTimer);holdTimer=null;pendingCard=null;
@@ -700,30 +763,24 @@ stage.addEventListener('pointermove',e=>{
   }
   if(pointers.size===2&&pinchStart){doPinch();return;}
   if(dragging){
-    const dx=(e.clientX-dragging.ox)/view.z, dy=(e.clientY-dragging.oy)/view.z;
-    if(Math.abs(e.clientX-dragging.ox)+Math.abs(e.clientY-dragging.oy)>3)dragging.moved=true;
-    dragging.c.x=dragging.sx+dx; dragging.c.y=dragging.sy+dy;
-    dragging.el.style.left=dragging.c.x+'px'; dragging.el.style.top=dragging.c.y+'px';
-    // Scene drop highlight
-    const hs=hitScene(e.clientX,e.clientY);
-    document.querySelectorAll('.scene-box.drop-over').forEach(el=>el.classList.remove('drop-over'));
-    const dl=document.getElementById('drop-line');
-    if(hs){
-      document.getElementById('scene-'+hs)?.classList.add('drop-over');
-      const ip=getInsertPos(hs,e.clientY);
-      dropTarget={sceneId:hs,insertPos:ip};
-      showDropLine(hs,ip,e.clientY);
-    } else {
-      dropTarget=null; if(dl)dl.style.display='none';
+    const dx=(e.clientX-dragging.ox)/view.z,dy=(e.clientY-dragging.oy)/view.z;
+    if(Math.abs(dx)+Math.abs(dy)>3)dragging.moved=true;
+    dragging.c.x=dragging.sx+dx;dragging.c.y=dragging.sy+dy;
+    dragging.el.style.left=dragging.c.x+'px';dragging.el.style.top=dragging.c.y+'px';
+    // In master view only: highlight scene zone under pointer
+    if(currentView==='master'){
+      document.querySelectorAll('.scene-box.drop-over').forEach(el=>el.classList.remove('drop-over'));
+      const hs=hitSceneBox(e.clientX,e.clientY);
+      if(hs){document.getElementById('scene-'+hs)?.classList.add('drop-over');dropTarget=hs;}
+      else dropTarget=null;
     }
-    drawWires(); return;
+    drawWires();return;
   }
   if(panStart){view.px=panStart.px+(e.clientX-panStart.x);view.py=panStart.py+(e.clientY-panStart.y);applyTransform();}
 });
 
 function endPtr(e){
   pointers.delete(e.pointerId);
-  // Tap (hold didn't fire)
   if(pendingCard){
     clearTimeout(holdTimer);holdTimer=null;
     const pc=pendingCard;pendingCard=null;
@@ -734,19 +791,21 @@ function endPtr(e){
   if(dragging){
     dragging.el.classList.remove('drag','armed');
     document.querySelectorAll('.scene-box.drop-over').forEach(el=>el.classList.remove('drop-over'));
-    const dl=document.getElementById('drop-line');if(dl)dl.style.display='none';
-    if(dropTarget){
-      fileCard(dragging.c,dropTarget.sceneId,dropTarget.insertPos);
+    if(currentView==='master'&&dropTarget!=null){
+      // File into scene
+      fileCard(dragging.c,dropTarget);
       renderCard(dragging.c);
+      renderForCurrentView();
     } else if(dragging.moved){
-      dragging.c.x=snap(dragging.c.x); dragging.c.y=snap(dragging.c.y);
-      dragging.el.style.left=dragging.c.x+'px'; dragging.el.style.top=dragging.c.y+'px';
+      // Snap and save
+      dragging.c.x=snap(dragging.c.x);dragging.c.y=snap(dragging.c.y);
+      dragging.el.style.left=dragging.c.x+'px';dragging.el.style.top=dragging.c.y+'px';
+      if(currentView==='scene'&&activeSceneId!=null)updateSceneOrderFromY(activeSceneId);
       save();
     } else {
-      // Tap on armed card
       openInspector(dragging.c.id);
     }
-    dragging=null; dropTarget=null;
+    dragging=null;dropTarget=null;
   }
   if(pointers.size<2)pinchStart=null;
   if(pointers.size===0){panStart=null;stage.classList.remove('grabbing');save();}
@@ -758,20 +817,22 @@ function startPinch(){const p=[...pointers.values()];pinchStart={d:dist(p[0],p[1
 function doPinch(){const p=[...pointers.values()];if(p.length<2)return;const d=dist(p[0],p[1]),nz=clamp(pinchStart.z*(d/pinchStart.d),.15,2.4);const wx=(pinchStart.mx-pinchStart.px)/pinchStart.z,wy=(pinchStart.my-pinchStart.py)/pinchStart.z;view.z=nz;view.px=pinchStart.mx-wx*nz;view.py=pinchStart.my-wy*nz;applyTransform();}
 stage.addEventListener('wheel',e=>{e.preventDefault();const f=e.deltaY<0?1.12:.89,nz=clamp(view.z*f,.15,2.4);const wx=(e.clientX-view.px)/view.z,wy=(e.clientY-view.py)/view.z;view.z=nz;view.px=e.clientX-wx*nz;view.py=e.clientY-wy*nz;applyTransform();},{passive:false});
 
-function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
-function byId(id){return state?.cards.find(c=>c.id===id)}
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function byId(id){return state?.cards.find(c=>c.id===id);}
 
 function zoomBy(f){const cx=innerWidth/2,cy=innerHeight/2,nz=clamp(view.z*f,.15,2.4);const wx=(cx-view.px)/view.z,wy=(cy-view.py)/view.z;view.z=nz;view.px=cx-wx*nz;view.py=cy-wy*nz;applyTransform();save();}
 document.getElementById('z-in').onclick=()=>zoomBy(1.18);
 document.getElementById('z-out').onclick=()=>zoomBy(.85);
 document.getElementById('z-fit').onclick=fitAll;
+
 function fitAll(){
+  if(currentView==='scene'&&activeSceneId){computeSceneFit(activeSceneId);applyTransform();save();return;}
   if(!state||!state.cards.length)return;
-  const xs=state.cards.map(c=>c.x),ys=state.cards.map(c=>c.y);
+  const allX=state.cards.map(c=>c.x),allY=state.cards.map(c=>c.y);
   const sx=SCENE_COLS*SCENE_COL_STEP,sy=SCENE_ROWS*SCENE_ROW_STEP;
-  const minx=Math.min(0,...xs)-40,maxx=Math.max(sx,...xs.map(x=>x+260)),miny=Math.min(0,...ys)-40,maxy=Math.max(sy,...ys.map(y=>y+180));
-  const z=clamp(Math.min((innerWidth-40)/(maxx-minx),(innerHeight-100)/(maxy-miny)),.15,1.2);
+  const minx=Math.min(0,...allX)-40,maxx=Math.max(sx,...allX.map(x=>x+CARD_W)),miny=Math.min(0,...allY)-40,maxy=Math.max(sy,...allY.map(y=>y+180));
+  const z=clamp(Math.min((innerWidth-40)/(maxx-minx),(innerHeight-100)/(maxy-miny)),.1,1.2);
   view.z=z;view.px=20-minx*z;view.py=56-miny*z;applyTransform();save();
 }
 
@@ -783,6 +844,7 @@ function drawWires(){
   state.links.forEach(([a,b])=>{
     const ca=byId(a),cb=byId(b);if(!ca||!cb)return;
     const ea=cardEls.get(a),eb=cardEls.get(b);if(!ea||!eb)return;
+    if(ea.style.display==='none'||eb.style.display==='none')return;
     const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
     ln.setAttribute('x1',ca.x+ea.offsetWidth/2);ln.setAttribute('y1',ca.y+ea.offsetHeight/2);
     ln.setAttribute('x2',cb.x+eb.offsetWidth/2);ln.setAttribute('y2',cb.y+eb.offsetHeight/2);
@@ -810,6 +872,21 @@ const insp=document.getElementById('insp');let curId=null;
 LANES.forEach(l=>{const o=document.createElement('option');o.value=l.k;o.textContent=l.n;document.getElementById('i-lane').appendChild(o);});
 TYPES.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;document.getElementById('i-type').appendChild(o);});
 
+function populateSceneSelect(currentSceneId){
+  const sel=document.getElementById('i-scene');sel.innerHTML='';
+  const none=document.createElement('option');none.value='';none.textContent='— unfiled —';sel.appendChild(none);
+  if(state?.scenes)state.scenes.forEach(sc=>{const o=document.createElement('option');o.value=sc.id;o.textContent=sc.id+(sc.theme?' — '+sc.theme:'');sel.appendChild(o);});
+  sel.value=currentSceneId!=null?String(currentSceneId):'';
+}
+
+document.getElementById('i-scene').addEventListener('change',function(){
+  const c=byId(curId);if(!c)return;
+  const newVal=this.value?parseInt(this.value):null;
+  if(newVal===c.sceneId)return;
+  if(newVal==null){unfileCard(c,true);}else{fileCard(c,newVal,true);}
+  renderForCurrentView();
+});
+
 function openInspector(id){
   curId=id;const c=byId(id);if(!c)return;
   document.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel'));
@@ -824,6 +901,7 @@ function openInspector(id){
   document.getElementById('i-lane').value=c.lane||'meta';
   document.getElementById('i-type').value=c.type||'note';
   document.getElementById('i-starbtn').classList.toggle('on',c.star);
+  populateSceneSelect(c.sceneId);
   insp.classList.add('open');
 }
 document.getElementById('i-close').onclick=()=>{insp.classList.remove('open');document.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel'));};
@@ -837,9 +915,9 @@ document.getElementById('i-save').onclick=()=>{
   c.lane=document.getElementById('i-lane').value;
   c.type=document.getElementById('i-type').value;
   c.links=document.getElementById('i-links').value.split('\n').map(s=>s.trim()).filter(Boolean).map(s=>{const p=s.split('|');return p.length>1?[p[0].trim(),p.slice(1).join('|').trim()]:[p[0].trim(),null];});
-  renderCard(c);applyFilter();drawWires();save();
-  if(c.sceneId!=null)layoutSceneCards(c.sceneId);
-  insp.classList.remove('open');
+  renderCard(c);applyFilter();drawWires();
+  if(c.sceneId!=null)renderMasterSceneBox(c.sceneId);
+  save();insp.classList.remove('open');
 };
 document.getElementById('i-starbtn').onclick=()=>{const c=byId(curId);if(!c)return;c.star=!c.star;renderCard(c);document.getElementById('i-starbtn').classList.toggle('on',c.star);applyFilter();save();};
 document.getElementById('i-del').onclick=()=>{
@@ -854,26 +932,53 @@ document.getElementById('i-del').onclick=()=>{
 stage.addEventListener('click',e=>{
   const s=e.target.closest('[data-star]');if(!s)return;
   const id=e.target.closest('.card')?.dataset.id;if(!id)return;
-  const c=byId(id);if(!c)return;
-  c.star=!c.star;renderCard(c);applyFilter();save();
+  const c=byId(id);if(!c)return;c.star=!c.star;renderCard(c);applyFilter();save();
 });
 
+/* ============================================================
+   SCENE ROOM BAR INTERACTIONS
+   ============================================================ */
+document.getElementById('srb-back').onclick=()=>exitSceneRoom();
+document.getElementById('srb-theme').addEventListener('input',function(){
+  const sc=state?.scenes?.find(s=>s.id===activeSceneId);
+  if(sc){sc.theme=this.value;save();
+    // also update the scene box theme input if visible
+    const box=document.getElementById('scene-'+activeSceneId);
+    const ti=box?.querySelector('.scene-theme-input');if(ti)ti.value=this.value;}
+});
+
+/* ============================================================
+   ADD CARD
+   ============================================================ */
 document.getElementById('b-add').onclick=()=>{
   const id=mkCardId();
-  const cx=(innerWidth/2-view.px)/view.z, cy=(innerHeight/2-view.py)/view.z;
-  const c={id,lane:'device',type:'note',t:'New card',b:'',note:'',mine:'',subChunk:'',links:[],x:snap(cx),y:snap(cy),star:false,moved:true,sceneId:null,sceneOrder:0};
-  state.cards.push(c);renderCard(c);openInspector(id);save();
+  const cx=(innerWidth/2-view.px)/view.z,cy=(innerHeight/2-view.py)/view.z;
+  const c={id,lane:'device',type:'note',t:'New card',b:'',note:'',mine:'',subChunk:'',links:[],
+    x:snap(cx),y:snap(cy),star:false,moved:true,sceneId:null,sceneOrder:0};
+  // Auto-file into active scene room
+  if(currentView==='scene'&&activeSceneId!=null){
+    const members=state.cards.filter(x=>x.sceneId===activeSceneId);
+    c.sceneId=activeSceneId;c.sceneOrder=members.length;
+    placeCardInSceneRoom(c,members.length);
+    state.cards.push(c);renderCard(c);
+    const el=cardEls.get(id);if(el){el.style.display='';el.style.left=c.x+'px';el.style.top=c.y+'px';}
+    renderMasterSceneBox(activeSceneId);updateSceneRoomBar();applyFilter();
+  } else {
+    state.cards.push(c);renderCard(c);
+    renderForCurrentView();
+  }
+  openInspector(id);save();
 };
 
 /* ============================================================
-   FILTER (search + star only — no lane chips)
+   FILTER
    ============================================================ */
-let starOnly=false, q='';
+let starOnly=false,q='';
 function applyFilter(){
   const qq=q.trim().toLowerCase();
   if(!state)return;
   state.cards.forEach(c=>{
-    const el=cardEls.get(c.id);if(!el)return;
+    const el=cardEls.get(c.id);if(!el||el.style.display==='none')return;
     let show=true;
     if(starOnly&&!c.star)show=false;
     if(qq){const hay=(c.t+' '+c.b+' '+(c.note||'')+' '+(c.mine||'')+' '+c.type).toLowerCase();if(!hay.includes(qq))show=false;}
@@ -885,33 +990,41 @@ document.getElementById('search').addEventListener('input',e=>{q=e.target.value;
 document.getElementById('b-star').onclick=function(){starOnly=!starOnly;this.classList.toggle('on',starOnly);applyFilter();};
 
 /* ============================================================
-   TIDY — snap all free cards to 24px grid
+   TIDY
    ============================================================ */
 document.getElementById('b-tidy').onclick=()=>{
-  if(!confirm('Snap all unfiled cards to the 24px grid?'))return;
-  state.cards.forEach(c=>{
-    if(c.sceneId!=null)return;
-    c.x=snap(c.x);c.y=snap(c.y);
-    const el=cardEls.get(c.id);if(el){el.style.left=c.x+'px';el.style.top=c.y+'px';}
-  });
-  drawWires();save();
+  if(currentView==='scene'&&activeSceneId!=null){
+    if(!confirm('Re-grid the cards in this scene?'))return;
+    layoutSceneRoomTidy(activeSceneId);save();
+  } else {
+    if(!confirm('Snap all unfiled cards to the 24px grid?'))return;
+    state.cards.forEach(c=>{
+      if(c.sceneId!=null)return;
+      c.x=snap(c.x);c.y=snap(c.y);
+      const el=cardEls.get(c.id);if(el){el.style.left=c.x+'px';el.style.top=c.y+'px';}
+    });
+    drawWires();save();
+  }
 };
 
 /* ============================================================
    EMERGENT
    ============================================================ */
 document.getElementById('b-emergent').onclick=()=>{
-  const vis=state.cards.filter(c=>!cardEls.get(c.id)?.classList.contains('dim'));
+  const vis=state.cards.filter(c=>{
+    const el=cardEls.get(c.id);
+    return el&&el.style.display!=='none'&&!el.classList.contains('dim');
+  });
   if(!vis.length)return;
   const c=vis[Math.floor(Math.random()*vis.length)];
   const el=cardEls.get(c.id);
-  view.z=clamp(1.0,.15,2.4);view.px=innerWidth/2-(c.x+el.offsetWidth/2)*view.z;view.py=innerHeight/2-(c.y+el.offsetHeight/2)*view.z;applyTransform();
-  el.classList.remove('pulse-anim');void el.offsetWidth;el.classList.add('pulse-anim');
+  view.z=clamp(1.0,.15,2.4);view.px=innerWidth/2-(c.x+el.offsetWidth/2)*view.z;view.py=innerHeight/2-(c.y+el.offsetHeight/2)*view.z;
+  applyTransform();el.classList.remove('pulse-anim');void el.offsetWidth;el.classList.add('pulse-anim');
   hint('✦ '+c.t);setTimeout(()=>hint(''),2600);save();
 };
 
 /* ============================================================
-   PULSE — balance by type
+   PULSE
    ============================================================ */
 const statpop=document.getElementById('statpop'),iopop=document.getElementById('iopop'),boardpop=document.getElementById('boardpop');
 function closePops(){[statpop,iopop,boardpop].forEach(p=>p.classList.remove('open'));}
@@ -927,6 +1040,8 @@ function renderStats(){
   state.cards.forEach(c=>{if(counts[c.type]!==undefined)counts[c.type]++;});
   const sorted=Object.entries(counts).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]);
   const max=sorted[0]?.[1]||1;
+  const filed=state.cards.filter(c=>c.sceneId!=null).length;
+  document.getElementById('stat-lead').textContent=`${state.cards.length} cards · ${filed} filed in scenes · ${sorted.length} types`;
   sorted.forEach(([t,n])=>{
     const row=document.createElement('div');row.className='row';
     row.innerHTML=`<span>${t}</span><span style="font-family:'IBM Plex Mono',monospace;color:var(--ink-40)">${n}</span>`;
@@ -934,16 +1049,15 @@ function renderStats(){
     const bf=document.createElement('div');bf.style.cssText=`height:5px;border-radius:3px;width:${Math.round(n/max*100)}%;background:${TYPE_COLORS[t]||'#888'}`;
     bw.appendChild(bf);rows.appendChild(row);rows.appendChild(bw);
   });
-  document.getElementById('stat-lead').textContent=`${state.cards.length} cards across ${sorted.length} types. ${state.cards.filter(c=>c.sceneId).length} filed in scenes.`;
 }
 
 /* ============================================================
    EXPORT / IMPORT
    ============================================================ */
-document.getElementById('io-export-one').onclick=()=>{dl(activeBoard,'scenius-board-'+slug(activeBoard.name));};
+document.getElementById('io-export-one').onclick=()=>dl(activeBoard,'scenius-board-'+slug(activeBoard.name));
 document.getElementById('io-export-all').onclick=async()=>{const boards=await fetchAllBoards();dl({_all:true,boards},'scenius-all-boards');};
 function dl(data,name){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name+'-'+new Date().toISOString().slice(0,10)+'.json';a.click();}
-function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
 
 document.getElementById('io-import').onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
@@ -953,8 +1067,7 @@ document.getElementById('io-import').onchange=async e=>{
       const d=JSON.parse(r.result);
       let incoming=[];
       if(d._all&&Array.isArray(d.boards))incoming=d.boards;
-      else if(d.cards)incoming=[d];
-      else throw 0;
+      else if(d.cards)incoming=[d];else throw 0;
       if(!incoming.length)throw 0;
       const existing=await fetchAllBoards();const existIds=new Set(existing.map(b=>b.id));
       let imported=0,skipped=0;
@@ -962,6 +1075,9 @@ document.getElementById('io-import').onchange=async e=>{
         if(existIds.has(b.id)){if(!confirm(`Board "${b.name}" already exists. Overwrite?`)){skipped++;continue;}}
         if(!b.id)b.id=mkId();b.updatedAt=b.updatedAt||Date.now();
         if(!b.scenes)b.scenes=mkScenes();
+        if(!b.masterView)b.masterView=b.view||{px:20,py:56,z:.55};
+        if(!b.sceneViews)b.sceneViews={};
+        if(!b.lastView)b.lastView={type:'master',sceneId:null};
         b.cards.forEach(ensureCardFields);
         await persistBoard(b);
         if(!allBoards.find(s=>s.id===b.id))allBoards=[...allBoards,bSummary(b)];else allBoards=allBoards.map(s=>s.id===b.id?bSummary(b):s);
@@ -973,12 +1089,13 @@ document.getElementById('io-import').onchange=async e=>{
   };r.readAsText(f);
 };
 document.getElementById('io-reset').onclick=()=>{
-  if(!confirm('Reset THIS board to the original seed cards? Clears all scenes, positions, and notes.'))return;
+  if(!confirm('Reset THIS board to seed cards? Clears all scenes and positions.'))return;
   const b=freshSeedBoard(activeBoard.name);b.id=activeBoard.id;
-  Object.assign(activeBoard,b);state=activeBoard;view=activeBoard.view;
+  Object.assign(activeBoard,b);state=activeBoard;
+  currentView='master';activeSceneId=null;view={...activeBoard.masterView};
   cardEls.forEach(el=>el.remove());cardEls.clear();
   document.querySelectorAll('.scene-box').forEach(el=>el.remove());
-  renderAll();renderSceneContainers();fitAll();save();iopop.classList.remove('open');
+  renderAll();renderSceneContainers();renderForCurrentView();fitAll();save();iopop.classList.remove('open');
 };
 
 /* ============================================================
@@ -1048,32 +1165,27 @@ function hint(t){hintEl.textContent=t||hintBase;}
    ============================================================ */
 async function boot(){
   try{idb=await idbOpen();}catch(e){idb=null;}
-  const OLD_KEY='scenius_wall_v1';const oldData=lsGet(OLD_KEY);
   let boards=await fetchAllBoards();
-  if(boards.length===0&&oldData?.cards){
-    const migrated=freshBoard('Main wall',oldData.cards,oldData.links||[],oldData.view||{px:20,py:56,z:.55});
-    ensureScenes(migrated);await persistBoard(migrated);await setActiveId(migrated.id);boards=[migrated];
-  }
   if(boards.length===0){const seed=freshSeedBoard('Main wall');await persistBoard(seed);await setActiveId(seed.id);boards=[seed];}
   allBoards=boards.map(bSummary);
   const activeId=(await getActiveId())||allBoards[0].id;
   await switchToBoard(activeId);
 }
-
 boot().catch(err=>{
   console.error('Boot error:',err);
   const seed=freshSeedBoard('Main wall');
-  activeBoard=seed;state=seed;view=seed.view;allBoards=[bSummary(seed)];
-  renderAll();renderSceneContainers();applyTransform();fitAll();updateBoardBtn();
+  activeBoard=seed;state=seed;currentView='master';activeSceneId=null;view={...seed.masterView};
+  allBoards=[bSummary(seed)];
+  renderAll();renderSceneContainers();renderForCurrentView();applyTransform();fitAll();updateBoardBtn();
 });
 
 /* ============================================================
-   SCENIUS BOARD ADAPTER — public API for board-ai.js
+   SCENIUS BOARD ADAPTER
    ============================================================ */
 window.SceniusBoard={
   getBoardId(){return activeBoard?.id||null;},
   get(){
-    if(!state)return{cards:[],links:[]};
+    if(!state)return{cards:[],links:[],scenes:[]};
     return{
       cards:state.cards.map(c=>({id:c.id,lane:c.lane,type:c.type,t:c.t,b:c.b,note:c.note||'',mine:c.mine||'',star:!!c.star,sceneId:c.sceneId,sceneOrder:c.sceneOrder,subChunk:c.subChunk||''})),
       links:state.links.map(l=>[...l]),
