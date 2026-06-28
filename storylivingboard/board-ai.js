@@ -300,6 +300,19 @@
     submit();
   });
 
+  /* ── public API ─────────────────────────────────────────────── */
+  window.BoardMind = {
+    askWith: function (prompt) {
+      openPanel();
+      setTimeout(function () {
+        inputEl.value = prompt;
+        inputEl.style.height = 'auto';
+        inputEl.style.height = Math.min(inputEl.scrollHeight, 96) + 'px';
+        submit();
+      }, 80);
+    },
+  };
+
   /* ── init ───────────────────────────────────────────────────── */
   openAIDB()
     .then(function (db) { aiDb = db; })

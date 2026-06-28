@@ -144,7 +144,7 @@ body.scene-room .c-unfile{display:block}
 /* ── Home Mode ─────────────────────────────────────────── */
 #home-mode{position:fixed;top:52px;left:0;right:0;bottom:0;z-index:35;background:var(--ink);display:none;flex-direction:column;overflow:hidden}
 #hm-track{display:flex;flex:1;min-height:0}
-.hm-panel{flex:0 0 100%;width:100%;min-width:100%;display:flex;flex-direction:column;overflow:hidden}
+.hm-panel{flex:0 0 100%;width:100%;min-width:100%;display:flex;flex-direction:column;overflow-x:hidden}
 .hm-scene-grid{flex:1;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);gap:10px;padding:12px;min-height:0}
 .hm-scene-item{position:relative;border-radius:10px;border:1.5px solid rgba(242,237,227,.12);background:rgba(20,27,46,.55);cursor:pointer;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;transition:border-color .15s,box-shadow .15s;touch-action:manipulation}
 .hm-scene-item:hover{border-color:rgba(242,237,227,.32);box-shadow:0 0 0 1px rgba(242,237,227,.1)}
@@ -160,10 +160,12 @@ body.scene-room .c-unfile{display:block}
 #hm-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10}
 .hm-dot{width:8px;height:8px;border-radius:50%;background:rgba(242,237,227,.22);cursor:pointer;transition:.15s;touch-action:manipulation}
 .hm-dot.active{background:var(--gold);transform:scale(1.3)}
-.hm-card-header{padding:8px 14px 4px;display:flex;align-items:baseline;gap:10px;flex:0 0 auto}
+.hm-card-header{padding:10px 14px 6px;display:flex;flex-direction:column;gap:3px;flex:0 0 auto;border-bottom:1px solid rgba(242,237,227,.07)}
+.hm-panel-num{font-family:Fraunces,serif;font-size:22px;font-weight:800;color:var(--gold);line-height:1;display:flex;align-items:center;justify-content:space-between}
+.hm-header-row{display:flex;align-items:center;gap:8px}
 .hm-panel-label{font-family:Fraunces,serif;font-size:14px;font-weight:600;color:var(--paper)}
 .hm-panel-sub{font-family:"IBM Plex Mono",monospace;font-size:10px;color:rgba(242,237,227,.35)}
-.hm-card-grid{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:4px 12px 52px;overflow-y:auto;align-content:start}
+.hm-card-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:4px 12px 52px;overflow-y:auto;overflow-x:hidden;align-content:start}
 .hm-card-item{background:var(--paper);color:var(--ink);border-radius:10px;padding:10px 12px 10px 16px;overflow:hidden;position:relative;border:1px solid rgba(20,27,46,.1);font-size:12px}
 .hm-card-item:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c,#8A7F6E);border-radius:10px 0 0 10px}
 .hm-edit{position:absolute;top:7px;right:28px;font-size:13px;color:rgba(20,27,46,.22);cursor:pointer;padding:2px 4px;border-radius:4px;touch-action:manipulation}
@@ -176,7 +178,7 @@ body.scene-room .c-unfile{display:block}
 .hm-detail-num{font-family:Fraunces,serif;font-size:22px;font-weight:800;color:var(--gold)}
 .hm-detail-theme{flex:1;font-size:14px;color:rgba(242,237,227,.8)}
 .hm-detail-count{font-family:"IBM Plex Mono",monospace;font-size:10px;color:rgba(242,237,227,.35)}
-.hm-detail-grid{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px;overflow-y:auto;align-content:start}
+.hm-detail-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px;overflow-y:auto;overflow-x:hidden;align-content:start}
 #scene-picker{display:none;position:fixed;inset:0;z-index:65;background:rgba(10,14,28,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center}
 #scene-picker.open{display:flex}
 #sp-inner{background:rgba(20,27,46,.97);border:1px solid rgba(242,237,227,.15);border-radius:16px;padding:18px;width:min(620px,95vw);max-height:90vh;overflow-y:auto}
@@ -192,9 +194,9 @@ body.scene-room .c-unfile{display:block}
 .sp-theme{font-size:9px;color:rgba(242,237,227,.5);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px}
 .sp-cnt{font-family:"IBM Plex Mono",monospace;font-size:8px;color:rgba(242,237,227,.28)}
 /* panel title */
-.hm-panel-title{font-family:Fraunces,serif;font-size:16px;font-weight:700;color:var(--paper);background:transparent;border:none;border-bottom:1.5px solid rgba(242,237,227,.18);outline:none;width:180px;padding:2px 4px;cursor:text}
-.hm-panel-title:focus{border-bottom-color:var(--gold)}
-.hm-panel-title::placeholder{color:rgba(242,237,227,.3)}
+.hm-panel-title{font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:500;color:var(--paper);background:transparent;border:none;border-bottom:1px solid rgba(242,237,227,.15);outline:none;width:100%;padding:1px 4px;cursor:text;opacity:.8}
+.hm-panel-title:focus{border-bottom-color:var(--gold);opacity:1}
+.hm-panel-title::placeholder{color:rgba(242,237,227,.25);font-style:italic}
 /* drag handle on hm cards */
 .hm-drag-handle{position:absolute;top:6px;left:3px;font-size:12px;color:rgba(20,27,46,.18);cursor:grab;line-height:1;padding:2px 3px;touch-action:none;user-select:none}
 .hm-drag-handle:hover{color:rgba(20,27,46,.5)}
@@ -232,6 +234,13 @@ body.scene-room .c-unfile{display:block}
 #hm-back-btn:disabled{opacity:.28;cursor:default}
 /* card linking in home mode */
 .hm-link-btn{display:inline-flex;align-items:center;gap:2px;font-size:10px;color:rgba(20,27,46,.3);cursor:pointer;padding:2px 5px;border-radius:4px;background:none;border:none;touch-action:manipulation;margin-top:4px}
+.hm-ai-btn{font-size:13px;cursor:pointer;padding:2px 4px;border-radius:4px;background:none;border:none;color:rgba(20,27,46,.28);touch-action:manipulation;line-height:1;transition:color .15s,background .15s}
+.hm-ai-btn:hover,.hm-ai-btn:active{color:var(--gold);background:rgba(217,164,65,.12)}
+.insp-ai-row{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.insp-ai-row label{flex:1;font-size:11px;letter-spacing:.05em;text-transform:uppercase;opacity:.5}
+.insp-ai-btn{font-size:12px;cursor:pointer;padding:1px 5px;border-radius:4px;background:none;border:1px solid rgba(217,164,65,.3);color:rgba(217,164,65,.6);touch-action:manipulation}
+.insp-ai-btn:hover{background:rgba(217,164,65,.12);color:var(--gold)}
+.ai-field-hint{font-size:10px;color:rgba(217,164,65,.55);padding:2px 0 4px;font-style:italic}
 .hm-link-btn:hover{color:var(--ink);background:rgba(20,27,46,.08)}
 .hm-link-btn .link-cnt{font-family:"IBM Plex Mono",monospace;font-size:8px;color:rgba(20,27,46,.5)}
 .hm-card-item.hm-link-src{outline:2px dashed var(--gold);outline-offset:-2px;background:rgba(217,164,65,.07)}
@@ -254,7 +263,8 @@ body.scene-room .c-unfile{display:block}
   <button class="btn ghost" id="b-stats">◴ Pulse</button>
   <button class="btn ghost" id="b-io">⇄ Save</button>
   <button class="btn on" id="b-mode">◈ Home</button>
-  <button class="btn ghost" id="b-viz">⬡ View</button>
+  <button class="btn ghost" id="b-viz-panels">⬡ Panels</button>
+  <button class="btn ghost" id="b-viz-scenes">◉ Scenes</button>
 </div>
 
 <!-- scene room header bar -->
@@ -303,10 +313,10 @@ body.scene-room .c-unfile{display:block}
 <aside id="insp">
   <div class="insp-head"><h3 id="i-h">Card</h3><span class="x" id="i-close">✕</span></div>
   <div class="insp-body">
-    <div class="fld"><label>Title</label><input id="i-title"></div>
-    <div class="fld"><label>Body</label><textarea id="i-body"></textarea></div>
-    <div class="fld"><label>Janet's note</label><textarea id="i-note"></textarea></div>
-    <div class="fld"><label>My remix notes</label><textarea id="i-mine" placeholder="your thinking…"></textarea></div>
+    <div class="fld"><div class="insp-ai-row"><label>Title</label><button type="button" class="insp-ai-btn" data-field="i-title">💡 AI</button></div><input id="i-title" placeholder="type @SynTony anywhere to get AI completion"></div>
+    <div class="fld"><div class="insp-ai-row"><label>Body</label><button type="button" class="insp-ai-btn" data-field="i-body">💡 AI</button></div><textarea id="i-body" placeholder="type @SynTony to trigger AI"></textarea></div>
+    <div class="fld"><div class="insp-ai-row"><label>Janet's note</label><button type="button" class="insp-ai-btn" data-field="i-note">💡 AI</button></div><textarea id="i-note"></textarea></div>
+    <div class="fld"><div class="insp-ai-row"><label>My remix notes</label><button type="button" class="insp-ai-btn" data-field="i-mine">💡 AI</button></div><textarea id="i-mine" placeholder="your thinking… (type @SynTony for AI)"></textarea></div>
     <div class="fld"><label>Sub-chunk label</label><input id="i-chunk" placeholder="e.g. A, opener, archival…"></div>
     <div class="fld"><label>Scene</label><select id="i-scene"></select></div>
     <div class="fld"><label>Links — one per line: Label | https://…</label><textarea id="i-links"></textarea></div>
@@ -1100,6 +1110,56 @@ stage.addEventListener('click',e=>{
   const c=byId(id);if(!c)return;c.star=!c.star;renderCard(c);applyFilter();save();
 });
 
+/* ── Board Mind AI — open with optional pre-loaded prompt ── */
+function openAIWith(prompt){
+  if(window.BoardMind&&window.BoardMind.askWith){window.BoardMind.askWith(prompt);return;}
+  const btn=document.getElementById('ai-btn');if(btn)btn.click();
+}
+
+/* ── @SynTony field completion ── */
+(function(){
+  const FIELDS=['i-title','i-body','i-note','i-mine'];
+  const FIELD_LABELS={i_title:'title','i-body':'body','i-note':'note','i-mine':'remix notes'};
+  let synRunning=false;
+
+  function synComplete(el){
+    if(synRunning)return;
+    const raw=el.value;
+    const idx=raw.toLowerCase().indexOf('@syntony');
+    if(idx<0)return;
+    const before=raw.slice(0,idx).trim();
+    el.value=(before||'(generating…)');
+    synRunning=true;
+    el.disabled=true;
+    const card=byId(curId);
+    const ctx=card?`Card: "${card.t}", type: ${card.type}${card.b?' — '+card.b.slice(0,80):''}. Scene: ${card.sceneId||'none'}.`:'';
+    const fieldName=FIELD_LABELS[el.id]||el.id;
+    const prompt=`Complete the ${fieldName} field for this documentary card. Context: ${ctx} The user started with: "${before}". Return ONLY the completed field text. Be concise and specific to the Civil Rights MOVIEment documentary.`;
+    fetch('/.netlify/functions/claude',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:prompt,board:{cards:(state?.cards||[]).slice(0,20)}})})
+    .then(r=>r.ok?r.json():Promise.reject(r.status))
+    .then(d=>{el.value=d.reply||before;})
+    .catch(()=>{el.value=before||'';el.placeholder='AI unavailable — deploy to Netlify to enable';})
+    .finally(()=>{synRunning=false;el.disabled=false;el.focus();});
+  }
+
+  FIELDS.forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.addEventListener('input',()=>{if(el.value.toLowerCase().includes('@syntony'))synComplete(el);});
+  });
+
+  // Inspector AI buttons (💡 AI label buttons)
+  document.querySelectorAll('.insp-ai-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const fieldId=btn.dataset.field;const el=document.getElementById(fieldId);if(!el)return;
+      const card=byId(curId);
+      const ctx=card?`Card: "${card.t}", type: ${card.type}${card.b?' — '+card.b.slice(0,80):''}. Scene: ${card.sceneId||'none'}.`:'';
+      const fieldName=FIELD_LABELS[fieldId]||fieldId;
+      openAIWith(`Suggest content for the ${fieldName} field of this card. ${ctx} Current value: "${el.value||'(empty)'}". Be specific and helpful for a documentary story board.`);
+    });
+  });
+})();
+
 /* ============================================================
    SCENE ROOM BAR INTERACTIONS
    ============================================================ */
@@ -1472,9 +1532,16 @@ function buildScenePanel(){
   const panel=document.createElement('div');panel.className='hm-panel';
   const pt=activeBoard?.panelTitles?.[0]||'';
   const hdr=document.createElement('div');hdr.className='hm-card-header';
-  const ti=document.createElement('input');ti.className='hm-panel-title';ti.placeholder='Scenes';ti.value=pt;ti.maxLength=40;
+  const numRow=document.createElement('div');numRow.className='hm-panel-num';
+  const numLabel=document.createElement('span');numLabel.textContent='Scenes';
+  const aib=document.createElement('button');aib.className='hm-ai-btn';aib.title='Ask Board Mind about all scenes';aib.textContent='💡';
+  aib.addEventListener('click',e=>{e.stopPropagation();openAIWith('Give me an overview of the 20-scene structure of the Civil Rights MOVIEment documentary. Which scenes are most populated with cards? What narrative arc do they suggest?');});
+  numRow.appendChild(numLabel);numRow.appendChild(aib);
+  const subRow=document.createElement('div');subRow.className='hm-header-row';
+  const ti=document.createElement('input');ti.className='hm-panel-title';ti.placeholder='Add a subtitle…';ti.value=pt;ti.maxLength=40;
   ti.addEventListener('change',()=>{if(activeBoard){activeBoard.panelTitles=activeBoard.panelTitles||{};activeBoard.panelTitles[0]=ti.value.trim();save();}});
-  hdr.appendChild(ti);panel.appendChild(hdr);
+  subRow.appendChild(ti);
+  hdr.appendChild(numRow);hdr.appendChild(subRow);panel.appendChild(hdr);
   const grid=document.createElement('div');grid.className='hm-scene-grid';
   for(let id=1;id<=20;id++)grid.appendChild(buildHomeSceneItem(id));
   panel.appendChild(grid);return panel;
@@ -1508,10 +1575,19 @@ function buildCardPanel(cards,pageNum){
   const pt=activeBoard?.panelTitles?.[panelIdx]||'';
   const total=sortedUnfiled().length;
   const hdr=document.createElement('div');hdr.className='hm-card-header';
-  const ti=document.createElement('input');ti.className='hm-panel-title';ti.placeholder=`Panel ${panelIdx}`;ti.value=pt;ti.maxLength=40;
+  // Top row: Panel N label + AI lightbulb
+  const numRow=document.createElement('div');numRow.className='hm-panel-num';
+  const numLabel=document.createElement('span');numLabel.textContent=`Panel ${panelIdx}`;
+  const aib=document.createElement('button');aib.className='hm-ai-btn';aib.title='Ask Board Mind about this panel';aib.textContent='💡';
+  aib.addEventListener('click',e=>{e.stopPropagation();const pTitle=ti.value||`Panel ${panelIdx}`;openAIWith(`I'm looking at panel "${pTitle}" (Panel ${panelIdx}) which has ${cards.length} unfiled card${cards.length!==1?'s':''}. Here are some: ${cards.slice(0,6).map(c=>c.t).join(', ')}${cards.length>6?'...':''}. Help me think through this group.`);});
+  numRow.appendChild(numLabel);numRow.appendChild(aib);
+  // Subtitle row: editable title + card count
+  const subRow=document.createElement('div');subRow.className='hm-header-row';
+  const ti=document.createElement('input');ti.className='hm-panel-title';ti.placeholder='Add a subtitle…';ti.value=pt;ti.maxLength=40;
   ti.addEventListener('change',()=>{if(activeBoard){activeBoard.panelTitles=activeBoard.panelTitles||{};activeBoard.panelTitles[panelIdx]=ti.value.trim();save();}});
-  const sub=document.createElement('span');sub.className='hm-panel-sub';sub.textContent=`${total} unfiled · page ${pageNum}`;
-  hdr.appendChild(ti);hdr.appendChild(sub);panel.appendChild(hdr);
+  const sub=document.createElement('span');sub.className='hm-panel-sub';sub.textContent=`${cards.length} card${cards.length!==1?'s':''}`;
+  subRow.appendChild(ti);subRow.appendChild(sub);
+  hdr.appendChild(numRow);hdr.appendChild(subRow);panel.appendChild(hdr);
   const grid=document.createElement('div');grid.className='hm-card-grid';grid.dataset.page=panelIdx;
   cards.forEach(c=>grid.appendChild(buildHomeCardItem(c,panelIdx)));
   setupGridDrag(grid);
@@ -1522,9 +1598,10 @@ function buildHomeCardItem(c,panelIdx){
   const item=document.createElement('div');item.className='hm-card-item';item.dataset.id=c.id;
   item.style.setProperty('--c',TYPE_COLORS[c.type]||'#8A7F6E');
   const lkCnt=(state?.links||[]).filter(([a,b])=>a===c.id||b===c.id).length;
-  item.innerHTML=`<span class="hm-drag-handle" title="Drag to reorder">⠿</span><span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:5px"><span class="c-type">${esc(c.type)}</span><button class="hm-file-btn">⤴ Scene</button><button class="hm-link-btn" title="Link cards">⤳${lkCnt?`<span class="link-cnt">${lkCnt}</span>`:''}</button></div><p class="c-title" style="margin:0 0 3px">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}`;
+  item.innerHTML=`<span class="hm-drag-handle" title="Drag to reorder">⠿</span><span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span><button class="hm-ai-btn" title="Ask Board Mind about this card">💡</button>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:5px"><span class="c-type">${esc(c.type)}</span><button class="hm-file-btn">⤴ Scene</button><button class="hm-link-btn" title="Link cards">⤳${lkCnt?`<span class="link-cnt">${lkCnt}</span>`:''}</button></div><p class="c-title" style="margin:0 0 3px">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}`;
   item.querySelector('.hm-edit').addEventListener('click',e=>{e.stopPropagation();openInspector(c.id);});
   item.querySelector('.hm-star').addEventListener('click',e=>{e.stopPropagation();c.star=!c.star;e.target.textContent=c.star?'★':'☆';e.target.classList.toggle('on',c.star);save();});
+  item.querySelector('.hm-ai-btn').addEventListener('click',e=>{e.stopPropagation();openAIWith(`Help me think about this card: "${c.t}"${c.b?' — '+c.b.slice(0,120):''}. Type: ${c.type}. How does it connect to the Civil Rights MOVIEment story?`);});
   item.querySelector('.hm-file-btn').addEventListener('click',e=>{e.stopPropagation();openScenePicker(c.id,panelIdx);});
   item.querySelector('.hm-link-btn').addEventListener('click',e=>{e.stopPropagation();hmTapLink(c.id,item);});
   item.addEventListener('click',()=>{if(hmLinkSrc&&hmLinkSrc!==c.id)commitLink(c.id);});
@@ -1598,8 +1675,9 @@ function showHomeSceneDetail(sceneId){
   const cards=(state?.cards||[]).filter(c=>c.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
   hm.innerHTML='';
   const head=document.createElement('div');head.className='hm-detail-head';
-  head.innerHTML=`<button class="btn" id="hm-back">← Scenes</button><span class="hm-detail-num">${sceneId}</span><span class="hm-detail-theme">${esc(sc.theme||'untitled')}</span><span class="hm-detail-count">${cards.length} card${cards.length!==1?'s':''}</span>`;
+  head.innerHTML=`<button class="btn" id="hm-back">← Scenes</button><span class="hm-detail-num">${sceneId}</span><span class="hm-detail-theme">${esc(sc.theme||'untitled')}</span><span class="hm-detail-count">${cards.length} card${cards.length!==1?'s':''}</span><button class="hm-ai-btn" id="hm-scene-ai" title="Ask Board Mind about this scene">💡</button>`;
   head.querySelector('#hm-back').addEventListener('click',()=>{homePanel=0;buildHomePanels();});
+  head.querySelector('#hm-scene-ai').addEventListener('click',e=>{e.stopPropagation();openAIWith(`Help me develop Scene ${sceneId}: "${sc.theme||'untitled'}". It has ${cards.length} card${cards.length!==1?'s':''}${cards.length?': '+cards.slice(0,5).map(c=>c.t).join(', ')+(cards.length>5?'...':''):'.'}. What narrative possibilities do you see?`);});
   hm.appendChild(head);
   const grid=document.createElement('div');grid.className='hm-detail-grid';
   if(!cards.length)grid.innerHTML=`<div style="color:rgba(242,237,227,.32);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;padding:40px;grid-column:1/-1">No cards here yet.<br>Use ⤴ Send to scene from card panels.</div>`;
@@ -1607,9 +1685,10 @@ function showHomeSceneDetail(sceneId){
     const item=document.createElement('div');item.className='hm-card-item';
     item.style.setProperty('--c',TYPE_COLORS[c.type]||'#8A7F6E');
     const lkCnt=(state?.links||[]).filter(([a,b])=>a===c.id||b===c.id).length;
-    item.innerHTML=`<span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0 3px">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="hm-unfile-btn">⤵ Eject</button><button class="hm-move-btn">⤴ Move</button><button class="hm-link-btn" title="Link cards">⤳${lkCnt?`<span class="link-cnt">${lkCnt}</span>`:''}</button></div>`;
+    item.innerHTML=`<span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span><button class="hm-ai-btn" title="Ask Board Mind about this card">💡</button>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0 3px">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="hm-unfile-btn">⤵ Eject</button><button class="hm-move-btn">⤴ Move</button><button class="hm-link-btn" title="Link cards">⤳${lkCnt?`<span class="link-cnt">${lkCnt}</span>`:''}</button></div>`;
     item.querySelector('.hm-edit').addEventListener('click',e=>{e.stopPropagation();openInspector(c.id);});
     item.querySelector('.hm-star').addEventListener('click',e=>{e.stopPropagation();c.star=!c.star;e.target.textContent=c.star?'★':'☆';e.target.classList.toggle('on',c.star);save();});
+    item.querySelector('.hm-ai-btn').addEventListener('click',e=>{e.stopPropagation();openAIWith(`Help me think about this card in Scene ${sceneId}: "${c.t}"${c.b?' — '+c.b.slice(0,120):''}. How does it fit the scene theme "${sc.theme||'untitled'}"?`);});
     item.querySelector('.hm-link-btn').addEventListener('click',e=>{e.stopPropagation();hmTapLink(c.id,item);});
     item.addEventListener('click',()=>{if(hmLinkSrc&&hmLinkSrc!==c.id)commitLink(c.id);});
     item.querySelector('.hm-unfile-btn').addEventListener('click',e=>{
@@ -1724,6 +1803,7 @@ document.addEventListener('keydown',e=>{
 let vizRotY=20,vizRotX=-12;
 let vizDragSx=0,vizDragSy=0,vizDragging=false;
 let vizVelX=0,vizVelY=0,vizRaf=null;
+let vizDragDist=0; // total pointer distance in current drag — suppress click if large
 let vizMode=null; // null | 'panels' | 'scenes'
 
 function getPanelDescriptors(){
@@ -1765,7 +1845,7 @@ function buildVizPrism(){
     face.innerHTML=buildFaceContent(panel,i);
     const fi=i;
     face.addEventListener('click',()=>{
-      if(Math.hypot(vizVelX,vizVelY)>3)return;
+      if(vizDragDist>8)return;
       homePanel=fi%panels.length;closeVisualizer();buildHomePanels();
     });
     prism.appendChild(face);
@@ -1788,7 +1868,7 @@ function buildVizScenes(){
     if(cards.length)face.style.borderColor='rgba(217,164,65,.6)';
     face.innerHTML=`<div class="vf-title" style="font-size:10px;padding:6px 6px 2px;border-bottom:1px solid rgba(242,237,227,.07)">${esc(sc.theme||'—')}</div><div class="viz-face-scene"><span class="vf-scene-num">${id}</span><span class="vf-scene-cnt">${cards.length||'—'}</span></div>`;
     face.addEventListener('click',()=>{
-      if(Math.hypot(vizVelX,vizVelY)>3)return;
+      if(vizDragDist>8)return;
       closeVisualizer();showHomeSceneDetail(id);
     });
     prism.appendChild(face);
@@ -1796,15 +1876,18 @@ function buildVizScenes(){
   updatePrismTransform();
 }
 
-function openVisualizer(){
+function openVisualizer(mode){
+  if(mode)vizMode=mode;
   document.getElementById('visualizer').classList.add('open');
-  document.getElementById('b-viz').classList.add('on');
+  document.getElementById('b-viz-panels').classList.toggle('on',vizMode==='panels');
+  document.getElementById('b-viz-scenes').classList.toggle('on',vizMode==='scenes');
   if(vizMode==='scenes')buildVizScenes();else buildVizPrism();
 }
 
 function closeVisualizer(){
   document.getElementById('visualizer').classList.remove('open');
-  document.getElementById('b-viz').classList.remove('on');
+  document.getElementById('b-viz-panels').classList.remove('on');
+  document.getElementById('b-viz-scenes').classList.remove('on');
   vizMode=null;
   if(vizRaf){cancelAnimationFrame(vizRaf);vizRaf=null;}
 }
@@ -1816,7 +1899,7 @@ function updatePrismTransform(){
 
 function vizStartDrag(e){
   if(e.target.closest('#viz-close'))return;
-  vizDragging=true;vizDragSx=e.clientX;vizDragSy=e.clientY;vizVelX=vizVelY=0;
+  vizDragging=true;vizDragSx=e.clientX;vizDragSy=e.clientY;vizVelX=vizVelY=0;vizDragDist=0;
   if(vizRaf){cancelAnimationFrame(vizRaf);vizRaf=null;}
   document.getElementById('viz-wrap').classList.add('grabbing');
   document.getElementById('viz-wrap').setPointerCapture(e.pointerId);
@@ -1824,6 +1907,7 @@ function vizStartDrag(e){
 function vizMoveDrag(e){
   if(!vizDragging)return;
   const dx=e.clientX-vizDragSx,dy=e.clientY-vizDragSy;
+  vizDragDist+=Math.hypot(dx,dy);
   vizDragSx=e.clientX;vizDragSy=e.clientY;
   vizVelX=dx*.55;vizVelY=-dy*.35;
   vizRotY+=vizVelX;vizRotX=Math.max(-45,Math.min(45,vizRotX+vizVelY));
@@ -1849,10 +1933,11 @@ function vizEndDrag(){
   wrap.addEventListener('pointerup',vizEndDrag);
   wrap.addEventListener('pointercancel',vizEndDrag);
   document.getElementById('viz-close').addEventListener('click',closeVisualizer);
-  document.getElementById('b-viz').addEventListener('click',()=>{
-    if(vizMode===null){vizMode='panels';openVisualizer();}
-    else if(vizMode==='panels'){vizMode='scenes';openVisualizer();}
-    else{closeVisualizer();}
+  document.getElementById('b-viz-panels').addEventListener('click',()=>{
+    if(vizMode==='panels'){closeVisualizer();}else{openVisualizer('panels');}
+  });
+  document.getElementById('b-viz-scenes').addEventListener('click',()=>{
+    if(vizMode==='scenes'){closeVisualizer();}else{openVisualizer('scenes');}
   });
 })();
 
