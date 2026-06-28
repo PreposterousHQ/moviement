@@ -57,9 +57,12 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
 .scene-more{font-family:"IBM Plex Mono",monospace;font-size:9px;color:rgba(242,237,227,.3);padding-left:6px;margin-top:2px}
 .scene-cover-btn{position:absolute;bottom:7px;right:7px;width:26px;height:26px;border-radius:7px;background:rgba(20,27,46,.58);border:1px solid rgba(242,237,227,.18);color:rgba(242,237,227,.65);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3;touch-action:manipulation;padding:0}
 .scene-cover-btn:hover{background:rgba(20,27,46,.88);color:#fff;border-color:rgba(242,237,227,.4)}
+.scene-logo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;mix-blend-mode:screen;opacity:.32;pointer-events:none;z-index:0;border-radius:9px}
+.scene-box.has-cover .scene-logo{display:none}
 .scene-box.has-cover{background-size:cover;background-position:center;background-repeat:no-repeat}
 .scene-box.has-cover .scene-head{background:linear-gradient(to bottom,rgba(10,14,28,.86),rgba(20,27,46,.72))}
 .scene-box.has-cover .scene-preview{background:rgba(10,14,28,.7);backdrop-filter:blur(3px)}
+.scene-box.has-cards{border:2px solid var(--gold);box-shadow:0 0 0 1px rgba(217,164,65,.22),0 4px 18px rgba(0,0,0,.45)}
 
 #unfiled-label{position:absolute;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(242,237,227,.13);pointer-events:none;text-align:center}
 
@@ -584,6 +587,7 @@ function renderMasterSceneBox(sceneId){
   const covBtn=box.querySelector('.scene-cover-btn');
   if(covBtn)covBtn.textContent=sc?.cover?'✕':'🖼';
   const cards=state.cards.filter(c=>c.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
+  box.classList.toggle('has-cards',cards.length>0);
   const countEl=box.querySelector('.scene-count');
   if(countEl)countEl.textContent=cards.length?(cards.length+' card'+(cards.length>1?'s':'')):'empty';
   let prev=box.querySelector('.scene-preview');
@@ -703,6 +707,7 @@ function renderSceneContainers(){
     let box=document.getElementById('scene-'+id);
     if(!box){
       box=document.createElement('div');box.className='scene-box';box.id='scene-'+id;
+      const logo=document.createElement('img');logo.className='scene-logo';logo.src='./scene-default.png';logo.alt='';box.appendChild(logo);
       const head=document.createElement('div');head.className='scene-head';
       // Click on head (not input) → enter scene room
       head.addEventListener('pointerdown',function(e){
