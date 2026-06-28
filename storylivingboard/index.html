@@ -742,9 +742,11 @@ stage.addEventListener('pointerdown',e=>{
   if(e.target.closest('[data-star]'))return;
   if(cardEl&&pointers.size===1){
     const c=byId(cardEl.dataset.id);if(!c)return;
-    pendingCard={el:cardEl,c,ox:e.clientX,oy:e.clientY,sx:c.x,sy:c.y};
+    pendingCard={el:cardEl,c,ox:e.clientX,oy:e.clientY,sx:c.x,sy:c.y,target:e.target};
     holdTimer=setTimeout(()=>{
       if(!pendingCard||pendingCard.el!==cardEl)return;
+      // Don't arm the card if the press was on an action button
+      if(pendingCard.target.closest('[data-edit],[data-unfile]')){pendingCard=null;return;}
       dragging={el:cardEl,c,ox:pendingCard.ox,oy:pendingCard.oy,sx:c.x,sy:c.y,moved:false};
       cardEl.classList.add('drag','armed');
       pendingCard=null;
@@ -786,7 +788,10 @@ stage.addEventListener('pointermove',e=>{
 function endPtr(e){
   pointers.delete(e.pointerId);
   if(pendingCard){
-    clearTimeout(holdTimer);holdTimer=null;pendingCard=null;
+    clearTimeout(holdTimer);holdTimer=null;
+    const pc=pendingCard;pendingCard=null;
+    if(pc.target.closest('[data-edit]')){openInspector(pc.c.id);}
+    else if(pc.target.closest('[data-unfile]')){unfileCard(pc.c,true);renderForCurrentView();}
     if(pointers.size===0){panStart=null;stage.classList.remove('grabbing');}
     return;
   }
@@ -930,15 +935,6 @@ document.getElementById('i-del').onclick=()=>{
   insp.classList.remove('open');drawWires();save();
 };
 stage.addEventListener('click',e=>{
-  if(e.target.closest('[data-edit]')){
-    const id=e.target.closest('.card')?.dataset.id;if(!id)return;
-    openInspector(id);return;
-  }
-  if(e.target.closest('[data-unfile]')){
-    const id=e.target.closest('.card')?.dataset.id;if(!id)return;
-    const c=byId(id);if(!c)return;
-    unfileCard(c,true);renderForCurrentView();return;
-  }
   const s=e.target.closest('[data-star]');if(!s)return;
   const id=e.target.closest('.card')?.dataset.id;if(!id)return;
   const c=byId(id);if(!c)return;c.star=!c.star;renderCard(c);applyFilter();save();
