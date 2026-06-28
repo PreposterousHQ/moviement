@@ -55,6 +55,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
 .scene-preview{padding:7px 9px;display:flex;flex-direction:column;gap:4px}
 .scene-mini{font-size:10.5px;color:rgba(242,237,227,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:6px;border-left:2.5px solid var(--accent,#8A7F6E)}
 .scene-more{font-family:"IBM Plex Mono",monospace;font-size:9px;color:rgba(242,237,227,.3);padding-left:6px;margin-top:2px}
+.scene-cover-btn{position:absolute;bottom:7px;right:7px;width:26px;height:26px;border-radius:7px;background:rgba(20,27,46,.58);border:1px solid rgba(242,237,227,.18);color:rgba(242,237,227,.65);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3;touch-action:manipulation;padding:0}
+.scene-cover-btn:hover{background:rgba(20,27,46,.88);color:#fff;border-color:rgba(242,237,227,.4)}
+.scene-box.has-cover{background-size:cover;background-position:center;background-repeat:no-repeat}
+.scene-box.has-cover .scene-head{background:linear-gradient(to bottom,rgba(10,14,28,.86),rgba(20,27,46,.72))}
+.scene-box.has-cover .scene-preview{background:rgba(10,14,28,.7);backdrop-filter:blur(3px)}
 
 #unfiled-label{position:absolute;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(242,237,227,.13);pointer-events:none;text-align:center}
 
@@ -222,6 +227,7 @@ body.scene-room .c-unfile{display:block}
   </div>
 </div>
 
+<input id="cover-input" type="file" accept="image/*" hidden>
 <div id="send-overlay">
   <div id="send-modal">
     <h4 id="send-title">Send starred cards</h4>
@@ -570,6 +576,13 @@ function renderForCurrentView(){
 function renderMasterSceneBox(sceneId){
   const box=document.getElementById('scene-'+sceneId);if(!box)return;
   if(!state)return;
+  const sc=state?.scenes?.find(s=>s.id===sceneId);
+  // Cover image
+  if(sc?.cover){box.style.backgroundImage=`url(${sc.cover})`;box.classList.add('has-cover');}
+  else{box.style.backgroundImage='';box.classList.remove('has-cover');}
+  // Update cover button icon
+  const covBtn=box.querySelector('.scene-cover-btn');
+  if(covBtn)covBtn.textContent=sc?.cover?'✕':'🖼';
   const cards=state.cards.filter(c=>c.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
   const countEl=box.querySelector('.scene-count');
   if(countEl)countEl.textContent=cards.length?(cards.length+' card'+(cards.length>1?'s':'')):'empty';
@@ -706,7 +719,17 @@ function renderSceneContainers(){
       ti.addEventListener('pointerdown',e=>e.stopPropagation());
       ti.addEventListener('input',(function(sid){return()=>{const sc=state?.scenes?.find(s=>s.id===sid);if(sc){sc.theme=ti.value;save();}}})(id));
       const cnt=document.createElement('span');cnt.className='scene-count';cnt.textContent='empty';
-      head.append(num,ti,cnt);box.appendChild(head);world.appendChild(box);
+      head.append(num,ti,cnt);box.appendChild(head);
+      // Cover button: 🖼 to set, ✕ to remove
+      const covBtn=document.createElement('button');covBtn.className='scene-cover-btn';covBtn.textContent='🖼';covBtn.title='Set cover image';
+      covBtn.addEventListener('pointerdown',e=>e.stopPropagation());
+      covBtn.addEventListener('click',function(e){
+        e.stopPropagation();
+        const sc=state?.scenes?.find(s=>s.id===id);
+        if(sc?.cover){sc.cover=null;renderMasterSceneBox(id);save();}
+        else{coverTargetId=id;document.getElementById('cover-input').click();}
+      });
+      box.appendChild(covBtn);world.appendChild(box);
     }
     const pos=scenePos(id);
     box.style.left=pos.x+'px';box.style.top=pos.y+'px';
@@ -1158,6 +1181,32 @@ document.getElementById('send-confirm').onclick=async()=>{
   hint(`${mode==='copy'?'Copied':'Moved'} ${starred.length} card${starred.length>1?'s':''} to "${destBoard.name}"`);
   setTimeout(()=>hint(''),3000);
 };
+
+/* ============================================================
+   COVER IMAGES
+   ============================================================ */
+let coverTargetId=null;
+document.getElementById('cover-input').addEventListener('change',function(){
+  const file=this.files[0];if(!file||!coverTargetId)return;
+  const sid=coverTargetId;coverTargetId=null;this.value='';
+  resizeCover(file,dataUrl=>{
+    const sc=state?.scenes?.find(s=>s.id===sid);if(!sc)return;
+    sc.cover=dataUrl;renderMasterSceneBox(sid);save();
+  });
+});
+function resizeCover(file,cb){
+  const img=new Image(),url=URL.createObjectURL(file);
+  img.onload=()=>{
+    const W=536,H=400,canvas=document.createElement('canvas');
+    canvas.width=W;canvas.height=H;
+    const ctx=canvas.getContext('2d'),scale=Math.max(W/img.width,H/img.height);
+    const sw=img.width*scale,sh=img.height*scale;
+    ctx.drawImage(img,(W-sw)/2,(H-sh)/2,sw,sh);
+    URL.revokeObjectURL(url);cb(canvas.toDataURL('image/jpeg',.82));
+  };
+  img.onerror=()=>URL.revokeObjectURL(url);
+  img.src=url;
+}
 
 /* ============================================================
    HINT
