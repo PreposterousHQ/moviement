@@ -140,6 +140,57 @@ body.scene-room .c-unfile{display:block}
 #zoomwrap{position:fixed;bottom:14px;right:12px;z-index:30;display:flex;gap:6px}
 #zoomwrap .btn{width:38px;height:38px;justify-content:center;font-size:18px;padding:0;border-radius:10px;background:rgba(20,27,46,.7)}
 @media(max-width:560px){.brand small{display:none}#hint{display:none}}
+
+/* ── Home Mode ─────────────────────────────────────────── */
+#home-mode{position:fixed;top:52px;left:0;right:0;bottom:0;z-index:35;background:var(--ink);display:none;flex-direction:column;overflow:hidden}
+#hm-track{display:flex;flex:1;min-height:0}
+.hm-panel{flex:0 0 100%;width:100%;min-width:100%;display:flex;flex-direction:column;overflow:hidden}
+.hm-scene-grid{flex:1;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);gap:10px;padding:12px;min-height:0}
+.hm-scene-item{position:relative;border-radius:10px;border:1.5px solid rgba(242,237,227,.12);background:rgba(20,27,46,.55);cursor:pointer;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;transition:border-color .15s,box-shadow .15s;touch-action:manipulation}
+.hm-scene-item:hover{border-color:rgba(242,237,227,.32);box-shadow:0 0 0 1px rgba(242,237,227,.1)}
+.hm-scene-item.has-cards{border:2px solid var(--gold);box-shadow:0 0 0 1px rgba(217,164,65,.22),0 4px 18px rgba(0,0,0,.45)}
+.hm-scene-item .scene-logo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:.28;border-radius:9px;pointer-events:none;z-index:0}
+.hm-scene-info{position:relative;z-index:2;padding:8px 10px;background:linear-gradient(to top,rgba(10,14,28,.92) 0%,rgba(20,27,46,.6) 60%,transparent 100%);display:flex;align-items:baseline;gap:7px}
+.hm-scene-num{font-family:Fraunces,serif;font-size:20px;font-weight:800;color:var(--gold);line-height:1}
+.hm-scene-theme{flex:1;font-size:11px;color:rgba(242,237,227,.75);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hm-scene-count{font-family:"IBM Plex Mono",monospace;font-size:10px;color:rgba(242,237,227,.4)}
+.hm-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(20,27,46,.72);border:1px solid rgba(242,237,227,.18);color:var(--paper);font-size:28px;width:44px;height:80px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;padding:0;transition:opacity .2s,background .15s;touch-action:manipulation}
+.hm-nav:hover{background:rgba(20,27,46,.94)}
+#hm-prev{left:8px}#hm-next{right:8px}
+#hm-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10}
+.hm-dot{width:8px;height:8px;border-radius:50%;background:rgba(242,237,227,.22);cursor:pointer;transition:.15s;touch-action:manipulation}
+.hm-dot.active{background:var(--gold);transform:scale(1.3)}
+.hm-card-header{padding:8px 14px 4px;display:flex;align-items:baseline;gap:10px;flex:0 0 auto}
+.hm-panel-label{font-family:Fraunces,serif;font-size:14px;font-weight:600;color:var(--paper)}
+.hm-panel-sub{font-family:"IBM Plex Mono",monospace;font-size:10px;color:rgba(242,237,227,.35)}
+.hm-card-grid{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:4px 12px 52px;overflow-y:auto;align-content:start}
+.hm-card-item{background:var(--paper);color:var(--ink);border-radius:10px;padding:10px 12px 10px 16px;overflow:hidden;position:relative;border:1px solid rgba(20,27,46,.1);font-size:12px}
+.hm-card-item:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c,#8A7F6E);border-radius:10px 0 0 10px}
+.hm-edit{position:absolute;top:7px;right:28px;font-size:13px;color:rgba(20,27,46,.22);cursor:pointer;padding:2px 4px;border-radius:4px;touch-action:manipulation}
+.hm-edit:hover{color:var(--ink);background:rgba(20,27,46,.09)}
+.hm-star{position:absolute;top:7px;right:7px;font-size:13px;color:rgba(20,27,46,.18);cursor:pointer;touch-action:manipulation}
+.hm-star.on{color:var(--gold)}
+.hm-file-btn,.hm-unfile-btn,.hm-move-btn{margin-top:6px;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.05em;color:rgba(20,27,46,.55);background:rgba(20,27,46,.07);border:1px solid rgba(20,27,46,.14);border-radius:6px;padding:3px 7px;cursor:pointer;touch-action:manipulation;display:inline-block}
+.hm-file-btn:hover,.hm-unfile-btn:hover,.hm-move-btn:hover{background:rgba(20,27,46,.15)}
+.hm-detail-head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(242,237,227,.1);flex:0 0 auto;background:rgba(20,27,46,.4)}
+.hm-detail-num{font-family:Fraunces,serif;font-size:22px;font-weight:800;color:var(--gold)}
+.hm-detail-theme{flex:1;font-size:14px;color:rgba(242,237,227,.8)}
+.hm-detail-count{font-family:"IBM Plex Mono",monospace;font-size:10px;color:rgba(242,237,227,.35)}
+.hm-detail-grid{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px;overflow-y:auto;align-content:start}
+#scene-picker{display:none;position:fixed;inset:0;z-index:65;background:rgba(10,14,28,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+#scene-picker.open{display:flex}
+#sp-inner{background:rgba(20,27,46,.97);border:1px solid rgba(242,237,227,.15);border-radius:16px;padding:18px;width:min(620px,95vw);max-height:90vh;overflow-y:auto}
+#sp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px}
+#sp-head h4{font-family:Fraunces,serif;margin:0;font-size:16px;color:var(--paper)}
+.sp-x{font-size:18px;color:rgba(242,237,227,.4);cursor:pointer;background:none;border:none;padding:4px 10px;line-height:1;border-radius:6px;touch-action:manipulation}
+.sp-x:hover{color:var(--paper);background:rgba(242,237,227,.1)}
+#sp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.sp-scene-btn{background:rgba(242,237,227,.06);border:1px solid rgba(242,237,227,.13);border-radius:10px;padding:10px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:.12s;color:var(--paper);touch-action:manipulation;width:100%}
+.sp-scene-btn:hover{background:rgba(217,164,65,.18);border-color:var(--gold)}
+.sp-scene-btn.has-cards{border-color:rgba(217,164,65,.38)}
+.sp-num{font-family:Fraunces,serif;font-size:18px;font-weight:800;color:var(--gold);line-height:1}
+.sp-theme{font-size:9px;color:rgba(242,237,227,.5);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px}
+.sp-cnt{font-family:"IBM Plex Mono",monospace;font-size:8px;color:rgba(242,237,227,.28)}
 </style>
 </head>
 <body>
@@ -156,6 +207,7 @@ body.scene-room .c-unfile{display:block}
   <button class="btn ghost" id="b-tidy">⊞ Tidy</button>
   <button class="btn ghost" id="b-stats">◴ Pulse</button>
   <button class="btn ghost" id="b-io">⇄ Save</button>
+  <button class="btn on" id="b-mode">◈ Home</button>
 </div>
 
 <!-- scene room header bar -->
@@ -165,6 +217,17 @@ body.scene-room .c-unfile{display:block}
   <span id="srb-sep">—</span>
   <input id="srb-theme" placeholder="scene theme…" maxlength="60">
   <span id="srb-count"></span>
+</div>
+
+<!-- home mode (panels view) -->
+<div id="home-mode" style="display:none"></div>
+
+<!-- scene picker overlay -->
+<div id="scene-picker">
+  <div id="sp-inner">
+    <div id="sp-head"><h4>File in scene</h4><button class="sp-x" id="sp-close">✕</button></div>
+    <div id="sp-grid"></div>
+  </div>
 </div>
 
 <div id="stage">
@@ -642,6 +705,7 @@ async function switchToBoard(id){
   renderAll();renderSceneContainers();renderForCurrentView();applyTransform();
   updateBoardBtn();
   window.dispatchEvent(new CustomEvent('scenius:boardswitch',{detail:{id:board.id}}));
+  switchMode(board.appMode||'home');
 }
 function updateBoardBtn(){const n=activeBoard?.name||'…';document.getElementById('board-name-display').textContent=n.length>18?n.slice(0,16)+'…':n;}
 
@@ -951,6 +1015,7 @@ document.getElementById('i-save').onclick=()=>{
   renderCard(c);applyFilter();drawWires();
   if(c.sceneId!=null)renderMasterSceneBox(c.sceneId);
   save();insp.classList.remove('open');
+  if(appMode==='home')refreshHomeView();
 };
 document.getElementById('i-starbtn').onclick=()=>{const c=byId(curId);if(!c)return;c.star=!c.star;renderCard(c);document.getElementById('i-starbtn').classList.toggle('on',c.star);applyFilter();save();};
 document.getElementById('i-del').onclick=()=>{
@@ -961,6 +1026,7 @@ document.getElementById('i-del').onclick=()=>{
   state.links=state.links.filter(([a,b])=>a!==curId&&b!==curId);
   cardEls.get(curId)?.remove();cardEls.delete(curId);
   insp.classList.remove('open');drawWires();save();
+  if(appMode==='home')refreshHomeView();
 };
 stage.addEventListener('click',e=>{
   const s=e.target.closest('[data-star]');if(!s)return;
@@ -1237,6 +1303,215 @@ boot().catch(err=>{
   allBoards=[bSummary(seed)];
   renderAll();renderSceneContainers();renderForCurrentView();applyTransform();fitAll();updateBoardBtn();
 });
+
+/* ============================================================
+   HOME MODE
+   ============================================================ */
+let appMode='home';
+let homePanel=0;
+let homeView='panels'; // 'panels' | 'scene-detail'
+let homeDetailScene=null;
+let spTargetCardId=null;
+let hmSwipeSetup=false;
+
+function switchMode(mode){
+  appMode=mode;
+  const hm=document.getElementById('home-mode');
+  const st=document.getElementById('stage');
+  const zw=document.getElementById('zoomwrap');
+  const hi=document.getElementById('hint');
+  const btn=document.getElementById('b-mode');
+  if(mode==='home'){
+    hm.style.display='flex';
+    st.style.display='none';
+    zw.style.display='none';
+    hi.style.display='none';
+    document.getElementById('scene-room-bar').classList.remove('open');
+    document.body.classList.remove('scene-room');
+    btn.textContent='⚡ Miro';btn.classList.add('on');
+    if(!hmSwipeSetup){hmSwipeSetup=true;setupHomeSwipe();}
+    buildHomePanels();
+  } else {
+    hm.style.display='none';
+    st.style.display='';
+    zw.style.display='';
+    hi.style.display='';
+    btn.textContent='◈ Home';btn.classList.remove('on');
+    renderForCurrentView();applyTransform();
+  }
+  if(activeBoard){activeBoard.appMode=mode;save();}
+}
+
+function setupHomeSwipe(){
+  const hm=document.getElementById('home-mode');
+  let sx=null;
+  hm.addEventListener('pointerdown',e=>{
+    if(homeView!=='panels')return;
+    if(e.target.closest('button,input,a,.hm-nav,.hm-dot'))return;
+    sx=e.clientX;
+  },{passive:true});
+  hm.addEventListener('pointerup',e=>{
+    if(sx==null)return;
+    const dx=e.clientX-sx;sx=null;
+    if(Math.abs(dx)>55&&homeView==='panels')navigateHome(dx<0?1:-1);
+  },{passive:true});
+  hm.addEventListener('pointercancel',()=>{sx=null;});
+}
+
+function buildHomePanels(){
+  homeView='panels';
+  const hm=document.getElementById('home-mode');
+  hm.innerHTML='<div id="hm-track"></div><button class="hm-nav" id="hm-prev">‹</button><button class="hm-nav" id="hm-next">›</button><div id="hm-dots"></div>';
+  document.getElementById('hm-prev').addEventListener('click',()=>navigateHome(-1));
+  document.getElementById('hm-next').addEventListener('click',()=>navigateHome(1));
+  const track=document.getElementById('hm-track');
+  track.appendChild(buildScenePanel());
+  const unfiled=(state?.cards||[]).filter(c=>c.sceneId==null);
+  if(unfiled.length===0){
+    track.appendChild(buildEmptyCardsPanel());
+  } else {
+    for(let i=0;i<unfiled.length;i+=20)
+      track.appendChild(buildCardPanel(unfiled.slice(i,i+20),Math.floor(i/20)+1));
+  }
+  homePanel=Math.max(0,Math.min(homePanel,totalHomePanels()-1));
+  applyHomePanelPosition(false);updateHomeDots();
+}
+
+function totalHomePanels(){
+  const u=(state?.cards||[]).filter(c=>c.sceneId==null).length;
+  return 1+Math.max(1,Math.ceil(u/20));
+}
+
+function buildScenePanel(){
+  const panel=document.createElement('div');panel.className='hm-panel';
+  const grid=document.createElement('div');grid.className='hm-scene-grid';
+  for(let id=1;id<=20;id++)grid.appendChild(buildHomeSceneItem(id));
+  panel.appendChild(grid);return panel;
+}
+
+function buildHomeSceneItem(id){
+  const sc=(state?.scenes||[]).find(s=>s.id===id)||{id,theme:''};
+  const cards=(state?.cards||[]).filter(c=>c.sceneId===id);
+  const item=document.createElement('div');
+  item.className='hm-scene-item'+(cards.length?' has-cards':'');
+  if(sc.cover){item.style.backgroundImage=`url(${sc.cover})`;item.style.backgroundSize='cover';item.style.backgroundPosition='center';}
+  const logo=document.createElement('img');logo.className='scene-logo';logo.src='./scene-default.png';logo.alt='';
+  if(sc.cover)logo.style.display='none';
+  item.appendChild(logo);
+  const info=document.createElement('div');info.className='hm-scene-info';
+  info.innerHTML=`<span class="hm-scene-num">${id}</span><span class="hm-scene-theme">${esc(sc.theme||'')}</span><span class="hm-scene-count">${cards.length||'—'}</span>`;
+  item.appendChild(info);
+  item.addEventListener('click',()=>showHomeSceneDetail(id));
+  return item;
+}
+
+function buildEmptyCardsPanel(){
+  const panel=document.createElement('div');panel.className='hm-panel';
+  panel.innerHTML='<div style="flex:1;display:flex;align-items:center;justify-content:center;font-family:\'IBM Plex Mono\',monospace;font-size:12px;color:rgba(242,237,227,.3)">All cards are filed in scenes</div>';
+  return panel;
+}
+
+function buildCardPanel(cards,pageNum){
+  const panel=document.createElement('div');panel.className='hm-panel';
+  const total=(state?.cards||[]).filter(c=>c.sceneId==null).length;
+  const hdr=document.createElement('div');hdr.className='hm-card-header';
+  hdr.innerHTML=`<span class="hm-panel-label">Unfiled — page ${pageNum}</span><span class="hm-panel-sub">${total} total unfiled</span>`;
+  panel.appendChild(hdr);
+  const grid=document.createElement('div');grid.className='hm-card-grid';
+  cards.forEach(c=>grid.appendChild(buildHomeCardItem(c)));
+  panel.appendChild(grid);return panel;
+}
+
+function buildHomeCardItem(c){
+  const item=document.createElement('div');item.className='hm-card-item';
+  item.style.setProperty('--c',TYPE_COLORS[c.type]||'#8A7F6E');
+  const lks=(c.links||[]).map(([l,u])=>u?`<a href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`:`<span>${esc(l)}</span>`).join('');
+  item.innerHTML=`<span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<button class="hm-file-btn">→ File in scene</button>`;
+  item.querySelector('.hm-edit').addEventListener('click',e=>{e.stopPropagation();openInspector(c.id);});
+  item.querySelector('.hm-star').addEventListener('click',e=>{e.stopPropagation();c.star=!c.star;e.target.textContent=c.star?'★':'☆';e.target.classList.toggle('on',c.star);save();});
+  item.querySelector('.hm-file-btn').addEventListener('click',e=>{e.stopPropagation();openScenePicker(c.id);});
+  return item;
+}
+
+function showHomeSceneDetail(sceneId){
+  homeView='scene-detail';homeDetailScene=sceneId;
+  const hm=document.getElementById('home-mode');
+  const sc=(state?.scenes||[]).find(s=>s.id===sceneId)||{id:sceneId,theme:''};
+  const cards=(state?.cards||[]).filter(c=>c.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
+  hm.innerHTML='';
+  const head=document.createElement('div');head.className='hm-detail-head';
+  head.innerHTML=`<button class="btn" id="hm-back">← All scenes</button><span class="hm-detail-num">${sceneId}</span><span class="hm-detail-theme">${esc(sc.theme||'untitled')}</span><span class="hm-detail-count">${cards.length} card${cards.length!==1?'s':''}</span>`;
+  head.querySelector('#hm-back').addEventListener('click',()=>{homePanel=0;buildHomePanels();});
+  hm.appendChild(head);
+  const grid=document.createElement('div');grid.className='hm-detail-grid';
+  if(!cards.length)grid.innerHTML=`<div style="color:rgba(242,237,227,.32);font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:center;padding:40px;grid-column:1/-1">No cards here yet — file them from the card panels</div>`;
+  cards.forEach(c=>{
+    const item=document.createElement('div');item.className='hm-card-item';
+    item.style.setProperty('--c',TYPE_COLORS[c.type]||'#8A7F6E');
+    const lks=(c.links||[]).map(([l,u])=>u?`<a href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`:`<span>${esc(l)}</span>`).join('');
+    item.innerHTML=`<span class="hm-edit" title="Edit">✎</span><span class="hm-star ${c.star?'on':''}">${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title" style="margin:4px 0">${esc(c.t)}</p>${c.b?`<p style="margin:0 0 4px;font-size:11px;opacity:.7">${esc(c.b)}</p>`:''}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="hm-unfile-btn">↑ Back to wall</button><button class="hm-move-btn">→ Move scene</button></div>`;
+    item.querySelector('.hm-edit').addEventListener('click',e=>{e.stopPropagation();openInspector(c.id);});
+    item.querySelector('.hm-star').addEventListener('click',e=>{e.stopPropagation();c.star=!c.star;e.target.textContent=c.star?'★':'☆';e.target.classList.toggle('on',c.star);save();});
+    item.querySelector('.hm-unfile-btn').addEventListener('click',e=>{e.stopPropagation();unfileCard(c,true);showHomeSceneDetail(sceneId);});
+    item.querySelector('.hm-move-btn').addEventListener('click',e=>{e.stopPropagation();openScenePicker(c.id);});
+    grid.appendChild(item);
+  });
+  hm.appendChild(grid);
+}
+
+function navigateHome(dir){
+  homePanel=Math.max(0,Math.min(homePanel+dir,totalHomePanels()-1));
+  applyHomePanelPosition(true);updateHomeDots();
+}
+
+function applyHomePanelPosition(animate){
+  const track=document.getElementById('hm-track');if(!track)return;
+  track.style.transition=animate?'transform .32s cubic-bezier(.4,0,.2,1)':'none';
+  track.style.transform=`translateX(${-homePanel*100}%)`;
+  const prev=document.getElementById('hm-prev');const next=document.getElementById('hm-next');
+  if(prev)prev.style.opacity=homePanel===0?'0.2':'1';
+  if(next)next.style.opacity=homePanel>=totalHomePanels()-1?'0.2':'1';
+}
+
+function updateHomeDots(){
+  const dots=document.getElementById('hm-dots');if(!dots)return;
+  const total=totalHomePanels();dots.innerHTML='';
+  for(let i=0;i<total;i++){
+    const d=document.createElement('span');d.className='hm-dot'+(i===homePanel?' active':'');
+    d.addEventListener('click',()=>{homePanel=i;applyHomePanelPosition(true);updateHomeDots();});
+    dots.appendChild(d);
+  }
+}
+
+function openScenePicker(cardId){
+  spTargetCardId=cardId;
+  const picker=document.getElementById('scene-picker');
+  const grid=document.getElementById('sp-grid');grid.innerHTML='';
+  for(let id=1;id<=20;id++){
+    const sc=(state?.scenes||[]).find(s=>s.id===id)||{id,theme:''};
+    const cnt=(state?.cards||[]).filter(c=>c.sceneId===id).length;
+    const btn=document.createElement('button');btn.className='sp-scene-btn'+(cnt?' has-cards':'');
+    btn.innerHTML=`<span class="sp-num">${id}</span>${sc.theme?`<span class="sp-theme">${esc(sc.theme)}</span>`:''}<span class="sp-cnt">${cnt||'—'}</span>`;
+    btn.addEventListener('click',()=>{
+      const c=byId(spTargetCardId);if(!c)return;
+      fileCard(c,id,true);
+      picker.classList.remove('open');
+      if(homeView==='scene-detail')showHomeSceneDetail(homeDetailScene);
+      else buildHomePanels();
+    });
+    grid.appendChild(btn);
+  }
+  picker.classList.add('open');
+}
+
+function refreshHomeView(){
+  if(homeView==='scene-detail'&&homeDetailScene!=null)showHomeSceneDetail(homeDetailScene);
+  else buildHomePanels();
+}
+
+document.getElementById('b-mode').addEventListener('click',()=>switchMode(appMode==='home'?'miro':'home'));
+document.getElementById('sp-close').addEventListener('click',()=>document.getElementById('scene-picker').classList.remove('open'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('scene-picker').classList.remove('open');});
 
 /* ============================================================
    SCENIUS BOARD ADAPTER
