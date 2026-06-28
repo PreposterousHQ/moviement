@@ -71,6 +71,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family
 .c-chunk{font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#1f8fa6;background:rgba(31,143,166,.1);padding:2px 6px;border-radius:4px;display:inline-block;margin-bottom:4px}
 .c-type{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--c,#8A7F6E);display:inline-block;padding:2px 6px;border-radius:4px;margin-bottom:6px}
 .c-star{position:absolute;top:9px;right:10px;font-size:14px;color:var(--ink-12);cursor:pointer}.c-star.on{color:var(--gold)}
+.c-edit{position:absolute;top:8px;right:34px;font-size:13px;color:var(--ink-12);cursor:pointer;padding:2px 4px;border-radius:4px;line-height:1}.c-edit:hover{color:var(--ink);background:rgba(20,27,46,.08)}
 .c-title{font-family:Fraunces,serif;font-weight:600;font-size:14.5px;line-height:1.18;margin:0 0 4px}
 .c-body{font-size:11.5px;line-height:1.34;color:var(--ink-60)}
 .c-note{margin-top:7px;font-size:10.5px;line-height:1.3;color:#6b5a2c;background:rgba(217,164,65,.16);border-left:2px solid var(--gold);padding:5px 7px;border-radius:0 5px 5px 0}
@@ -170,7 +171,7 @@ body.scene-room .c-unfile{display:block}
   <button class="btn" id="z-in">+</button>
 </div>
 
-<div id="hint">tap a scene number to enter · hold a card to lift it · tap to open</div>
+<div id="hint">tap scene number to enter · hold card to drag · ✎ to edit</div>
 
 <aside id="insp">
   <div class="insp-head"><h3 id="i-h">Card</h3><span class="x" id="i-close">✕</span></div>
@@ -679,7 +680,7 @@ function renderCard(c){
   el.style.setProperty('--c',TYPE_COLORS[c.type]||'#8A7F6E');
   el.style.left=c.x+'px';el.style.top=c.y+'px';
   const lks=(c.links||[]).map(([l,u])=>u?`<a href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`:`<span>${esc(l)}</span>`).join('');
-  el.innerHTML=`<span class="c-star ${c.star?'on':''}" data-star>${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title">${esc(c.t)}</p><div class="c-body">${esc(c.b||'')}</div>${c.note?`<div class="c-note"><b>Janet</b>${esc(c.note)}</div>`:''}${c.mine?`<div class="c-mine"><b>My remix</b>${esc(c.mine)}</div>`:''}${lks?`<div class="c-links">${lks}</div>`:''}<div class="c-unfile" data-unfile>↑ return to wall</div>`;
+  el.innerHTML=`<span class="c-edit" data-edit title="Edit">✎</span><span class="c-star ${c.star?'on':''}" data-star>${c.star?'★':'☆'}</span>${c.subChunk?`<div class="c-chunk">${esc(c.subChunk)}</div>`:''}<span class="c-type">${esc(c.type)}</span><p class="c-title">${esc(c.t)}</p><div class="c-body">${esc(c.b||'')}</div>${c.note?`<div class="c-note"><b>Janet</b>${esc(c.note)}</div>`:''}${c.mine?`<div class="c-mine"><b>My remix</b>${esc(c.mine)}</div>`:''}${lks?`<div class="c-links">${lks}</div>`:''}<div class="c-unfile" data-unfile>↑ return to wall</div>`;
 }
 function esc(s){return(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
 
@@ -785,9 +786,7 @@ stage.addEventListener('pointermove',e=>{
 function endPtr(e){
   pointers.delete(e.pointerId);
   if(pendingCard){
-    clearTimeout(holdTimer);holdTimer=null;
-    const pc=pendingCard;pendingCard=null;
-    openInspector(pc.c.id);
+    clearTimeout(holdTimer);holdTimer=null;pendingCard=null;
     if(pointers.size===0){panStart=null;stage.classList.remove('grabbing');}
     return;
   }
@@ -805,8 +804,6 @@ function endPtr(e){
       dragging.el.style.left=dragging.c.x+'px';dragging.el.style.top=dragging.c.y+'px';
       if(currentView==='scene'&&activeSceneId!=null)updateSceneOrderFromY(activeSceneId);
       save();
-    } else {
-      openInspector(dragging.c.id);
     }
     dragging=null;dropTarget=null;
   }
@@ -933,6 +930,10 @@ document.getElementById('i-del').onclick=()=>{
   insp.classList.remove('open');drawWires();save();
 };
 stage.addEventListener('click',e=>{
+  if(e.target.closest('[data-edit]')){
+    const id=e.target.closest('.card')?.dataset.id;if(!id)return;
+    openInspector(id);return;
+  }
   if(e.target.closest('[data-unfile]')){
     const id=e.target.closest('.card')?.dataset.id;if(!id)return;
     const c=byId(id);if(!c)return;
