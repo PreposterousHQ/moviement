@@ -13,7 +13,6 @@
     --ink:#141B2E; --paper:#F2EDE3; --gold:#D9A441;
     --ink-60:rgba(20,27,46,.6); --ink-40:rgba(20,27,46,.4); --ink-12:rgba(20,27,46,.12);
     --card-w:248px;
-    /* lane colors */
     --L-meta:#5B6472; --L-open:#C2493D; --L-act1:#C68A2E; --L-act2:#3FB8AF;
     --L-act3:#5A7D5A; --L-model:#4E9A5A; --L-ascent:#D9A441; --L-appendix:#8A8576;
     --L-pillar:#7C6BB0; --L-script:#4F6BCE; --L-quest:#C2557A; --L-device:#1F8FA6;
@@ -31,6 +30,9 @@
     text-transform:uppercase;color:var(--gold);display:block;margin-top:-2px}
   .brand a{color:inherit;text-decoration:none}
   .brand a:hover{color:var(--gold)}
+  #b-boards{max-width:160px}
+  #board-name-display{display:inline-block;max-width:100px;overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap;vertical-align:middle}
   #search{flex:1 1 150px;min-width:120px;background:rgba(242,237,227,.07);border:1px solid rgba(242,237,227,.16);
     color:var(--paper);border-radius:9px;padding:8px 11px;font-size:14px;font-family:inherit}
   #search::placeholder{color:rgba(242,237,227,.42)}
@@ -40,6 +42,7 @@
   .btn:active{transform:translateY(1px)}
   .btn.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
   .btn.ghost{background:transparent}
+  .btn:disabled{opacity:.38;cursor:default;pointer-events:none}
 
   /* ---------- filter rail ---------- */
   #rail{position:fixed;top:54px;left:0;right:0;z-index:35;display:flex;gap:6px;align-items:center;
@@ -118,7 +121,7 @@
   .insp-actions .btn.go{color:var(--ink);background:var(--gold);border-color:var(--gold)}
   .x{cursor:pointer;font-size:20px;color:var(--ink-40);line-height:1;padding:2px 6px}
 
-  /* ---------- stats / help popover ---------- */
+  /* ---------- popovers ---------- */
   .pop{position:fixed;top:96px;right:12px;z-index:45;width:min(300px,88vw);background:var(--paper);color:var(--ink);
     border-radius:12px;box-shadow:0 14px 44px rgba(0,0,0,.42);padding:14px;display:none}
   .pop.open{display:block}
@@ -127,6 +130,40 @@
   .pop .row{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;padding:3px 0;border-bottom:1px solid var(--ink-12)}
   .pop .bar{height:6px;border-radius:3px;background:var(--c);margin-top:2px}
   .kbd{font-family:"IBM Plex Mono",monospace;font-size:10px;background:rgba(20,27,46,.08);padding:1px 5px;border-radius:4px}
+
+  /* ---------- board popover ---------- */
+  #boardpop{left:12px;right:auto;width:min(280px,88vw)}
+  .board-item{display:flex;align-items:center;gap:6px;padding:7px 2px;border-bottom:1px solid var(--ink-12);
+    cursor:pointer;border-radius:6px;margin:0 -2px;transition:.12s}
+  .board-item:last-of-type{border-bottom:none}
+  .board-item:hover{background:rgba(20,27,46,.05)}
+  .board-item .b-dot{width:8px;height:8px;flex:none;border-radius:50%;background:var(--gold);opacity:0;transition:.12s}
+  .board-item.active .b-dot{opacity:1}
+  .board-item .b-name{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .board-item.active .b-name{font-weight:600}
+  .board-item .bi{font-size:13px;color:var(--ink-40);cursor:pointer;padding:1px 4px;border-radius:4px;flex:none}
+  .board-item .bi:hover{color:var(--ink);background:rgba(20,27,46,.08)}
+  .board-sep{height:1px;background:var(--ink-12);margin:9px 0}
+  .board-action{display:flex;align-items:center;gap:6px;padding:7px 2px;font-size:12.5px;cursor:pointer;
+    color:var(--ink-60);border-radius:6px;margin:0 -2px;transition:.12s}
+  .board-action:hover{color:var(--ink);background:rgba(20,27,46,.05)}
+
+  /* ---------- send starred modal ---------- */
+  #send-overlay{display:none;position:fixed;inset:0;z-index:60;background:rgba(20,27,46,.65);
+    backdrop-filter:blur(4px);align-items:center;justify-content:center}
+  #send-overlay.open{display:flex}
+  #send-modal{background:var(--paper);color:var(--ink);border-radius:14px;padding:20px;
+    width:min(320px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  #send-modal h4{font-family:Fraunces,serif;margin:0 0 14px;font-size:16px}
+  #send-modal label.flabel{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-40);display:block;margin-bottom:5px}
+  #send-dest{width:100%;font-family:inherit;font-size:13px;color:var(--ink);
+    background:#fff;border:1px solid var(--ink-12);border-radius:8px;padding:8px 9px;margin-bottom:14px}
+  .radio-row{display:flex;gap:18px;margin-bottom:16px;font-size:13px}
+  .radio-row label{display:flex;align-items:center;gap:5px;cursor:pointer}
+  .send-actions{display:flex;gap:8px;justify-content:flex-end}
+  .send-actions .btn{color:var(--ink);background:rgba(20,27,46,.06);border-color:var(--ink-12)}
+  .send-actions .btn.go{background:var(--gold);border-color:var(--gold)}
 
   /* ---------- hint ---------- */
   #hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:30;
@@ -143,9 +180,11 @@
 
 <div id="bar">
   <div class="brand"><a href="/">Scenius Wall</a><small>MOVIEment remix canvas</small></div>
+  <button class="btn" id="b-boards">◈ <span id="board-name-display">…</span> ▾</button>
   <input id="search" placeholder="Search every card…" autocomplete="off">
   <button class="btn" id="b-link" title="Link two cards">⤳ Link</button>
   <button class="btn" id="b-star" title="Show starred only">★ Starred</button>
+  <button class="btn ghost" id="b-send" title="Send starred cards to another board">→ Send starred</button>
   <button class="btn ghost" id="b-emergent" title="Surface a random card">✦ Emergent</button>
   <button class="btn ghost" id="b-add" title="New card">＋ Card</button>
   <button class="btn ghost" id="b-tidy" title="Re-arrange into lanes">⊞ Tidy</button>
@@ -193,6 +232,18 @@
   </div>
 </aside>
 
+<!-- board switcher popover -->
+<div class="pop" id="boardpop">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <h4 style="margin:0">Your Boards</h4>
+    <span class="x" id="boardpop-close">✕</span>
+  </div>
+  <div id="board-list"></div>
+  <div class="board-sep"></div>
+  <div class="board-action" id="ba-new">＋ New empty board</div>
+  <div class="board-action" id="ba-dup">⊕ Duplicate this board</div>
+</div>
+
 <!-- stats popover -->
 <div class="pop" id="statpop">
   <h4>Pulse — where your attention is</h4>
@@ -202,13 +253,31 @@
 
 <!-- save/load popover -->
 <div class="pop" id="iopop">
-  <h4>Save & load your board</h4>
-  <p>This board autosaves in this browser. To carry it between machines or back it up, export a file — and re-import it anywhere.</p>
+  <h4>Save & load</h4>
+  <p>This board autosaves to IndexedDB in this browser. Export as JSON to back up or share.</p>
   <div style="display:flex;flex-direction:column;gap:8px">
-    <button class="btn" id="io-export" style="color:var(--ink);background:var(--gold);border-color:var(--gold);justify-content:center">⬇ Export board (.json)</button>
-    <label class="btn" style="color:var(--ink);background:rgba(20,27,46,.06);border-color:var(--ink-12);justify-content:center;cursor:pointer">⬆ Import board
+    <button class="btn" id="io-export-one" style="color:var(--ink);background:var(--gold);border-color:var(--gold);justify-content:center">⬇ Export this board (.json)</button>
+    <button class="btn" id="io-export-all" style="color:var(--ink);background:rgba(217,164,65,.45);border-color:var(--gold);justify-content:center">⬇ Export ALL boards (.json)</button>
+    <label class="btn" style="color:var(--ink);background:rgba(20,27,46,.06);border-color:var(--ink-12);justify-content:center;cursor:pointer">⬆ Import board(s)
       <input id="io-import" type="file" accept="application/json,.json" hidden></label>
     <button class="btn" id="io-reset" style="color:#fff;background:var(--L-open);border-color:var(--L-open);justify-content:center">↺ Reset to original atoms</button>
+  </div>
+</div>
+
+<!-- send starred modal -->
+<div id="send-overlay">
+  <div id="send-modal">
+    <h4 id="send-title">Send starred cards</h4>
+    <label class="flabel">Destination board</label>
+    <select id="send-dest"></select>
+    <div class="radio-row">
+      <label><input type="radio" name="send-mode" value="copy" checked> Copy</label>
+      <label><input type="radio" name="send-mode" value="move"> Move (remove from this board)</label>
+    </div>
+    <div class="send-actions">
+      <button class="btn" id="send-cancel">Cancel</button>
+      <button class="btn go" id="send-confirm">Send →</button>
+    </div>
   </div>
 </div>
 
@@ -234,11 +303,9 @@ const LANE = Object.fromEntries(LANES.map(l=>[l.k,l]));
 const TYPES = ['person','artifact','beat','note','question','decision','thought','org','quote','concept','pillar','scriptbeat','quest','device'];
 
 /* ============================================================
-   SEED CARDS — atomized from Janet's treatment + today's work
-   fields: id, lane, type, t(itle), b(ody), note?, links?[ [label,url|null] ]
+   SEED CARDS
    ============================================================ */
 const SEED = [
-/* ---------- META / FRONT MATTER ---------- */
 {id:'j01',lane:'meta',type:'decision',t:'Title change',b:'"Mistaken for Madness" → "A Civil Rights MOVIEment for the Soul of New Jersey."',note:'Issued to Bret 6/26. v. June 27/26.'},
 {id:'j02',lane:'meta',type:'note',t:'Civil-rights reframe additions',b:'Add Rev. Gil Caldwell & Dr. Martin Luther King Jr., Dale, Mark Duffy in the 1970s.',note:'The new connective tissue Janet wants woven in.'},
 {id:'j03',lane:'meta',type:'note',t:'Chelsea — CSPNJ archive',b:'Chelsea helps source original CSPNJ videos & photos.'},
@@ -254,8 +321,6 @@ const SEED = [
 {id:'j13',lane:'meta',type:'note',t:'Content relocated',b:'Janet/Freehold & NJ content moved from the Docuseries Demos into this NJ-focused cut.'},
 {id:'j14',lane:'meta',type:'question',t:'Restorative justice + moral injury',b:'How to add restorative justice & prevention of moral injury to the Ancora demo? Set up follow-up service with MDs & lived experience.'},
 {id:'j15',lane:'meta',type:'note',t:'Add Anne & veterans',b:'Add Anne & veterans with Postcards From Home.'},
-
-/* ---------- OPENING ---------- */
 {id:'j20',lane:'open',type:'beat',t:'Cold open — a spiritual experience',b:'Dark, out of focus. Joshua Roberts describes his 2006 state; ethereal imagery. Jarring turn → police, forced hospitalization, unwanted meds. Rapid ER/ward flashes.',note:'Margin: Josh replaces Janet at open/close. Also "replace with Bret."'},
 {id:'j21',lane:'open',type:'beat',t:'Shift to the 1980s',b:'A variety of people who immediately show what "spiritual experience" means. They recur throughout the documentary.'},
 {id:'j22',lane:'open',type:'person',t:'Jim Gottstein (intro)',b:'Harvard law student; psychotic episode with spiritual elements from sleep deprivation. Staff doubt his future as a lawyer.',note:'Elmcrest Hospital · Yale New Haven Hospital.'},
@@ -264,8 +329,6 @@ const SEED = [
 {id:'j25',lane:'open',type:'note',t:'Add Janet here',b:'Margin note — fold Janet into the opening cohort.'},
 {id:'j26',lane:'open',type:'person',t:'David Lukoff (contrast)',b:'Has a spiritual experience but avoids hospitalization entirely — friends & family provide the support that heals.'},
 {id:'j27',lane:'open',type:'person',t:'Rob Wipond as a teen (1970s)',b:'"What if we add Rob as a teen — could have been hospitalized." Artist-performer in college years. "I had a lot of unusual experiences… not as aggressive in that era."',links:[['Rob × Janet interview pt.2 (YouTube)',null]]},
-
-/* ---------- ACT ONE ---------- */
 {id:'j30',lane:'act1',type:'beat',t:'Nascent peer support',b:'Early 1980s — the peer support movement begins, the seed of the solution.'},
 {id:'j31',lane:'act1',type:'person',t:'Mark Duffy — the origin',b:'Connects with a veteran with lived experience; informal group meets as a Career Club at First Methodist Church, Freehold. Shore Area Council of Churches.',note:'★ Mark Duffy 1970s photos — the faith-community origin is the civil-rights anchor.'},
 {id:'j32',lane:'act1',type:'person',t:"Calvin Chatlos — 1981 awakening",b:'Psychiatric residency at Bellevue NYC; first paranoid psychosis with religious underpinnings. NOT hospitalized — it redirected his whole approach to psychiatry.'},
@@ -280,8 +343,6 @@ const SEED = [
 {id:'j41',lane:'act1',type:'beat',t:'Mija — Chicago → Haiti',b:'1990s Chicago college years back to childhood in Haiti, where her spiritual gifts were nurtured by her grandmother. Acceptance vs. the later system.'},
 {id:'j42',lane:'act1',type:'person',t:'1990s national vignettes',b:'Short vignettes showing the issue is everywhere: Denise Maratos (CA), Jen Macdonald (Canada), Jen Gaita Siciliano (NY), Oryx Cohen (MA).'},
 {id:'j43',lane:'act1',type:'beat',t:'1994 — DSM-IV opens a door',b:'Dr. David Lukoff (now PhD), Dr. Francis Lu & others win a new category: "Religious or Spiritual Problems." A first acknowledgment.'},
-
-/* ---------- ACT TWO ---------- */
 {id:'j50',lane:'act2',type:'beat',t:'Peer power blossoms',b:'Late 90s–early 2000s: 8 Dimensions of Wellness, shared experience, safety & care reshape the landscape.'},
 {id:'j51',lane:'act2',type:'note',t:'Sequence to build',b:'"Need sequence from original to current."'},
 {id:'j52',lane:'act2',type:'person',t:'Peggy Swarbrick — 8 Dimensions',b:'Articulates the spiritual dimension within the "8 Dimensions of Wellness": meaning, purpose, inner balance, honoring traditions.'},
@@ -297,8 +358,6 @@ const SEED = [
 {id:'j62',lane:'act2',type:'beat',t:'Respites open',b:'First CSPNJ Peer Respite House — New Brunswick 2014; Haledon 2014; Newark 2018. Tables of food, warm greetings.'},
 {id:'j63',lane:'act2',type:'quote',t:'Chatlos — "no one was listening"',b:'On DSM-5: the Religious/Spiritual Problems section was still there "but it seemed like no one was truly listening."'},
 {id:'j64',lane:'act2',type:'note',t:'Add hospitalizations→advocates',b:'"2017 Ben — we may add another photo sequence of hospitalizations that lead to advocates."'},
-
-/* ---------- ACT THREE ---------- */
 {id:'j70',lane:'act3',type:'beat',t:'Janet breaks the silence (2019)',b:'At Rutgers with doctoral student Michael Garbe. "I was rebuilding my life, a single mom facing financial hardship… It was time to speak."',links:[['Assessing for Spiritual Emergency (Rutgers 2019)',null]]},
 {id:'j71',lane:'act3',type:'quote',t:'Calvin — the word "soul"',b:'2019 Psychiatric Times "Portrait of a Psychiatrist": "Psychiatry plays a central role in exploring and treating the depths of human experience captured by the word \'soul\'…"'},
 {id:'j72',lane:'act3',type:'beat',t:'Calvin at WPA Jerusalem (2019)',b:'World Psychiatric Association Intl Congress on Spirituality, Religion & Mental Health. Meets Francis Lu; the WPA Position Statement.'},
@@ -335,15 +394,9 @@ const SEED = [
 {id:'j103',lane:'act3',type:'concept',t:'Open Dialogue',b:'From Finland / UK to NJ — the dialogic model entering the picture.'},
 {id:'j104',lane:'act3',type:'concept',t:'Public-service tools',b:'Rapid awareness tools as part of "the vision": the HELP model; FEAR, HELP, Stop-Pause.'},
 {id:'j105',lane:'act3',type:'quote',t:'Call to action — Chatlos at NAMI',b:'NJ NAMI keynote: "The time for awareness is over. The time for action is now." Against opioid overdoses, youth MH, rising suicide.'},
-
-/* ---------- CONCLUSION / MODEL VISION ---------- */
 {id:'j110',lane:'model',type:'beat',t:'The model, working (Josh redux)',b:'Mirror of the opening — but his mother calmly calls 988. MCORT (not police) arrives: calm, no judgment, active listening. Josh chooses the peer respite. A peer\'s gentle hug.',note:'Margin: Josh replaces Janet.'},
 {id:'j111',lane:'model',type:'beat',t:'Eleven days later',b:'Josh leaves the respite bright and hopeful — a celebratory hug from friends about his new job. Light warms to pure white.'},
-
-/* ---------- FINAL SCENE ---------- */
 {id:'j120',lane:'ascent',type:'beat',t:'A Shared Ascent',b:'CSPNJ HQ celebration — everyone we met, holding hands. A drone rises: Freehold → NJ → US → Canada → world map of the network. Settles on the New Brunswick respite backyard garden.'},
-
-/* ---------- APPENDIX / OPEN THREADS ---------- */
 {id:'j130',lane:'appendix',type:'artifact',t:'Equine Assisted Therapy',b:'Janet Werner with Brooke Lichter, LCSW, EAGALA-certified. "Operation Hope" roughcut.'},
 {id:'j131',lane:'appendix',type:'beat',t:'Rutgers ScarletWell — UPLIFT',b:'University Peers for Leadership, Impact, Fortitude & Teamwork — first cohort June 3. With Adrienne Simonds, Paul Fischbach, Peggy Swarbrick, Josh Langberg. "An idea to fruition so quickly."'},
 {id:'j132',lane:'appendix',type:'beat',t:'Carrier Clinic / Hackensack Meridian',b:'Humanizing Care & Restraint Reduction, Raritan Bay Dec 2024; Holistic Council; Christian Peters; 2025 CEO Christopher Morrison. Impact on an NJ court case.'},
@@ -353,10 +406,6 @@ const SEED = [
 {id:'j136',lane:'appendix',type:'question',t:'STE experts & moral injury',b:'How to pull together peer-support-evolution experts + spiritually-transformative-experience experts while preventing moral injury — Dr. Lu, Josh.'},
 {id:'j137',lane:'appendix',type:'org',t:'Kiva Centers (national)',b:'Peer-run, trauma-informed: Worcester RLC; Kiva of New Mexico; Soteria Las Cruces (2nd in US, 22nd worldwide); Juniper Peer Respite → Uxbridge MA.',links:[['kivacenters.org','https://www.kivacenters.org']]},
 {id:'j138',lane:'appendix',type:'org',t:'Bazelon Center — Vesper Moore',b:'"ADA at 35" series. Vesper Moore: peer support happens "at the barbershop, the hair salon, at your kitchen table."',note:'Find the video & get permission; position history & 2025 progress.'},
-
-/* ============================================================
-   OUR LAYER — PILLARS (today)
-   ============================================================ */
 {id:'p01',lane:'pillar',type:'pillar',t:'Positive-sum is the operating system',b:'Stone Soup, Filmanthropy, regenerative production, the trust, the moviement — all one move: converting zero-sum to positive-sum. Dale named the enemy himself: "either you win or I win."'},
 {id:'p02',lane:'pillar',type:'pillar',t:'Dale: "we need a mental health movement"',b:'VERIFIED on camera (Centenary). "Every great movement was started by college students… SNCC… we need a mental health movement." The bridge from the 1960s movement to the moviement, in his mouth.',links:[['YouTube L2TqjqUuzy4','https://www.youtube.com/watch?v=L2TqjqUuzy4']]},
 {id:'p03',lane:'pillar',type:'pillar',t:'Free Tibet — awareness carried by culture',b:'Yauch (1996): change comes only through mass public awareness, carried by culture. Swap music→film, Tibet→the soul, and it\'s the thesis. Potts: "raise action, not money."'},
@@ -372,10 +421,6 @@ const SEED = [
 {id:'p13',lane:'pillar',type:'pillar',t:'Ritual / "we are the medicine"',b:'Not treatment — ceremony. The One Mind Show as nightly catharsis; the village as a ritual of friendship. Disconnection is the wound; engaged ritual is the medicine.'},
 {id:'p14',lane:'pillar',type:'pillar',t:'Wound as medicine / still alive',b:'"Failure is my medicine." 30 years later, still in it — the man the system broke building what would have caught him, not pretending he\'s healed enough to make it tidy.'},
 {id:'p15',lane:'pillar',type:'pillar',t:'I AM THE USE CASE — keystone',b:'Not built for "them"; built by and for the people living it. Bret & Janet aren\'t above the use case — they are it. Leadership and lived experience, the same body. Every other pillar serves this one.'},
-
-/* ============================================================
-   OUR LAYER — SCRIPT (Ep.1 spine)
-   ============================================================ */
 {id:'s0',lane:'script',type:'scriptbeat',t:'M0 · Cold open — the handshake',b:'Consecrated re-enactment: "We\'re going to make history together." Cut to black before we understand it. Detonate first, earn it later.',note:'FORK: detonate vs. save for the climax.'},
 {id:'s1',lane:'script',type:'scriptbeat',t:'M1 · Gratitude',b:'Open for real on Bret thanking Dale for the gift already given — his time, on camera. Prompt: "Why did you say yes?" Models the gift economy; turns the office into a man.'},
 {id:'s2',lane:'script',type:'scriptbeat',t:'M2 · The Three Doors',b:'Where ALL the archival lives. Janet ("1979") → ward footage. Dale ("my dad") → Rev. Gil + MLK + marches. Bret → the wound, I-am-the-use-case. History summoned by naming, never a timeline.'},
@@ -384,20 +429,12 @@ const SEED = [
 {id:'s5',lane:'script',type:'scriptbeat',t:'M5 · The dreaming, conjured together',b:'Studio, Filmanthropy, village, NJ as HeartQuarters. Stay in the dream, not details. Playful seed: "Dale, can you help me reach the Beastie Boys?" (plants Season 3 as joy).'},
 {id:'s6',lane:'script',type:'scriptbeat',t:'M6 · The quest names itself + the ask',b:'Let it emerge so Dale half-says it. Season 1 = $5M cash + gifted resources → the pilot village. The real ask: not money — be recurring. Keep dreaming this with us.',note:'Climax: "how in is he?" pays off.'},
 {id:'s7',lane:'script',type:'scriptbeat',t:'M7 · Threshold crossed — film opens',b:'Reveal: the meeting WAS the moviement happening. Gratitude bookend, back to the handshake. Turn outward — the festival audience has an ingredient too. Dale = thread into Ep.2.'},
-
-/* ============================================================
-   OUR LAYER — QUEST (the seasons)
-   ============================================================ */
 {id:'q1',lane:'quest',type:'quest',t:'Season 1 — Faith ($5M)',b:'26 episodes. Goal: $5M in cash AND gifted resources (gifts go further — land, materials, labor). The pot fills visibly across episodes; Ep.26 is faith vindicated, not a miracle.'},
 {id:'q2',lane:'quest',type:'quest',t:'Season 2 — Function (the village)',b:'Build the pilot village — the $5M seed of the $90M model dreamed with Dale. People move in. It functions as respite. Bret lives there. Seeds the concert. Heart: one person\'s "I moved in."'},
 {id:'q3',lane:'quest',type:'quest',t:'Season 3 — Culture (the concert)',b:'The Tibetan-Freedom-Concert lineage turned toward the soul. The movement large enough to fill a room.'},
 {id:'q4',lane:'quest',type:'quest',t:'Season 4 — Scale ($90M)',b:'The $90M village rises — the model the concert made thinkable.'},
 {id:'q5',lane:'quest',type:'quest',t:'Season 5 — System ($1B)',b:'A repeatable, fully-regenerative transmedium system scaling mental-health care across NJ. Land & assets in trust; the receivers are the beneficiaries.'},
 {id:'q6',lane:'quest',type:'quest',t:'The ladder + the big ask',b:'Faith → Function → Culture → Scale → System. Each season\'s miracle is the next season\'s permission. The big ask to Dale isn\'t money — it\'s to be a recurring character.'},
-
-/* ============================================================
-   OUR LAYER — DEVICES & CONCEPTS
-   ============================================================ */
 {id:'d1',lane:'device',type:'device',t:'The conversation that contains the film',b:'The Dale meeting is the riverbed; everything else (archival, stills, history) flows from what\'s said in the room. The talk generates the cutaways.'},
 {id:'d2',lane:'device',type:'device',t:'"How in is he?" — the secret engine',b:'Dale\'s presence is the premise; his depth of yes is the reveal. A passenger who turns out to be crew. That dramatic question makes 20 minutes of talk a story.'},
 {id:'d3',lane:'device',type:'device',t:'Archival as evidence, never timeline',b:'History never appears as "and then in 1985…" — it\'s summoned as testimony in service of a present-tense case.'},
@@ -411,38 +448,174 @@ const SEED = [
 ];
 
 /* ============================================================
-   STATE + PERSISTENCE
+   PERSISTENCE — IndexedDB with localStorage fallback
    ============================================================ */
-const KEY='scenius_wall_v1';
-let state = load() || fresh();
+const IDB_NAME = 'sceniusDB', IDB_VER = 1;
+let idb = null;
 
-function fresh(){
-  const cards = SEED.map(c=>({...c, x:0,y:0, star:false, mine:'', moved:false}));
-  layout(cards);
-  return {cards, links:[], view:{px:60,py:150,z:.72}};
-}
-function load(){ try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null} }
-let saveT;
-function save(){ try{clearTimeout(saveT);saveT=setTimeout(()=>localStorage.setItem(KEY,JSON.stringify(state)),250)}catch(e){} }
-
-/* auto lane layout */
-function layout(cards){
-  const colW=290, top=70, gapY=14;
-  const yByLane={}; LANES.forEach((l,i)=>yByLane[l.k]=top);
-  const xByLane={}; LANES.forEach((l,i)=>xByLane[l.k]=i*colW);
-  cards.forEach(c=>{
-    const lx=xByLane[c.lane]; if(lx===undefined)return;
-    c.x = lx;
-    c.y = yByLane[c.lane];
-    const h = estHeight(c);
-    yByLane[c.lane]+= h+gapY;
+function idbOpen() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('boards')) d.createObjectStore('boards', {keyPath:'id'});
+      if (!d.objectStoreNames.contains('meta'))   d.createObjectStore('meta',   {keyPath:'k'});
+    };
+    req.onsuccess = e => res(e.target.result);
+    req.onerror = () => rej(req.error);
   });
 }
-function estHeight(c){
+function idbOp(store, mode, fn) {
+  return new Promise((res, rej) => {
+    const tx = idb.transaction(store, mode), st = tx.objectStore(store), req = fn(st);
+    req.onsuccess = () => res(req.result);
+    req.onerror  = () => rej(req.error);
+  });
+}
+const idbGet    = (s,k) => idbOp(s,'readonly',  st=>st.get(k));
+const idbPut    = (s,v) => idbOp(s,'readwrite', st=>st.put(v));
+const idbDel    = (s,k) => idbOp(s,'readwrite', st=>st.delete(k));
+const idbAll    = (s)   => idbOp(s,'readonly',  st=>st.getAll());
+
+function lsGet(k){ try{const r=localStorage.getItem(k);return r?JSON.parse(r):null}catch(e){return null} }
+function lsSet(k,v){ try{localStorage.setItem(k,JSON.stringify(v))}catch(e){} }
+function lsDel(k){ try{localStorage.removeItem(k)}catch(e){} }
+
+async function persistBoard(board) {
+  if (idb) { try { await idbPut('boards', board); return; } catch(e){} }
+  lsSet('sb_'+board.id, board);
+  const idx = lsGet('sb_idx') || [];
+  if (!idx.includes(board.id)) { idx.push(board.id); lsSet('sb_idx', idx); }
+}
+async function removeBoard(id) {
+  if (idb) { try { await idbDel('boards', id); } catch(e){} }
+  lsDel('sb_'+id);
+  lsSet('sb_idx', (lsGet('sb_idx')||[]).filter(x=>x!==id));
+}
+async function fetchAllBoards() {
+  if (idb) { try { return await idbAll('boards'); } catch(e){} }
+  return (lsGet('sb_idx')||[]).map(id=>lsGet('sb_'+id)).filter(Boolean);
+}
+async function getActiveId() {
+  if (idb) { try { const r=await idbGet('meta','active'); return r?.v; } catch(e){} }
+  return lsGet('sb_active');
+}
+async function setActiveId(id) {
+  if (idb) { try { await idbPut('meta',{k:'active',v:id}); } catch(e){} }
+  lsSet('sb_active', id);
+}
+
+/* ============================================================
+   BOARD MANAGEMENT
+   ============================================================ */
+let allBoards = []; // [{id, name, updatedAt}] — lightweight index
+let activeBoard = null;
+let state = null; // alias → activeBoard
+
+function mkId(){ return 'b'+Math.random().toString(36).slice(2,9); }
+function mkCardId(){ return 'u'+Math.random().toString(36).slice(2,10); }
+function bSummary(b){ return {id:b.id, name:b.name, updatedAt:b.updatedAt}; }
+
+function freshBoard(name, cards=[], links=[], view={px:60,py:150,z:.72}) {
+  return { id:mkId(), name, cards:cards.map(c=>({...c})), links:[...links], view:{...view}, updatedAt:Date.now() };
+}
+function freshSeedBoard(name='Main wall') {
+  const cards = SEED.map(c=>({...c, x:0,y:0, star:false, mine:'', moved:false}));
+  layout(cards);
+  return freshBoard(name, cards, [], {px:60,py:150,z:.72});
+}
+
+async function loadBoardById(id) {
+  if (idb) { try { return await idbGet('boards', id); } catch(e){} }
+  return lsGet('sb_'+id);
+}
+
+async function switchToBoard(id) {
+  const board = await loadBoardById(id);
+  if (!board) return;
+  activeBoard = board;
+  state = board;
+  view = board.view;
+  await setActiveId(id);
+  cardEls.forEach(el=>el.remove()); cardEls.clear();
+  renderAll(); buildRail(); applyTransform();
+  updateBoardBtn();
+}
+
+function updateBoardBtn() {
+  const n = activeBoard?.name || '…';
+  document.getElementById('board-name-display').textContent = n.length > 18 ? n.slice(0,16)+'…' : n;
+}
+
+async function createBoard(name, seedCards) {
+  const b = seedCards ? freshBoard(name, seedCards) : freshBoard(name);
+  await persistBoard(b);
+  allBoards = [...allBoards, bSummary(b)];
+  await switchToBoard(b.id);
+  return b;
+}
+
+async function duplicateCurrentBoard() {
+  const src = activeBoard;
+  const b = freshBoard(src.name+' copy', src.cards, src.links, src.view);
+  await persistBoard(b);
+  allBoards = [...allBoards, bSummary(b)];
+  await switchToBoard(b.id);
+  closePops();
+}
+
+async function renameBoardById(id, name) {
+  if (!name.trim()) return;
+  const b = await loadBoardById(id);
+  if (!b) return;
+  b.name = name.trim(); b.updatedAt = Date.now();
+  await persistBoard(b);
+  allBoards = allBoards.map(s => s.id===id ? bSummary(b) : s);
+  if (activeBoard.id === id) { activeBoard.name = b.name; updateBoardBtn(); }
+  renderBoardList();
+}
+
+async function deleteBoardById(id) {
+  if (allBoards.length <= 1) { alert('You need at least one board.'); return; }
+  if (!confirm('Delete "'+( allBoards.find(s=>s.id===id)?.name||'this board')+'"? Cannot be undone.')) return;
+  await removeBoard(id);
+  allBoards = allBoards.filter(s=>s.id!==id);
+  if (activeBoard.id === id) await switchToBoard(allBoards[0].id);
+  renderBoardList();
+}
+
+/* ============================================================
+   AUTO-SAVE
+   ============================================================ */
+let saveT;
+function save() {
+  clearTimeout(saveT);
+  saveT = setTimeout(() => {
+    if (!activeBoard) return;
+    activeBoard.updatedAt = Date.now();
+    persistBoard(activeBoard).catch(()=>{});
+    allBoards = allBoards.map(s => s.id===activeBoard.id ? bSummary(activeBoard) : s);
+  }, 250);
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+function layout(cards) {
+  const colW=290, top=70, gapY=14;
+  const yByLane={}, xByLane={};
+  LANES.forEach((l,i)=>{ yByLane[l.k]=top; xByLane[l.k]=i*colW; });
+  cards.forEach(c=>{
+    if(xByLane[c.lane]===undefined) return;
+    c.x=xByLane[c.lane]; c.y=yByLane[c.lane];
+    yByLane[c.lane]+=estHeight(c)+gapY;
+  });
+}
+function estHeight(c) {
   let h=70;
-  h+= Math.ceil((c.b||'').length/34)*15;
-  if(c.note) h+= 26+Math.ceil(c.note.length/40)*13;
-  if(c.mine) h+= 26+Math.ceil(c.mine.length/40)*13;
+  h+=Math.ceil((c.b||'').length/34)*15;
+  if(c.note) h+=26+Math.ceil(c.note.length/40)*13;
+  if(c.mine) h+=26+Math.ceil(c.mine.length/40)*13;
   if(c.links&&c.links.length) h+=24;
   return Math.max(96,h);
 }
@@ -452,12 +625,12 @@ function estHeight(c){
    ============================================================ */
 const stage=document.getElementById('stage'), world=document.getElementById('world'),
       wires=document.getElementById('wires');
-let view=state.view;
+let view = {px:60,py:150,z:.72};
 const cardEls=new Map();
 
-function cssvar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+function cssvar(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 
-function renderAll(){
+function renderAll() {
   document.querySelectorAll('.lane-label').forEach(e=>e.remove());
   LANES.forEach((l,i)=>{
     const lab=document.createElement('div');
@@ -467,16 +640,18 @@ function renderAll(){
     lab.innerHTML=`${l.n}<small>${l.s}</small>`;
     world.appendChild(lab);
   });
-  state.cards.forEach(renderCard);
+  if (state) state.cards.forEach(renderCard);
   applyTransform(); drawWires(); applyFilter();
 }
-function renderCard(c){
+function renderCard(c) {
   let el=cardEls.get(c.id);
-  if(!el){ el=document.createElement('div'); el.className='card'; el.dataset.id=c.id;
-    world.appendChild(el); cardEls.set(c.id,el); attachCard(el,c); }
+  if (!el) {
+    el=document.createElement('div'); el.className='card'; el.dataset.id=c.id;
+    world.appendChild(el); cardEls.set(c.id,el);
+  }
   el.style.setProperty('--c', cssvar(LANE[c.lane]?LANE[c.lane].c:'--L-meta'));
   el.style.left=c.x+'px'; el.style.top=c.y+'px';
-  const links=(c.links||[]).map(([l,u])=> u?`<a href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`:`<span>${esc(l)} · find link</span>`).join('');
+  const links=(c.links||[]).map(([l,u])=>u?`<a href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`:`<span>${esc(l)} · find link</span>`).join('');
   el.innerHTML=`
     <span class="c-star ${c.star?'on':''}" data-star>${c.star?'★':'☆'}</span>
     <span class="c-type">${c.type}</span>
@@ -486,10 +661,10 @@ function renderCard(c){
     ${c.mine?`<div class="c-mine"><b>My remix</b>${esc(c.mine)}</div>`:''}
     ${links?`<div class="c-links">${links}</div>`:''}`;
 }
-function esc(s){return (s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function esc(s){ return (s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
 
 /* ============================================================
-   PAN / ZOOM  (pointer events, touch + mouse)
+   PAN / ZOOM
    ============================================================ */
 function applyTransform(){ world.style.transform=`translate(${view.px}px,${view.py}px) scale(${view.z})`; }
 const pointers=new Map(); let panStart=null, pinchStart=null, dragging=null;
@@ -498,91 +673,92 @@ stage.addEventListener('pointerdown',e=>{
   stage.setPointerCapture(e.pointerId);
   pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
   const cardEl=e.target.closest('.card');
-  if(linkMode && cardEl){ handleLink(cardEl.dataset.id); return; }
-  if(e.target.closest('[data-star]')){ return; }
-  if(cardEl){
+  if (linkMode && cardEl) { handleLink(cardEl.dataset.id); return; }
+  if (e.target.closest('[data-star]')) return;
+  if (cardEl) {
     const c=byId(cardEl.dataset.id);
     dragging={el:cardEl,c,ox:e.clientX,oy:e.clientY,sx:c.x,sy:c.y,moved:false};
-    cardEl.classList.add('drag');
-    return;
+    cardEl.classList.add('drag'); return;
   }
-  if(pointers.size===1){ panStart={px:view.px,py:view.py,x:e.clientX,y:e.clientY}; stage.classList.add('grabbing'); }
-  if(pointers.size===2){ startPinch(); }
+  if (pointers.size===1) { panStart={px:view.px,py:view.py,x:e.clientX,y:e.clientY}; stage.classList.add('grabbing'); }
+  if (pointers.size===2) startPinch();
 });
 stage.addEventListener('pointermove',e=>{
-  if(!pointers.has(e.pointerId))return;
+  if (!pointers.has(e.pointerId)) return;
   pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(pointers.size===2 && pinchStart){ doPinch(); return; }
-  if(dragging){
+  if (pointers.size===2 && pinchStart) { doPinch(); return; }
+  if (dragging) {
     const dx=(e.clientX-dragging.ox)/view.z, dy=(e.clientY-dragging.oy)/view.z;
-    if(Math.abs(e.clientX-dragging.ox)+Math.abs(e.clientY-dragging.oy)>3) dragging.moved=true;
+    if (Math.abs(e.clientX-dragging.ox)+Math.abs(e.clientY-dragging.oy)>3) dragging.moved=true;
     dragging.c.x=dragging.sx+dx; dragging.c.y=dragging.sy+dy;
     dragging.el.style.left=dragging.c.x+'px'; dragging.el.style.top=dragging.c.y+'px';
     drawWires(); return;
   }
-  if(panStart){ view.px=panStart.px+(e.clientX-panStart.x); view.py=panStart.py+(e.clientY-panStart.y); applyTransform(); }
+  if (panStart) { view.px=panStart.px+(e.clientX-panStart.x); view.py=panStart.py+(e.clientY-panStart.y); applyTransform(); }
 });
-function endPtr(e){
+function endPtr(e) {
   pointers.delete(e.pointerId);
-  if(dragging){
+  if (dragging) {
     dragging.el.classList.remove('drag');
-    if(dragging.moved){ dragging.c.moved=true; save(); }
-    else { openInspector(dragging.c.id); }
+    if (dragging.moved) { dragging.c.moved=true; save(); }
+    else openInspector(dragging.c.id);
     dragging=null;
   }
-  if(pointers.size<2) pinchStart=null;
-  if(pointers.size===0){ panStart=null; stage.classList.remove('grabbing'); save(); }
+  if (pointers.size<2) pinchStart=null;
+  if (pointers.size===0) { panStart=null; stage.classList.remove('grabbing'); save(); }
 }
 stage.addEventListener('pointerup',endPtr);
 stage.addEventListener('pointercancel',endPtr);
 
-function startPinch(){
+function startPinch() {
   const p=[...pointers.values()];
-  pinchStart={d:dist(p[0],p[1]), z:view.z, mx:(p[0].x+p[1].x)/2, my:(p[0].y+p[1].y)/2, px:view.px, py:view.py};
+  pinchStart={d:dist(p[0],p[1]),z:view.z,mx:(p[0].x+p[1].x)/2,my:(p[0].y+p[1].y)/2,px:view.px,py:view.py};
 }
-function doPinch(){
-  const p=[...pointers.values()]; if(p.length<2)return;
-  const d=dist(p[0],p[1]); let nz=clamp(pinchStart.z*(d/pinchStart.d),.2,2.4);
+function doPinch() {
+  const p=[...pointers.values()]; if(p.length<2) return;
+  const d=dist(p[0],p[1]), nz=clamp(pinchStart.z*(d/pinchStart.d),.2,2.4);
   const wx=(pinchStart.mx-pinchStart.px)/pinchStart.z, wy=(pinchStart.my-pinchStart.py)/pinchStart.z;
   view.z=nz; view.px=pinchStart.mx-wx*nz; view.py=pinchStart.my-wy*nz; applyTransform();
 }
 stage.addEventListener('wheel',e=>{
   e.preventDefault();
-  const f=e.deltaY<0?1.12:0.89; const nz=clamp(view.z*f,.2,2.4);
+  const f=e.deltaY<0?1.12:.89, nz=clamp(view.z*f,.2,2.4);
   const wx=(e.clientX-view.px)/view.z, wy=(e.clientY-view.py)/view.z;
   view.z=nz; view.px=e.clientX-wx*nz; view.py=e.clientY-wy*nz; applyTransform();
 },{passive:false});
 
-function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
-function byId(id){return state.cards.find(c=>c.id===id)}
+function dist(a,b){ return Math.hypot(a.x-b.x,a.y-b.y); }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+function byId(id){ return state?.cards.find(c=>c.id===id); }
 
-/* zoom buttons */
-function zoomBy(f){ const cx=innerWidth/2,cy=innerHeight/2; const nz=clamp(view.z*f,.2,2.4);
-  const wx=(cx-view.px)/view.z, wy=(cy-view.py)/view.z; view.z=nz; view.px=cx-wx*nz; view.py=cy-wy*nz; applyTransform(); save(); }
+function zoomBy(f) {
+  const cx=innerWidth/2, cy=innerHeight/2, nz=clamp(view.z*f,.2,2.4);
+  const wx=(cx-view.px)/view.z, wy=(cy-view.py)/view.z;
+  view.z=nz; view.px=cx-wx*nz; view.py=cy-wy*nz; applyTransform(); save();
+}
 document.getElementById('z-in').onclick=()=>zoomBy(1.18);
 document.getElementById('z-out').onclick=()=>zoomBy(.85);
 document.getElementById('z-fit').onclick=fitAll;
-function fitAll(){
+function fitAll() {
+  if (!state||!state.cards.length) return;
   const xs=state.cards.map(c=>c.x), ys=state.cards.map(c=>c.y);
   const minx=Math.min(...xs)-40, maxx=Math.max(...xs)+290, miny=Math.min(...ys)-60, maxy=Math.max(...ys)+220;
-  const w=maxx-minx, h=maxy-miny;
-  const z=clamp(Math.min((innerWidth-40)/w,(innerHeight-150)/h),.2,1.2);
+  const z=clamp(Math.min((innerWidth-40)/(maxx-minx),(innerHeight-150)/(maxy-miny)),.2,1.2);
   view.z=z; view.px=20-minx*z; view.py=120-miny*z; applyTransform(); save();
 }
 
 /* ============================================================
-   WIRES (links)
+   WIRES
    ============================================================ */
-function drawWires(){
+function drawWires() {
   wires.innerHTML='';
+  if (!state) return;
   state.links.forEach(([a,b])=>{
-    const ca=byId(a),cb=byId(b); if(!ca||!cb)return;
-    const ea=cardEls.get(a),eb=cardEls.get(b); if(!ea||!eb)return;
-    const ax=ca.x+ea.offsetWidth/2, ay=ca.y+ea.offsetHeight/2;
-    const bx=cb.x+eb.offsetWidth/2, by=cb.y+eb.offsetHeight/2;
+    const ca=byId(a), cb=byId(b); if (!ca||!cb) return;
+    const ea=cardEls.get(a), eb=cardEls.get(b); if (!ea||!eb) return;
     const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
-    ln.setAttribute('x1',ax);ln.setAttribute('y1',ay);ln.setAttribute('x2',bx);ln.setAttribute('y2',by);
+    ln.setAttribute('x1',ca.x+ea.offsetWidth/2); ln.setAttribute('y1',ca.y+ea.offsetHeight/2);
+    ln.setAttribute('x2',cb.x+eb.offsetWidth/2); ln.setAttribute('y2',cb.y+eb.offsetHeight/2);
     wires.appendChild(ln);
   });
 }
@@ -592,11 +768,11 @@ document.getElementById('b-link').onclick=function(){
   linkSrc=null; document.querySelectorAll('.link-src').forEach(e=>e.classList.remove('link-src'));
   hint(linkMode?'Link mode — tap one card, then another, to connect or disconnect them':'');
 };
-function handleLink(id){
-  if(!linkSrc){ linkSrc=id; cardEls.get(id).classList.add('link-src'); return; }
-  if(linkSrc===id){ cardEls.get(id).classList.remove('link-src'); linkSrc=null; return; }
+function handleLink(id) {
+  if (!linkSrc) { linkSrc=id; cardEls.get(id).classList.add('link-src'); return; }
+  if (linkSrc===id) { cardEls.get(id).classList.remove('link-src'); linkSrc=null; return; }
   const i=state.links.findIndex(([a,b])=>(a===linkSrc&&b===id)||(a===id&&b===linkSrc));
-  if(i>=0) state.links.splice(i,1); else state.links.push([linkSrc,id]);
+  if (i>=0) state.links.splice(i,1); else state.links.push([linkSrc,id]);
   cardEls.get(linkSrc).classList.remove('link-src'); linkSrc=null; drawWires(); save();
 }
 
@@ -605,164 +781,335 @@ function handleLink(id){
    ============================================================ */
 const insp=document.getElementById('insp'); let curId=null;
 const I={h:'i-h',title:'i-title',body:'i-body',note:'i-note',mine:'i-mine',links:'i-links',lane:'i-lane',type:'i-type'};
-LANES.forEach(l=>{const o=document.createElement('option');o.value=l.k;o.textContent=l.n;document.getElementById('i-lane').appendChild(o)});
-TYPES.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;document.getElementById('i-type').appendChild(o)});
+LANES.forEach(l=>{ const o=document.createElement('option');o.value=l.k;o.textContent=l.n;document.getElementById('i-lane').appendChild(o); });
+TYPES.forEach(t=>{ const o=document.createElement('option');o.value=t;o.textContent=t;document.getElementById('i-type').appendChild(o); });
 
-function openInspector(id){
-  curId=id; const c=byId(id); if(!c)return;
+function openInspector(id) {
+  curId=id; const c=byId(id); if (!c) return;
   document.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel'));
   cardEls.get(id).classList.add('sel');
-  i('h').textContent=c.t||'Card'; i('title').value=c.t||''; i('body').value=c.b||'';
-  i('note').value=c.note||''; i('mine').value=c.mine||'';
-  i('links').value=(c.links||[]).map(([l,u])=>u?`${l} | ${u}`:l).join('\n');
-  i('lane').value=c.lane; i('type').value=c.type;
+  gi('h').textContent=c.t||'Card'; gi('title').value=c.t||''; gi('body').value=c.b||'';
+  gi('note').value=c.note||''; gi('mine').value=c.mine||'';
+  gi('links').value=(c.links||[]).map(([l,u])=>u?`${l} | ${u}`:l).join('\n');
+  gi('lane').value=c.lane; gi('type').value=c.type;
   document.getElementById('i-starbtn').classList.toggle('on',c.star);
   insp.classList.add('open');
 }
-function i(k){return document.getElementById(I[k])}
-document.getElementById('i-close').onclick=()=>{insp.classList.remove('open');document.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel'))};
+function gi(k){ return document.getElementById(I[k]); }
+document.getElementById('i-close').onclick=()=>{ insp.classList.remove('open'); document.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel')); };
 document.getElementById('i-save').onclick=()=>{
-  const c=byId(curId); if(!c)return;
-  c.t=i('title').value; c.b=i('body').value; c.note=i('note').value; c.mine=i('mine').value;
-  c.lane=i('lane').value; c.type=i('type').value;
-  c.links=i('links').value.split('\n').map(s=>s.trim()).filter(Boolean).map(s=>{
-    const p=s.split('|'); return p.length>1?[p[0].trim(),p.slice(1).join('|').trim()]:[p[0].trim(),null]; });
+  const c=byId(curId); if (!c) return;
+  c.t=gi('title').value; c.b=gi('body').value; c.note=gi('note').value; c.mine=gi('mine').value;
+  c.lane=gi('lane').value; c.type=gi('type').value;
+  c.links=gi('links').value.split('\n').map(s=>s.trim()).filter(Boolean).map(s=>{
+    const p=s.split('|'); return p.length>1?[p[0].trim(),p.slice(1).join('|').trim()]:[p[0].trim(),null];
+  });
   renderCard(c); applyFilter(); drawWires(); save(); buildRail();
   insp.classList.remove('open');
 };
-document.getElementById('i-starbtn').onclick=()=>{const c=byId(curId);c.star=!c.star;renderCard(c);document.getElementById('i-starbtn').classList.toggle('on',c.star);applyFilter();save()};
+document.getElementById('i-starbtn').onclick=()=>{
+  const c=byId(curId); c.star=!c.star; renderCard(c);
+  document.getElementById('i-starbtn').classList.toggle('on',c.star); applyFilter(); save();
+};
 document.getElementById('i-del').onclick=()=>{
-  const c=byId(curId); if(!c)return;
-  if(!confirm('Delete this card? (Export first if unsure.)'))return;
+  const c=byId(curId); if (!c) return;
+  if (!confirm('Delete this card? (Export first if unsure.)')) return;
   state.cards=state.cards.filter(x=>x.id!==curId);
   state.links=state.links.filter(([a,b])=>a!==curId&&b!==curId);
   cardEls.get(curId)?.remove(); cardEls.delete(curId);
   insp.classList.remove('open'); drawWires(); save();
 };
 stage.addEventListener('click',e=>{
-  const s=e.target.closest('[data-star]'); if(!s)return;
+  const s=e.target.closest('[data-star]'); if (!s) return;
   const id=e.target.closest('.card').dataset.id; const c=byId(id);
   c.star=!c.star; renderCard(c); applyFilter(); save();
 });
 function attachCard(){}
 
-/* add card */
 document.getElementById('b-add').onclick=()=>{
-  const id='u'+Date.now().toString(36);
+  const id=mkCardId();
   const cx=(innerWidth/2-view.px)/view.z, cy=(innerHeight/2-view.py)/view.z;
   const c={id,lane:'device',type:'note',t:'New card',b:'',note:'',mine:'',links:[],x:cx,y:cy,star:false,moved:true};
   state.cards.push(c); renderCard(c); openInspector(id); save();
 };
 
 /* ============================================================
-   FILTER RAIL  (lanes · types · layer · starred)
+   FILTER RAIL
    ============================================================ */
 const railEl=document.getElementById('rail');
-let laneOff=new Set(), typeOff=new Set(), starOnly=false, q='';
-function buildRail(){
+let laneOff=new Set(), starOnly=false, q='';
+function buildRail() {
   railEl.innerHTML='';
-  const mk=(txt,cls,on,fn,sw)=>{const c=document.createElement('span');c.className='chip '+cls+(on?'':' off');
-    c.innerHTML=(sw?`<span class="sw" style="background:${sw}"></span>`:'')+txt; c.onclick=fn; railEl.appendChild(c); return c;};
+  const mk=(txt,cls,on,fn,sw)=>{
+    const c=document.createElement('span'); c.className='chip '+cls+(on?'':' off');
+    c.innerHTML=(sw?`<span class="sw" style="background:${sw}"></span>`:'')+txt; c.onclick=fn;
+    railEl.appendChild(c); return c;
+  };
   mk('JANET LAYER','layer',true,()=>toggleLayer('janet'));
   mk('OUR LAYER','layer',true,()=>toggleLayer('our'));
-  const sep=document.createElement('span');sep.style.cssText='flex:0 0 1px;height:18px;background:rgba(242,237,227,.2);margin:0 2px';railEl.appendChild(sep);
-  LANES.forEach(l=>mk(l.n.replace('OUR ','').replace(' · ',' '),'',!laneOff.has(l.k),()=>{laneOff.has(l.k)?laneOff.delete(l.k):laneOff.add(l.k);buildRail();applyFilter()},cssvar(l.c)));
+  const sep=document.createElement('span');
+  sep.style.cssText='flex:0 0 1px;height:18px;background:rgba(242,237,227,.2);margin:0 2px';
+  railEl.appendChild(sep);
+  LANES.forEach(l=>mk(l.n.replace('OUR ','').replace(' · ',' '),'',!laneOff.has(l.k),()=>{
+    laneOff.has(l.k)?laneOff.delete(l.k):laneOff.add(l.k); buildRail(); applyFilter();
+  },cssvar(l.c)));
 }
 const OUR=new Set(['pillar','script','quest','device']);
-function toggleLayer(which){
-  const keys=LANES.filter(l=> which==='our'?OUR.has(l.k):!OUR.has(l.k)).map(l=>l.k);
+function toggleLayer(which) {
+  const keys=LANES.filter(l=>which==='our'?OUR.has(l.k):!OUR.has(l.k)).map(l=>l.k);
   const allOn=keys.every(k=>!laneOff.has(k));
-  keys.forEach(k=> allOn?laneOff.add(k):laneOff.delete(k));
+  keys.forEach(k=>allOn?laneOff.add(k):laneOff.delete(k));
   buildRail(); applyFilter();
 }
-function applyFilter(){
+function applyFilter() {
   const qq=q.trim().toLowerCase();
+  if (!state) return;
   state.cards.forEach(c=>{
-    const el=cardEls.get(c.id); if(!el)return;
+    const el=cardEls.get(c.id); if (!el) return;
     let show=true;
-    if(laneOff.has(c.lane)) show=false;
-    if(starOnly && !c.star) show=false;
-    if(qq){ const hay=(c.t+' '+c.b+' '+(c.note||'')+' '+(c.mine||'')+' '+c.type+' '+(c.links||[]).map(l=>l[0]).join(' ')).toLowerCase();
-      if(!hay.includes(qq)) show=false; }
+    if (laneOff.has(c.lane)) show=false;
+    if (starOnly && !c.star) show=false;
+    if (qq) {
+      const hay=(c.t+' '+c.b+' '+(c.note||'')+' '+(c.mine||'')+' '+c.type+' '+(c.links||[]).map(l=>l[0]).join(' ')).toLowerCase();
+      if (!hay.includes(qq)) show=false;
+    }
     el.classList.toggle('dim',!show);
   });
   drawWires();
 }
-document.getElementById('search').addEventListener('input',e=>{q=e.target.value;applyFilter()});
-document.getElementById('b-star').onclick=function(){starOnly=!starOnly;this.classList.toggle('on',starOnly);applyFilter()};
+document.getElementById('search').addEventListener('input',e=>{ q=e.target.value; applyFilter(); });
+document.getElementById('b-star').onclick=function(){ starOnly=!starOnly; this.classList.toggle('on',starOnly); applyFilter(); };
 
-/* tidy */
 document.getElementById('b-tidy').onclick=()=>{
-  if(!confirm('Re-arrange every card back into its lane column? (Your links & stars stay.)'))return;
+  if (!confirm('Re-arrange every card back into its lane column? (Your links & stars stay.)')) return;
   layout(state.cards); state.cards.forEach(renderCard); drawWires(); fitAll(); save();
 };
 
-/* emergent */
 document.getElementById('b-emergent').onclick=()=>{
-  const vis=state.cards.filter(c=>!cardEls.get(c.id).classList.contains('dim'));
-  if(!vis.length)return; const c=vis[Math.floor(Math.random()*vis.length)];
+  const vis=state.cards.filter(c=>!cardEls.get(c.id)?.classList.contains('dim'));
+  if (!vis.length) return;
+  const c=vis[Math.floor(Math.random()*vis.length)];
   const el=cardEls.get(c.id);
-  const cx=c.x+el.offsetWidth/2, cy=c.y+el.offsetHeight/2;
-  view.z=clamp(1.0,.2,2.4); view.px=innerWidth/2-cx*view.z; view.py=innerHeight/2-cy*view.z; applyTransform();
+  view.z=clamp(1.0,.2,2.4); view.px=innerWidth/2-(c.x+el.offsetWidth/2)*view.z;
+  view.py=innerHeight/2-(c.y+el.offsetHeight/2)*view.z; applyTransform();
   el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
   hint('✦ '+c.t); setTimeout(()=>hint(''),2600); save();
 };
 
 /* ============================================================
-   PULSE (blind-spots) + SAVE popovers
+   PULSE + I/O POPOVERS
    ============================================================ */
-const statpop=document.getElementById('statpop'), iopop=document.getElementById('iopop');
-document.getElementById('b-stats').onclick=()=>{iopop.classList.remove('open');statpop.classList.toggle('open');renderStats()};
-document.getElementById('b-io').onclick=()=>{statpop.classList.remove('open');iopop.classList.toggle('open')};
-function renderStats(){
+const statpop=document.getElementById('statpop'), iopop=document.getElementById('iopop'), boardpop=document.getElementById('boardpop');
+function closePops(){ [statpop,iopop,boardpop].forEach(p=>p.classList.remove('open')); }
+
+document.getElementById('b-stats').onclick=()=>{ closePops(); statpop.classList.toggle('open'); renderStats(); };
+document.getElementById('b-io').onclick=()=>{ closePops(); iopop.classList.toggle('open'); };
+document.getElementById('b-boards').onclick=()=>{ closePops(); boardpop.classList.toggle('open'); renderBoardList(); };
+document.getElementById('boardpop-close').onclick=()=>boardpop.classList.remove('open');
+
+document.addEventListener('click',e=>{
+  if (!e.target.closest('.pop')&&!e.target.closest('#b-stats')&&!e.target.closest('#b-io')&&!e.target.closest('#b-boards')&&!e.target.closest('#send-overlay'))
+    closePops();
+});
+
+function renderStats() {
   const rows=document.getElementById('stat-rows'); rows.innerHTML='';
-  let quietest=null,quietScore=2;
+  let quietest=null, quietScore=2;
   LANES.forEach(l=>{
-    const cards=state.cards.filter(c=>c.lane===l.k); if(!cards.length)return;
+    const cards=state.cards.filter(c=>c.lane===l.k); if (!cards.length) return;
     const touched=cards.filter(c=>c.moved||c.star||c.mine).length;
-    const ratio=touched/cards.length; if(ratio<quietScore){quietScore=ratio;quietest=l}
+    const ratio=touched/cards.length;
+    if (ratio<quietScore) { quietScore=ratio; quietest=l; }
     const row=document.createElement('div'); row.className='row';
     row.innerHTML=`<span>${l.n.replace('OUR ','')}</span><span style="font-family:'IBM Plex Mono',monospace;color:var(--ink-40)">${touched}/${cards.length}</span>`;
-    const bw=document.createElement('div'); bw.style.cssText=`width:100%;height:6px;border-radius:3px;background:rgba(20,27,46,.08);margin:0 0 6px`;
+    const bw=document.createElement('div'); bw.style.cssText='width:100%;height:6px;border-radius:3px;background:rgba(20,27,46,.08);margin:0 0 6px';
     const bf=document.createElement('div'); bf.style.cssText=`height:6px;border-radius:3px;width:${Math.round(ratio*100)}%;background:${cssvar(l.c)}`;
     bw.appendChild(bf); rows.appendChild(row); rows.appendChild(bw);
   });
   document.getElementById('stat-lead').textContent = quietest
-    ? `Your quietest lane right now is "${quietest.n.replace('OUR ','')}". Not a verdict — a nudge toward where you haven\'t looked yet.`
+    ? `Your quietest lane is "${quietest.n.replace('OUR ','')}". Not a verdict — a nudge.`
     : 'Move, star, or annotate cards and this fills in.';
 }
 
-/* export / import / reset */
-document.getElementById('io-export').onclick=()=>{
-  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='scenius-wall-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+/* export / import */
+document.getElementById('io-export-one').onclick=()=>{
+  dl([activeBoard], 'scenius-board-'+slug(activeBoard.name));
 };
-document.getElementById('io-import').onchange=e=>{
-  const f=e.target.files[0]; if(!f)return; const r=new FileReader();
-  r.onload=()=>{try{const d=JSON.parse(r.result); if(!d.cards)throw 0;
-    state=d; view=state.view||{px:60,py:150,z:.72};
-    cardEls.forEach(el=>el.remove()); cardEls.clear(); renderAll(); buildRail(); fitAll(); save();
-    iopop.classList.remove('open');
-  }catch(err){alert('That file could not be read as a board export.')}};
+document.getElementById('io-export-all').onclick=async ()=>{
+  const boards = await fetchAllBoards();
+  dl({_all:true, boards}, 'scenius-all-boards');
+};
+function dl(data, name) {
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=name+'-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+}
+function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+
+document.getElementById('io-import').onchange=async e=>{
+  const f=e.target.files[0]; if (!f) return;
+  const r=new FileReader();
+  r.onload=async()=>{
+    try {
+      const d=JSON.parse(r.result);
+      let incoming=[];
+      if (d._all && Array.isArray(d.boards)) incoming=d.boards;
+      else if (d.cards) incoming=[d]; // single board
+      else throw 0;
+      if (!incoming.length) throw 0;
+      const existing=await fetchAllBoards();
+      const existIds=new Set(existing.map(b=>b.id));
+      let imported=0, skipped=0;
+      for (const b of incoming) {
+        if (existIds.has(b.id)) {
+          if (!confirm(`A board named "${b.name}" already exists. Overwrite?`)) { skipped++; continue; }
+        }
+        if (!b.id) b.id=mkId();
+        b.updatedAt=b.updatedAt||Date.now();
+        await persistBoard(b);
+        if (!allBoards.find(s=>s.id===b.id)) allBoards=[...allBoards,bSummary(b)]; else allBoards=allBoards.map(s=>s.id===b.id?bSummary(b):s);
+        imported++;
+      }
+      alert(`Imported ${imported} board(s)${skipped?`, skipped ${skipped}`:''}.`);
+      iopop.classList.remove('open');
+      if (imported>0) { renderBoardList(); }
+    } catch(err) { alert('Could not read that file as a board export.'); }
+  };
   r.readAsText(f);
 };
 document.getElementById('io-reset').onclick=()=>{
-  if(!confirm('Reset to the original atomized set? This clears your moves, links, stars & remix notes in THIS browser. Export first if you want to keep them.'))return;
-  state=fresh(); view=state.view;
-  cardEls.forEach(el=>el.remove()); cardEls.clear(); renderAll(); buildRail(); fitAll(); save();
+  if (!confirm('Reset THIS board to the original atomized seed? Clears your moves, links, stars & remix notes. Export first if you want to keep them.')) return;
+  const b = freshSeedBoard(activeBoard.name);
+  b.id = activeBoard.id; // keep same id so allBoards stays valid
+  Object.assign(activeBoard, b);
+  state = activeBoard;
+  view = activeBoard.view;
+  cardEls.forEach(el=>el.remove()); cardEls.clear();
+  renderAll(); buildRail(); fitAll(); save();
   iopop.classList.remove('open');
 };
 
-/* hint helper */
-const hintEl=document.getElementById('hint'); let hintBase=hintEl.textContent;
+/* ============================================================
+   BOARD SWITCHER UI
+   ============================================================ */
+function renderBoardList() {
+  const listEl=document.getElementById('board-list'); listEl.innerHTML='';
+  allBoards.forEach(s=>{
+    const row=document.createElement('div'); row.className='board-item'+(s.id===activeBoard?.id?' active':'');
+    const dot=document.createElement('span'); dot.className='b-dot';
+    const nm=document.createElement('span'); nm.className='b-name';
+    nm.textContent=s.name; nm.title=s.name;
+    nm.onclick=()=>{ switchToBoard(s.id); boardpop.classList.remove('open'); };
+    const ren=document.createElement('span'); ren.className='bi'; ren.title='Rename'; ren.textContent='✎';
+    ren.onclick=e=>{ e.stopPropagation();
+      const n=prompt('Rename board:',s.name); if(n) renameBoardById(s.id,n); };
+    const del=document.createElement('span'); del.className='bi'; del.title='Delete'; del.textContent='✕';
+    del.onclick=e=>{ e.stopPropagation(); deleteBoardById(s.id); };
+    row.append(dot,nm,ren,del); listEl.appendChild(row);
+  });
+}
+
+document.getElementById('ba-new').onclick=async ()=>{
+  const name=prompt('New board name:','New board'); if (!name) return;
+  await createBoard(name.trim());
+  boardpop.classList.remove('open');
+};
+document.getElementById('ba-dup').onclick=()=>duplicateCurrentBoard();
+
+/* ============================================================
+   SEND STARRED
+   ============================================================ */
+const sendOverlay=document.getElementById('send-overlay');
+document.getElementById('b-send').onclick=()=>{
+  if (!state) return;
+  const starred=state.cards.filter(c=>c.star);
+  if (!starred.length) { hint('No starred cards — star some cards first.'); setTimeout(()=>hint(''),2400); return; }
+  document.getElementById('send-title').textContent=`Send ${starred.length} starred card${starred.length>1?'s':''}`;
+  const destSel=document.getElementById('send-dest'); destSel.innerHTML='';
+  const newOpt=document.createElement('option'); newOpt.value='__new__'; newOpt.textContent='+ New board…'; destSel.appendChild(newOpt);
+  allBoards.filter(s=>s.id!==activeBoard.id).forEach(s=>{
+    const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; destSel.appendChild(o);
+  });
+  closePops();
+  sendOverlay.classList.add('open');
+};
+document.getElementById('send-cancel').onclick=()=>sendOverlay.classList.remove('open');
+document.getElementById('send-confirm').onclick=async ()=>{
+  const destId=document.getElementById('send-dest').value;
+  const mode=document.querySelector('input[name="send-mode"]:checked').value;
+  const starred=state.cards.filter(c=>c.star);
+  if (!starred.length) { sendOverlay.classList.remove('open'); return; }
+
+  let destBoard;
+  if (destId==='__new__') {
+    const name=prompt('Name the new board:','New board'); if (!name) return;
+    const b=freshBoard(name.trim());
+    await persistBoard(b); allBoards=[...allBoards,bSummary(b)]; destBoard=b;
+  } else {
+    destBoard=await loadBoardById(destId);
+    if (!destBoard) { alert('Could not load destination board.'); return; }
+  }
+
+  if (mode==='copy') {
+    const newCards=starred.map(c=>({...c, id:mkCardId(), moved:false}));
+    destBoard.cards.push(...newCards);
+  } else {
+    destBoard.cards.push(...starred.map(c=>({...c})));
+    state.cards=state.cards.filter(c=>!c.star);
+    starred.forEach(c=>{ cardEls.get(c.id)?.remove(); cardEls.delete(c.id); });
+    drawWires(); save();
+  }
+  destBoard.updatedAt=Date.now();
+  await persistBoard(destBoard);
+  allBoards=allBoards.map(s=>s.id===destBoard.id?bSummary(destBoard):s);
+  sendOverlay.classList.remove('open');
+  hint(`${mode==='copy'?'Copied':'Moved'} ${starred.length} card${starred.length>1?'s':''} to "${destBoard.name}"`);
+  setTimeout(()=>hint(''),3000);
+};
+
+/* hint */
+const hintEl=document.getElementById('hint'); const hintBase=hintEl.textContent;
 function hint(t){ hintEl.textContent=t||hintBase; }
 
 /* ============================================================
-   BOOT
+   BOOT — IndexedDB init → migration → load active board
    ============================================================ */
-renderAll(); buildRail();
-applyTransform();
+async function boot() {
+  try { idb=await idbOpen(); } catch(e) { idb=null; }
+
+  // migrate old single-board localStorage save
+  const OLD_KEY='scenius_wall_v1';
+  const oldData=lsGet(OLD_KEY);
+  let boards=await fetchAllBoards();
+  if (boards.length===0 && oldData?.cards) {
+    const migrated=freshBoard('Main wall', oldData.cards, oldData.links||[], oldData.view||{px:60,py:150,z:.72});
+    await persistBoard(migrated);
+    await setActiveId(migrated.id);
+    boards=[migrated];
+    // don't delete old key — keep as backup
+  }
+
+  if (boards.length===0) {
+    const seed=freshSeedBoard('Main wall');
+    await persistBoard(seed);
+    await setActiveId(seed.id);
+    boards=[seed];
+  }
+
+  allBoards=boards.map(bSummary);
+  const activeId=(await getActiveId())||allBoards[0].id;
+  await switchToBoard(activeId);
+  fitAll();
+}
+
+boot().catch(err=>{
+  console.error('Boot error:', err);
+  // emergency fallback
+  const seed=freshSeedBoard('Main wall');
+  activeBoard=seed; state=seed; view=seed.view;
+  allBoards=[bSummary(seed)];
+  renderAll(); buildRail(); applyTransform(); fitAll(); updateBoardBtn();
+});
 </script>
 </body>
 </html>
