@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Scenius Wall — MOVIEment Remix Canvas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#141B2E; --paper:#F2EDE3; --gold:#D9A441;
+    --ink-60:rgba(20,27,46,.6); --ink-40:rgba(20,27,46,.4); --ink-12:rgba(20,27,46,.12);
+    --card-w:248px;
+    /* lane colors */
+    --L-meta:#5B6472; --L-open:#C2493D; --L-act1:#C68A2E; --L-act2:#3FB8AF;
+    --L-act3:#5A7D5A; --L-model:#4E9A5A; --L-ascent:#D9A441; --L-appendix:#8A8576;
+    --L-pillar:#7C6BB0; --L-script:#4F6BCE; --L-quest:#C2557A; --L-device:#1F8FA6;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);
+    font-family:Inter,system-ui,sans-serif;color:var(--paper);overscroll-behavior:none}
+
+  /* ---------- top bar ---------- */
+  #bar{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;gap:8px;align-items:center;
+    padding:9px 12px;background:rgba(20,27,46,.86);backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(242,237,227,.12);flex-wrap:wrap}
+  .brand{font-family:Fraunces,serif;font-weight:800;font-size:16px;letter-spacing:-.01em;white-space:nowrap;margin-right:2px}
+  .brand small{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:9px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--gold);display:block;margin-top:-2px}
+  .brand a{color:inherit;text-decoration:none}
+  .brand a:hover{color:var(--gold)}
+  #search{flex:1 1 150px;min-width:120px;background:rgba(242,237,227,.07);border:1px solid rgba(242,237,227,.16);
+    color:var(--paper);border-radius:9px;padding:8px 11px;font-size:14px;font-family:inherit}
+  #search::placeholder{color:rgba(242,237,227,.42)}
+  .btn{background:rgba(242,237,227,.08);border:1px solid rgba(242,237,227,.18);color:var(--paper);
+    border-radius:9px;padding:8px 11px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;
+    font-family:inherit;display:inline-flex;align-items:center;gap:5px;user-select:none;touch-action:manipulation}
+  .btn:active{transform:translateY(1px)}
+  .btn.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .btn.ghost{background:transparent}
+
+  /* ---------- filter rail ---------- */
+  #rail{position:fixed;top:54px;left:0;right:0;z-index:35;display:flex;gap:6px;align-items:center;
+    padding:7px 12px;overflow-x:auto;background:rgba(20,27,46,.7);backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(242,237,227,.08);scrollbar-width:none}
+  #rail::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.04em;
+    padding:5px 9px;border-radius:20px;border:1px solid rgba(242,237,227,.2);cursor:pointer;
+    color:rgba(242,237,227,.8);background:transparent;user-select:none;touch-action:manipulation;white-space:nowrap}
+  .chip .sw{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+  .chip.off{opacity:.34}
+  .chip.layer{font-weight:600;border-width:1.5px}
+
+  /* ---------- canvas ---------- */
+  #stage{position:absolute;inset:0;top:0;touch-action:none;cursor:grab;background:
+    radial-gradient(circle at 30% 20%, rgba(60,72,110,.5), transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(45,55,90,.4), transparent 55%), var(--ink)}
+  #stage.grabbing{cursor:grabbing}
+  #world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+  #wires{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+  #wires line{stroke:var(--gold);stroke-width:1.6;stroke-opacity:.55;stroke-dasharray:2 5}
+
+  .lane-label{position:absolute;font-family:Fraunces,serif;font-weight:800;font-size:15px;
+    white-space:nowrap;pointer-events:none;letter-spacing:-.01em}
+  .lane-label small{display:block;font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:9px;
+    letter-spacing:.18em;text-transform:uppercase;opacity:.7;margin-top:1px}
+
+  .card{position:absolute;width:var(--card-w);background:var(--paper);color:var(--ink);
+    border-radius:11px;padding:12px 13px 12px 16px;box-shadow:0 6px 20px rgba(0,0,0,.34);
+    cursor:grab;touch-action:none;border:1px solid rgba(20,27,46,.1);overflow:hidden}
+  .card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c,#888)}
+  .card.drag{cursor:grabbing;box-shadow:0 16px 40px rgba(0,0,0,.5);z-index:9}
+  .card.dim{opacity:.16;filter:saturate(.4)}
+  .card.sel{outline:2.5px solid var(--gold);outline-offset:2px;z-index:8}
+  .card.link-src{outline:2.5px dashed var(--gold);outline-offset:2px}
+  .card.pulse{animation:pulse 1.1s ease-out}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,164,65,.9),0 6px 20px rgba(0,0,0,.34)}
+    100%{box-shadow:0 0 0 26px rgba(217,164,65,0),0 6px 20px rgba(0,0,0,.34)}}
+  .c-type{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:#fff;background:var(--c,#888);display:inline-block;padding:2px 6px;border-radius:4px;margin-bottom:6px}
+  .c-star{position:absolute;top:9px;right:10px;font-size:14px;color:var(--ink-12);cursor:pointer}
+  .c-star.on{color:var(--gold)}
+  .c-title{font-family:Fraunces,serif;font-weight:600;font-size:14.5px;line-height:1.18;margin:0 0 4px}
+  .c-body{font-size:11.5px;line-height:1.34;color:var(--ink-60)}
+  .c-note{margin-top:7px;font-size:10.5px;line-height:1.3;color:#6b5a2c;background:rgba(217,164,65,.16);
+    border-left:2px solid var(--gold);padding:5px 7px;border-radius:0 5px 5px 0}
+  .c-note b{font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+    display:block;color:#9a7a26;margin-bottom:1px}
+  .c-links{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
+  .c-links a,.c-links span{font-family:"IBM Plex Mono",monospace;font-size:9px;text-decoration:none;
+    background:rgba(20,27,46,.07);border:1px solid rgba(20,27,46,.12);border-radius:5px;
+    padding:2px 6px;color:var(--ink-60)}
+  .c-links a{color:#3a5a9a}
+  .c-mine{margin-top:6px;font-size:10.5px;line-height:1.3;color:#2a5a55;background:rgba(31,143,166,.12);
+    border-left:2px solid var(--L-device);padding:5px 7px;border-radius:0 5px 5px 0}
+  .c-mine b{font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+    display:block;color:#1f8fa6;margin-bottom:1px}
+
+  /* ---------- inspector ---------- */
+  #insp{position:fixed;top:0;right:0;bottom:0;width:min(360px,90vw);z-index:50;background:var(--paper);
+    color:var(--ink);transform:translateX(102%);transition:transform .22s ease;box-shadow:-12px 0 40px rgba(0,0,0,.4);
+    display:flex;flex-direction:column;overflow:hidden}
+  #insp.open{transform:translateX(0)}
+  .insp-head{display:flex;align-items:center;gap:8px;padding:14px 14px 10px;border-bottom:1px solid var(--ink-12)}
+  .insp-head h3{font-family:Fraunces,serif;margin:0;font-size:16px;flex:1}
+  .insp-body{padding:14px;overflow-y:auto;flex:1}
+  .fld{margin-bottom:13px}
+  .fld label{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-40);display:block;margin-bottom:4px}
+  .fld input,.fld textarea,.fld select{width:100%;font-family:inherit;font-size:13px;color:var(--ink);
+    background:#fff;border:1px solid var(--ink-12);border-radius:8px;padding:8px 9px}
+  .fld textarea{min-height:62px;resize:vertical;line-height:1.4}
+  .insp-actions{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--ink-12);flex-wrap:wrap}
+  .insp-actions .btn{color:var(--ink);background:rgba(20,27,46,.06);border-color:var(--ink-12)}
+  .insp-actions .btn.danger{color:#fff;background:var(--L-open);border-color:var(--L-open)}
+  .insp-actions .btn.go{color:var(--ink);background:var(--gold);border-color:var(--gold)}
+  .x{cursor:pointer;font-size:20px;color:var(--ink-40);line-height:1;padding:2px 6px}
+
+  /* ---------- stats / help popover ---------- */
+  .pop{position:fixed;top:96px;right:12px;z-index:45;width:min(300px,88vw);background:var(--paper);color:var(--ink);
+    border-radius:12px;box-shadow:0 14px 44px rgba(0,0,0,.42);padding:14px;display:none}
+  .pop.open{display:block}
+  .pop h4{font-family:Fraunces,serif;margin:0 0 4px;font-size:15px}
+  .pop p{font-size:12px;line-height:1.45;color:var(--ink-60);margin:0 0 9px}
+  .pop .row{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;padding:3px 0;border-bottom:1px solid var(--ink-12)}
+  .pop .bar{height:6px;border-radius:3px;background:var(--c);margin-top:2px}
+  .kbd{font-family:"IBM Plex Mono",monospace;font-size:10px;background:rgba(20,27,46,.08);padding:1px 5px;border-radius:4px}
+
+  /* ---------- hint ---------- */
+  #hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:30;
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.04em;color:rgba(242,237,227,.6);
+    background:rgba(20,27,46,.7);border:1px solid rgba(242,237,227,.12);border-radius:20px;padding:7px 14px;
+    pointer-events:none;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+  #zoomwrap{position:fixed;bottom:14px;right:12px;z-index:30;display:flex;gap:6px}
+  #zoomwrap .btn{width:38px;height:38px;justify-content:center;font-size:18px;padding:0;border-radius:10px;
+    background:rgba(20,27,46,.7)}
+  @media(max-width:560px){ .brand small{display:none} #hint{display:none} }
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="brand"><a href="/">Scenius Wall</a><small>MOVIEment remix canvas</small></div>
+  <input id="search" placeholder="Search every card…" autocomplete="off">
+  <button class="btn" id="b-link" title="Link two cards">⤳ Link</button>
+  <button class="btn" id="b-star" title="Show starred only">★ Starred</button>
+  <button class="btn ghost" id="b-emergent" title="Surface a random card">✦ Emergent</button>
+  <button class="btn ghost" id="b-add" title="New card">＋ Card</button>
+  <button class="btn ghost" id="b-tidy" title="Re-arrange into lanes">⊞ Tidy</button>
+  <button class="btn ghost" id="b-stats" title="Blind-spots & balance">◴ Pulse</button>
+  <button class="btn ghost" id="b-io" title="Save / load board">⇄ Save</button>
+</div>
+
+<div id="rail"></div>
+
+<div id="stage">
+  <div id="world">
+    <svg id="wires"></svg>
+  </div>
+</div>
+
+<div id="zoomwrap">
+  <button class="btn" id="z-out">−</button>
+  <button class="btn" id="z-fit" title="Fit all">⤢</button>
+  <button class="btn" id="z-in">+</button>
+</div>
+
+<div id="hint">drag empty space to pan · pinch / wheel to zoom · drag a card to move · tap a card to open</div>
+
+<!-- inspector -->
+<aside id="insp">
+  <div class="insp-head">
+    <h3 id="i-h">Card</h3>
+    <span class="x" id="i-close">✕</span>
+  </div>
+  <div class="insp-body">
+    <div class="fld"><label>Title</label><input id="i-title"></div>
+    <div class="fld"><label>What it is — the artifact or idea</label><textarea id="i-body"></textarea></div>
+    <div class="fld"><label>Janet's note / why / context</label><textarea id="i-note"></textarea></div>
+    <div class="fld"><label>My remix notes</label><textarea id="i-mine" placeholder="your thinking, connections, where this goes…"></textarea></div>
+    <div class="fld"><label>Links — one per line: Label | https://…</label><textarea id="i-links"></textarea></div>
+    <div class="fld" style="display:flex;gap:8px">
+      <div style="flex:1"><label>Lane</label><select id="i-lane"></select></div>
+      <div style="flex:1"><label>Type</label><select id="i-type"></select></div>
+    </div>
+  </div>
+  <div class="insp-actions">
+    <button class="btn go" id="i-save">Save</button>
+    <button class="btn" id="i-starbtn">★ Star</button>
+    <button class="btn danger" id="i-del">Delete</button>
+  </div>
+</aside>
+
+<!-- stats popover -->
+<div class="pop" id="statpop">
+  <h4>Pulse — where your attention is</h4>
+  <p id="stat-lead">Cards you've moved, starred, or annotated count as "touched." Quiet lanes are your blind spots — not a verdict, a nudge.</p>
+  <div id="stat-rows"></div>
+</div>
+
+<!-- save/load popover -->
+<div class="pop" id="iopop">
+  <h4>Save & load your board</h4>
+  <p>This board autosaves in this browser. To carry it between machines or back it up, export a file — and re-import it anywhere.</p>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <button class="btn" id="io-export" style="color:var(--ink);background:var(--gold);border-color:var(--gold);justify-content:center">⬇ Export board (.json)</button>
+    <label class="btn" style="color:var(--ink);background:rgba(20,27,46,.06);border-color:var(--ink-12);justify-content:center;cursor:pointer">⬆ Import board
+      <input id="io-import" type="file" accept="application/json,.json" hidden></label>
+    <button class="btn" id="io-reset" style="color:#fff;background:var(--L-open);border-color:var(--L-open);justify-content:center">↺ Reset to original atoms</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   LANES & TYPES
+   ============================================================ */
+const LANES = [
+  {k:'meta',    n:'Front Matter & Intent',     s:'the why under the film',        c:'--L-meta'},
+  {k:'open',    n:'Opening · The Descent',      s:'minute one',                    c:'--L-open'},
+  {k:'act1',    n:'Act One · Groundwork',       s:'1970s – 90s',                   c:'--L-act1'},
+  {k:'act2',    n:'Act Two · Rise of Peer Power',s:'90s – mid 2000s',              c:'--L-act2'},
+  {k:'act3',    n:'Act Three · Awakening',       s:'2019 – present',               c:'--L-act3'},
+  {k:'model',   n:'Conclusion · Model Vision',   s:'the system, working',          c:'--L-model'},
+  {k:'ascent',  n:'Final · Shared Ascent',       s:'the lift-off',                 c:'--L-ascent'},
+  {k:'appendix',n:'Appendix · Open Threads',     s:"Janet's loose ends",           c:'--L-appendix'},
+  {k:'pillar',  n:'OUR PILLARS',                 s:'the load-bearing beams',       c:'--L-pillar'},
+  {k:'script',  n:'OUR SCRIPT · Ep.1 spine',     s:'the 20-min cut',               c:'--L-script'},
+  {k:'quest',   n:'OUR QUEST · the seasons',     s:'the nested dream',             c:'--L-quest'},
+  {k:'device',  n:'OUR DEVICES & CONCEPTS',      s:'the craft moves',              c:'--L-device'},
+];
+const LANE = Object.fromEntries(LANES.map(l=>[l.k,l]));
+const TYPES = ['person','artifact','beat','note','question','decision','thought','org','quote','concept','pillar','scriptbeat','quest','device'];
+
+/* ============================================================
+   SEED CARDS — atomized from Janet's treatment + today's work
+   fields: id, lane, type, t(itle), b(ody), note?, links?[ [label,url|null] ]
+   ============================================================ */
+const SEED = [
+/* ---------- META / FRONT MATTER ---------- */
+{id:'j01',lane:'meta',type:'decision',t:'Title change',b:'"Mistaken for Madness" → "A Civil Rights MOVIEment for the Soul of New Jersey."',note:'Issued to Bret 6/26. v. June 27/26.'},
+{id:'j02',lane:'meta',type:'note',t:'Civil-rights reframe additions',b:'Add Rev. Gil Caldwell & Dr. Martin Luther King Jr., Dale, Mark Duffy in the 1970s.',note:'The new connective tissue Janet wants woven in.'},
+{id:'j03',lane:'meta',type:'note',t:'Chelsea — CSPNJ archive',b:'Chelsea helps source original CSPNJ videos & photos.'},
+{id:'j04',lane:'meta',type:'note',t:'Move into 2026 — the serial arc',b:'Add Dale & FAC; ongoing filming of the moviement in episodes.',note:'Janet pointing at the docuseries / forward vector.'},
+{id:'j05',lane:'meta',type:'question',t:'Who narrates?',b:'Original: Mija. Open question.'},
+{id:'j06',lane:'meta',type:'decision',t:'Bookends',b:'Short intro: Josh opens, Janet closes. Margins repeatedly say replace Janet with Josh or Bret.',note:'Source contradicts itself — unresolved.'},
+{id:'j07',lane:'meta',type:'question',t:'Geographic scope',b:'Freehold/Monmouth, or NJ, or Northeast to start?',note:'Changes how much national/global chorus survives the runtime.'},
+{id:'j08',lane:'meta',type:'thought',t:"Janet's 2006 message, coming true",b:'"When we change how we see madness, we change how we respond to the sacred in human experience."',note:'"This is my 2006 message coming true in 2025. One safe space exists with peer respites. We are co-creating a safe space in a state hospital — Ancora. Unprecedented. This is my mission."'},
+{id:'j09',lane:'meta',type:'thought',t:'The intent (the ask under the film)',b:'Influence the public to use peer wellness centers & respites. Fund a peer respite in every NJ county. Screen for spiritual emergency to prevent wrongful hospitalization & forced meds. Include chaplains & clergy in MH support.',note:'Janet: "We co-create shared message through May & June."'},
+{id:'j10',lane:'meta',type:'concept',t:'Log line',b:'When divine whispers are mistaken for madness, a spiritual awakening can lead to a locked ward — and a movement of shared support can lead the way out.'},
+{id:'j11',lane:'meta',type:'concept',t:'Summary / register',b:'An all-ages public-service documentary: illuminate the problem, present a solution decades in the making, a community-driven path to transformation. Local (NJ) / national (SAMHSA) / world (WPA) impact.'},
+{id:'j12',lane:'meta',type:'note',t:'Runtime budget',b:'Time it to 12 min; decide what goes to Part 2. We film more than we use — surplus feeds NEWS & virtual conversations. Part 2 expands across the US.'},
+{id:'j13',lane:'meta',type:'note',t:'Content relocated',b:'Janet/Freehold & NJ content moved from the Docuseries Demos into this NJ-focused cut.'},
+{id:'j14',lane:'meta',type:'question',t:'Restorative justice + moral injury',b:'How to add restorative justice & prevention of moral injury to the Ancora demo? Set up follow-up service with MDs & lived experience.'},
+{id:'j15',lane:'meta',type:'note',t:'Add Anne & veterans',b:'Add Anne & veterans with Postcards From Home.'},
+
+/* ---------- OPENING ---------- */
+{id:'j20',lane:'open',type:'beat',t:'Cold open — a spiritual experience',b:'Dark, out of focus. Joshua Roberts describes his 2006 state; ethereal imagery. Jarring turn → police, forced hospitalization, unwanted meds. Rapid ER/ward flashes.',note:'Margin: Josh replaces Janet at open/close. Also "replace with Bret."'},
+{id:'j21',lane:'open',type:'beat',t:'Shift to the 1980s',b:'A variety of people who immediately show what "spiritual experience" means. They recur throughout the documentary.'},
+{id:'j22',lane:'open',type:'person',t:'Jim Gottstein (intro)',b:'Harvard law student; psychotic episode with spiritual elements from sleep deprivation. Staff doubt his future as a lawyer.',note:'Elmcrest Hospital · Yale New Haven Hospital.'},
+{id:'j23',lane:'open',type:'person',t:'Claire Bien (intro)',b:'Of Chinese descent; psychotic episode sparked by family tragedy → institutionalized at Yale New Haven.'},
+{id:'j24',lane:'open',type:'person',t:'Mija Bradford (intro)',b:'At 17 her parents hospitalize her, pathologizing experiences tied to her Haitian background. Forced meds; she silences her voice.'},
+{id:'j25',lane:'open',type:'note',t:'Add Janet here',b:'Margin note — fold Janet into the opening cohort.'},
+{id:'j26',lane:'open',type:'person',t:'David Lukoff (contrast)',b:'Has a spiritual experience but avoids hospitalization entirely — friends & family provide the support that heals.'},
+{id:'j27',lane:'open',type:'person',t:'Rob Wipond as a teen (1970s)',b:'"What if we add Rob as a teen — could have been hospitalized." Artist-performer in college years. "I had a lot of unusual experiences… not as aggressive in that era."',links:[['Rob × Janet interview pt.2 (YouTube)',null]]},
+
+/* ---------- ACT ONE ---------- */
+{id:'j30',lane:'act1',type:'beat',t:'Nascent peer support',b:'Early 1980s — the peer support movement begins, the seed of the solution.'},
+{id:'j31',lane:'act1',type:'person',t:'Mark Duffy — the origin',b:'Connects with a veteran with lived experience; informal group meets as a Career Club at First Methodist Church, Freehold. Shore Area Council of Churches.',note:'★ Mark Duffy 1970s photos — the faith-community origin is the civil-rights anchor.'},
+{id:'j32',lane:'act1',type:'person',t:"Calvin Chatlos — 1981 awakening",b:'Psychiatric residency at Bellevue NYC; first paranoid psychosis with religious underpinnings. NOT hospitalized — it redirected his whole approach to psychiatry.'},
+{id:'j33',lane:'act1',type:'quote',t:'Calvin — humanistic medicine',b:'"Humanistic medicine was a big deal… very common for us to listen deeply, looking underneath the diagnosis." (1974–78)'},
+{id:'j34',lane:'act1',type:'beat',t:'1980 — DSM-III, the turn',b:'Chatlos: the DSM-III publication dramatically shifts psychiatry toward diagnosis + medication.'},
+{id:'j35',lane:'act1',type:'person',t:'Robert Whitaker',b:'Calls the DSM-III "the psychiatrists\' Bible." Archival Newsweek/NYT covers; Prozac; the pharma boom of the 80s–90s.'},
+{id:'j36',lane:'act1',type:'person',t:'Dr. Stan Grof',b:'Listed — transpersonal / spiritual-emergency lineage figure.'},
+{id:'j37',lane:'act1',type:'beat',t:'CSPNJ is born — 1985',b:'Duffy + Peggy Swarbrick montage. Peers: veterans, police, nurses. Mark Duffy secures initial funding → official birth of CSPNJ, 1985. Narrated by Vesper Moore.'},
+{id:'j38',lane:'act1',type:'thought',t:'Janet: thank you, pioneers',b:'"Impact on Janet learning what was happening while I was in corporate. Thank you, pioneers."'},
+{id:'j39',lane:'act1',type:'note',t:'Add Lynn Seaward as a teen',b:'Lynn as a teen with her dad, a Vietnam vet — impact / observations of veteran peer support.'},
+{id:'j40',lane:'act1',type:'person',t:'Janet Werner — NJ 1979',b:'Trenton Psychiatric Hospital. Her own door, set among the national cohort.',note:'Hospital-name sensitivity flagged elsewhere (Calling God to the Witness Stand).'},
+{id:'j41',lane:'act1',type:'beat',t:'Mija — Chicago → Haiti',b:'1990s Chicago college years back to childhood in Haiti, where her spiritual gifts were nurtured by her grandmother. Acceptance vs. the later system.'},
+{id:'j42',lane:'act1',type:'person',t:'1990s national vignettes',b:'Short vignettes showing the issue is everywhere: Denise Maratos (CA), Jen Macdonald (Canada), Jen Gaita Siciliano (NY), Oryx Cohen (MA).'},
+{id:'j43',lane:'act1',type:'beat',t:'1994 — DSM-IV opens a door',b:'Dr. David Lukoff (now PhD), Dr. Francis Lu & others win a new category: "Religious or Spiritual Problems." A first acknowledgment.'},
+
+/* ---------- ACT TWO ---------- */
+{id:'j50',lane:'act2',type:'beat',t:'Peer power blossoms',b:'Late 90s–early 2000s: 8 Dimensions of Wellness, shared experience, safety & care reshape the landscape.'},
+{id:'j51',lane:'act2',type:'note',t:'Sequence to build',b:'"Need sequence from original to current."'},
+{id:'j52',lane:'act2',type:'person',t:'Peggy Swarbrick — 8 Dimensions',b:'Articulates the spiritual dimension within the "8 Dimensions of Wellness": meaning, purpose, inner balance, honoring traditions.'},
+{id:'j53',lane:'act2',type:'person',t:'Heather Simms — lived→leader',b:'2001 visitor in crisis → becomes Deputy Director of Peer Advocacy & Community Initiatives at CSPNJ. The model made flesh.',note:'Margin elsewhere: "EDIT out Heather" in one cut — confirm.'},
+{id:'j54',lane:'act2',type:'artifact',t:'CSPNJ Welcome Video (2017)',b:'Nostalgic CSPNJ clip for the montage.',links:[['CSPNJ Welcome Video (YouTube)',null]]},
+{id:'j55',lane:'act2',type:'person',t:'Lynn Seaward — file',b:'Dir. of Development & Community Based Services (Peer Liaison). FLACRA 2014–19; Lakeview MH 2004–14; STAR Program, RWJBarnabas 2019–22.',links:[['2017 Democrat & Chronicle','https://www.democratandchronicle.com/story/news/local/victor/2017/04/20/helping-people-through-minefield-addiction/21331340007/'],['2019 NJ PBS panel','https://www.njpbs.org/addiction/event/innovation-in-addiction-recovery-2019/']]},
+{id:'j56',lane:'act2',type:'person',t:'Jim Gottstein — Zyprexa Papers',b:'Now a prominent voice against the harm of psychotropic meds; references the "Zyprexa Papers."'},
+{id:'j57',lane:'act2',type:'person',t:'Rob Wipond — investigations',b:'Canadian journalist; forced hospitalization, stigma, psychiatric meds — rooted in his father\'s negative experiences.'},
+{id:'j58',lane:'act2',type:'person',t:'Dr. Harold Koenig — the research',b:'Religion/spirituality ↔ reduced depression, anxiety, substance use; greater well-being. "Handbook on Religion and Mental Health" (Harvard, 2012).'},
+{id:'j59',lane:'act2',type:'beat',t:'Janet, 2005 — it happens again',b:'Re-hospitalization echoes the opening. A Wall Street advocate presenting to investors to reform the system — undone by "past misdiagnosis." "How can this continue to happen?"',note:'Need permission: Deb Visconi, CEO.'},
+{id:'j60',lane:'act2',type:'beat',t:'2022 — "She is not Bipolar"',b:'Calvin Chatlos + Janet introduced by Debra Wentz (CEO, NJAMHAA). Full-day case study of Janet\'s 40+ years. First validation by a psychiatrist. Calvin becomes an investor.',links:[['Calvin case study Janet 2022 (YouTube)',null]]},
+{id:'j61',lane:'act2',type:'org',t:'NJ Governor\'s Council on Anti-Stigma (2023)',b:'Debra Wentz (CEO, NJAMHAA) & Bridget Johnson (CEO, Care Plus).'},
+{id:'j62',lane:'act2',type:'beat',t:'Respites open',b:'First CSPNJ Peer Respite House — New Brunswick 2014; Haledon 2014; Newark 2018. Tables of food, warm greetings.'},
+{id:'j63',lane:'act2',type:'quote',t:'Chatlos — "no one was listening"',b:'On DSM-5: the Religious/Spiritual Problems section was still there "but it seemed like no one was truly listening."'},
+{id:'j64',lane:'act2',type:'note',t:'Add hospitalizations→advocates',b:'"2017 Ben — we may add another photo sequence of hospitalizations that lead to advocates."'},
+
+/* ---------- ACT THREE ---------- */
+{id:'j70',lane:'act3',type:'beat',t:'Janet breaks the silence (2019)',b:'At Rutgers with doctoral student Michael Garbe. "I was rebuilding my life, a single mom facing financial hardship… It was time to speak."',links:[['Assessing for Spiritual Emergency (Rutgers 2019)',null]]},
+{id:'j71',lane:'act3',type:'quote',t:'Calvin — the word "soul"',b:'2019 Psychiatric Times "Portrait of a Psychiatrist": "Psychiatry plays a central role in exploring and treating the depths of human experience captured by the word \'soul\'…"'},
+{id:'j72',lane:'act3',type:'beat',t:'Calvin at WPA Jerusalem (2019)',b:'World Psychiatric Association Intl Congress on Spirituality, Religion & Mental Health. Meets Francis Lu; the WPA Position Statement.'},
+{id:'j73',lane:'act3',type:'beat',t:'988 arrives (July 2022)',b:'The new lifeline — aims to reduce police involvement, include MH professionals & peer support in crisis response.',links:[['988 Briefings (YouTube)',null]]},
+{id:'j74',lane:'act3',type:'beat',t:'Rights vigilance & 988',b:'Jim Gottstein (PsychRights, "Zyprexa Papers") + Rob Wipond ("Your Consent is Not Required") on psychiatric rights inside the new lifeline.',note:'Anne & Juliet attended a live event, July 20 2023.'},
+{id:'j75',lane:'act3',type:'beat',t:'AWARE is born (Nov 2 2023)',b:'Urban Mental Health conference hosted by Petros Levounis (APA President) at Rutgers NJMS. NJ A.W.A.R.E. (Are We Aware of Religious & Spiritual Experiences) launches — clergy + MH coalition.',note:'★ Dale Caldwell / Faith Action Center thread enters here.'},
+{id:'j76',lane:'act3',type:'person',t:'Levounis & McGreevey',b:'Petros Levounis (Chair, Rutgers NJMS; APA President) with James McGreevey (Chair, NJ Reentry Corp; former NJ Governor).'},
+{id:'j77',lane:'act3',type:'quote',t:'Sean Blackwell — "a revelation"',b:'"It was a revelation to see a medical-school conference addressing spiritual awakening… This conference represented a historic leap forward."',links:[['Rutgers Conference — Sean Blackwell (YouTube)',null]]},
+{id:'j78',lane:'act3',type:'quote',t:'"Are we ready for this?"',b:'John — "A standard of care that includes spiritual history and spiritual competency is groundbreaking and will make a significant difference in patient outcomes."',links:[['Medicine Meets Spirituality — Roundtable Nov 2 2023 (YouTube)',null]]},
+{id:'j79',lane:'act3',type:'beat',t:'Webinars — clergy + first responders',b:'Chatlos & Janet host online webinars folding clergy into 988. Rev. Ronald Sparks; Rabbi Marc Kline. Diverse houses of worship.'},
+{id:'j80',lane:'act3',type:'beat',t:'Filming in Freehold — Bethel AME',b:'Rev. Sparks & Calvin roughcut; Janet church testimony at Bethel AME; mainstream NEWS (Chatlos, Sparks, Dr. Ashley).',note:'"EDIT out Heather." Nov 30 2023: 988 launched in Canada.',links:[['Bethel AME Freehold (YouTube)',null]]},
+{id:'j81',lane:'act3',type:'person',t:'Ernie Stevens — Crisis Cops',b:'Retired police officer; differentiating spiritual experience from "hyper-religiosity"; de-escalation. HBO doc; Deputy Division Director of Law Enforcement, Council of State Governments.'},
+{id:'j82',lane:'act3',type:'person',t:'Dr. Olivia Johnson — Blue Wall',b:'Veteran & former police officer; advocates clergy in crisis response; "First Responder Fridays" with Chatlos & Janet as guests.'},
+{id:'j83',lane:'act3',type:'note',t:'APA / faith-based line',b:'From Joshua: a California county rep said therapists must include faith-based leaders/strategies if the client requests it — APA has this line in.'},
+{id:'j84',lane:'act3',type:'artifact',t:'Webinar library',b:'April 5 2024 USA webinar; July 12 2024 First Responder Friday — "Moral injury in community crisis care." Calvin has strong spiritual content here.'},
+{id:'j85',lane:'act3',type:'beat',t:'AWARE meets CSPNJ',b:'Chatlos & Janet connect with the peer-services movement for the first time; shown the New Brunswick respite "right in their own backyard." Peer services + 988 + lived experience unite.',links:[['New Brunswick Respite','https://cspnj.org/wp-content/uploads/2021/10/New-Brunswick-Respite-.mp4']]},
+{id:'j86',lane:'act3',type:'person',t:'Anne Smullen Thieling & Juliet Quiles',b:'COO & Program Manager, CSPNJ. Postcards From Home™. Anne\'s own story: a young Rutgers student staying silent to avoid hospitalization, now a transformation leader.'},
+{id:'j87',lane:'act3',type:'org',t:'WildFlower Alliance (MA)',b:'Jen audio of Massachusetts peer respites; Janet on respites vs. psychiatric units, recorded 2024; comment on Joshua in California.'},
+{id:'j88',lane:'act3',type:'artifact',t:'Rob Wipond @ CSPNJ HQ',b:'Filming Rob Wipond at CSPNJ headquarters, April 13 2024.'},
+{id:'j89',lane:'act3',type:'beat',t:'National & global chorus',b:'Contact options (script will choose): Claire Bien (DE, ISPS President) · Mija Bradford (Chicago, Soul Ascending) · Mary Fulp (AK, principal\'s legal battle) · Ernie Stevens (TX) · Olivia Johnson (IL) · Joshua Roberts (CA, Inspired Mind, Theology degree).'},
+{id:'j90',lane:'act3',type:'beat',t:'NJ model assembled',b:'Anne Smullen Thieling + Janet + Chatlos envision an integrated 988 with peer support, wellness centers, respites.'},
+{id:'j91',lane:'act3',type:'person',t:'Carlito Cabelin — crisis counselor',b:'Certified Crisis Counselor; demonstrates handling a spiritual-emergency caller; leads the AWARE initiative.',note:'Court Room Shoot (Drive); use Jen\'s podcast; some First Responder Fridays.'},
+{id:'j92',lane:'act3',type:'question',t:'Show colleges & universities?',b:'"Do we show movement at colleges & universities?"',note:'Direct seam to Dale/Centenary + Brookdale.'},
+{id:'j93',lane:'act3',type:'person',t:'Dale Caldwell @ Centenary',b:'President of Centenary University & Pastor — "Centenary University mental health video v4." Filming collaboration at Centenary.',note:'★ The forward arc: Dale + FAC + ongoing episodes.',links:[['Verified: Dale "we need a mental health movement" (YouTube L2TqjqUuzy4)','https://www.youtube.com/watch?v=L2TqjqUuzy4']]},
+{id:'j94',lane:'act3',type:'beat',t:'MCORT + county system',b:'Coordinated CSPNJ + county MH agencies; newly launched Mobile Crisis Outreach Response Teams (MCORT) + wellness centers.'},
+{id:'j95',lane:'act3',type:'person',t:'Coalition leaders',b:'Rev. Ron Sparks, Heather Simms, Rev. Akins, Achille DeJean (ED, Mental Health America Monmouth County) — NJ A.W.A.R.E. → AWARE USA → AWARE Global (CA, Chicago, OR, TX, HI, New England, NYC; expanding UK, India, Australia, Indonesia, South Africa).'},
+{id:'j96',lane:'act3',type:'beat',t:'MHA Monmouth @ JBJ Soul Kitchen',b:'2023 & 2024 — Mental Health America Monmouth County, ED Achille DeJean + AWARE lead Carlito Cabelin.',note:'Q: "How to add Achille\'s voice." Q: "Do we connect to corporate mental health for all orgs?"'},
+{id:'j97',lane:'act3',type:'person',t:'Rev. Cynthia Wilcox — chaplain',b:'2024 — Janet visits a psych unit at Jersey Shore Medical Center escorted by Chaplain Wilcox. Postcards From Home™ on the locked ward — "a sense of agency within the walls."'},
+{id:'j98',lane:'act3',type:'beat',t:'State-hospital visits',b:'Chatlos & Janet visit Ancora, Greystone, Trenton — meeting patients, shining light on spiritual/religious experience; chaplain director of a model program.',note:'Are we allowed to video on the grounds? (Greystone). NJ-AWARE press releases; 12.20.24 TPH flyer.'},
+{id:'j99',lane:'act3',type:'beat',t:'AWARE training, in the room',b:'Classroom scenes: "I didn\'t know this!" · "I had a spiritual experience too." · "No one ever mentioned this throughout years of therapy and hospitalization."'},
+{id:'j100',lane:'act3',type:'person',t:'Lynn Seaward — Monmouth Behavioral Health',b:'Director of Behavioral Health, Monmouth County. On the need for AWARE training, referrals to peer support, and a respite in every county. Orientation Feb 20 2025.',note:'"Sort Lynn into dates."',links:[['Lynn history (Drive)','https://drive.google.com/drive/folders/1pQuVWhm6dCFeeQum4oV3Tk8O_Gz42pfV?usp=drive_link'],['Monmouth Acts','https://monmouthacts.org/2022/09/22/monmouth-county-recovery-collaborative-impacts-the-lives-of-two-new-jersey-siblings/']]},
+{id:'j101',lane:'act3',type:'person',t:'Shrabanee Shah — No Stigma Network',b:'Founder; vision now integrated into CSPNJ. Anne joins a shared vision to serve young adults across NJ.'},
+{id:'j102',lane:'act3',type:'beat',t:'The whole crisis system, oriented',b:'Rev. Sparks, Rev. Akins, Lynn Seaward on Arrive Together, Link to Care, Stabilization Centers, 988 dispatchers, screening centers & chaplains all receiving spiritual-experience orientation.'},
+{id:'j103',lane:'act3',type:'concept',t:'Open Dialogue',b:'From Finland / UK to NJ — the dialogic model entering the picture.'},
+{id:'j104',lane:'act3',type:'concept',t:'Public-service tools',b:'Rapid awareness tools as part of "the vision": the HELP model; FEAR, HELP, Stop-Pause.'},
+{id:'j105',lane:'act3',type:'quote',t:'Call to action — Chatlos at NAMI',b:'NJ NAMI keynote: "The time for awareness is over. The time for action is now." Against opioid overdoses, youth MH, rising suicide.'},
+
+/* ---------- CONCLUSION / MODEL VISION ---------- */
+{id:'j110',lane:'model',type:'beat',t:'The model, working (Josh redux)',b:'Mirror of the opening — but his mother calmly calls 988. MCORT (not police) arrives: calm, no judgment, active listening. Josh chooses the peer respite. A peer\'s gentle hug.',note:'Margin: Josh replaces Janet.'},
+{id:'j111',lane:'model',type:'beat',t:'Eleven days later',b:'Josh leaves the respite bright and hopeful — a celebratory hug from friends about his new job. Light warms to pure white.'},
+
+/* ---------- FINAL SCENE ---------- */
+{id:'j120',lane:'ascent',type:'beat',t:'A Shared Ascent',b:'CSPNJ HQ celebration — everyone we met, holding hands. A drone rises: Freehold → NJ → US → Canada → world map of the network. Settles on the New Brunswick respite backyard garden.'},
+
+/* ---------- APPENDIX / OPEN THREADS ---------- */
+{id:'j130',lane:'appendix',type:'artifact',t:'Equine Assisted Therapy',b:'Janet Werner with Brooke Lichter, LCSW, EAGALA-certified. "Operation Hope" roughcut.'},
+{id:'j131',lane:'appendix',type:'beat',t:'Rutgers ScarletWell — UPLIFT',b:'University Peers for Leadership, Impact, Fortitude & Teamwork — first cohort June 3. With Adrienne Simonds, Paul Fischbach, Peggy Swarbrick, Josh Langberg. "An idea to fruition so quickly."'},
+{id:'j132',lane:'appendix',type:'beat',t:'Carrier Clinic / Hackensack Meridian',b:'Humanizing Care & Restraint Reduction, Raritan Bay Dec 2024; Holistic Council; Christian Peters; 2025 CEO Christopher Morrison. Impact on an NJ court case.'},
+{id:'j133',lane:'appendix',type:'note',t:'Political engagement',b:'"From all parties." Commissioner (Freehold NJ); Prosecutor Raymond Santiago (Monmouth County).'},
+{id:'j134',lane:'appendix',type:'note',t:'NJ celebrities w/ MH history',b:'Idea card — NJ public figures with lived mental-health history.'},
+{id:'j135',lane:'appendix',type:'question',t:'NJ → coast → global good news',b:'How do we show NJ → West Coast → USA → global good news? Do we include Mad in America / Mad around the world?'},
+{id:'j136',lane:'appendix',type:'question',t:'STE experts & moral injury',b:'How to pull together peer-support-evolution experts + spiritually-transformative-experience experts while preventing moral injury — Dr. Lu, Josh.'},
+{id:'j137',lane:'appendix',type:'org',t:'Kiva Centers (national)',b:'Peer-run, trauma-informed: Worcester RLC; Kiva of New Mexico; Soteria Las Cruces (2nd in US, 22nd worldwide); Juniper Peer Respite → Uxbridge MA.',links:[['kivacenters.org','https://www.kivacenters.org']]},
+{id:'j138',lane:'appendix',type:'org',t:'Bazelon Center — Vesper Moore',b:'"ADA at 35" series. Vesper Moore: peer support happens "at the barbershop, the hair salon, at your kitchen table."',note:'Find the video & get permission; position history & 2025 progress.'},
+
+/* ============================================================
+   OUR LAYER — PILLARS (today)
+   ============================================================ */
+{id:'p01',lane:'pillar',type:'pillar',t:'Positive-sum is the operating system',b:'Stone Soup, Filmanthropy, regenerative production, the trust, the moviement — all one move: converting zero-sum to positive-sum. Dale named the enemy himself: "either you win or I win."'},
+{id:'p02',lane:'pillar',type:'pillar',t:'Dale: "we need a mental health movement"',b:'VERIFIED on camera (Centenary). "Every great movement was started by college students… SNCC… we need a mental health movement." The bridge from the 1960s movement to the moviement, in his mouth.',links:[['YouTube L2TqjqUuzy4','https://www.youtube.com/watch?v=L2TqjqUuzy4']]},
+{id:'p03',lane:'pillar',type:'pillar',t:'Free Tibet — awareness carried by culture',b:'Yauch (1996): change comes only through mass public awareness, carried by culture. Swap music→film, Tibet→the soul, and it\'s the thesis. Potts: "raise action, not money."'},
+{id:'p04',lane:'pillar',type:'pillar',t:'The day after',b:'Potts: "the most important day of our work was the day after the concerts." Bono\'s trap → the answer is the permanent apparatus (Storylivingry Studio, Students-for-a-Free-Tibet model).'},
+{id:'p05',lane:'pillar',type:'pillar',t:'Brookdale / Dr. Stout — the campus node',b:'Flagship install. Stout: PhD in health psychology + county MH board. EV program = pioneer-then-export precedent. Diane Raver / NJ Film Academy = the embedded-nonprofit template.'},
+{id:'p06',lane:'pillar',type:'pillar',t:'"We choose to" — positive-sum, on film',b:'The compass pillar. Kennedy gave the form; the deeper choice is which game you play. Embody it on camera with no money, before the proof exists — that\'s the hard part, and the point.'},
+{id:'p07',lane:'pillar',type:'pillar',t:'Dale is already here',b:'Presence as the first ingredient. He didn\'t endorse the pillar — he helped pour it. The Secretary of State choosing to be on camera is the assembly beginning.'},
+{id:'p08',lane:'pillar',type:'pillar',t:'The process is the product',b:'Recursive / fractal. The making of the film is the first act of the moviement. The Roundtable wasn\'t a pitch about it — it was Scene II of it. Performing and meaning collapse.'},
+{id:'p09',lane:'pillar',type:'pillar',t:'The network already exists',b:'The innovation is the assembly, not the wanting. The mycelium is vast and underground; the job is to help it pop up into visibility. Abundance, not deficit.'},
+{id:'p10',lane:'pillar',type:'pillar',t:'Documenting reality into existence',b:'A pitch plans; a dream gets declared, and reality rearranges around it. Episode 1 names the star. Backcast from the dream — ten seasons can fit in fifteen episodes.'},
+{id:'p11',lane:'pillar',type:'pillar',t:'Episode 1 is a founding utterance',b:'Not a roadmap. Dramaturgy = music. "I have a dream" has no plot — a build, a litany, a crescendo, a listener it transforms. Conduct a declaration, don\'t edit a story.'},
+{id:'p12',lane:'pillar',type:'pillar',t:'Making history = authoring the present',b:'Zero-sum legacy is being remembered. Positive-sum history is authoring the present — abundant, additive. Dale wants to make history; this gives his ambition the conversion.'},
+{id:'p13',lane:'pillar',type:'pillar',t:'Ritual / "we are the medicine"',b:'Not treatment — ceremony. The One Mind Show as nightly catharsis; the village as a ritual of friendship. Disconnection is the wound; engaged ritual is the medicine.'},
+{id:'p14',lane:'pillar',type:'pillar',t:'Wound as medicine / still alive',b:'"Failure is my medicine." 30 years later, still in it — the man the system broke building what would have caught him, not pretending he\'s healed enough to make it tidy.'},
+{id:'p15',lane:'pillar',type:'pillar',t:'I AM THE USE CASE — keystone',b:'Not built for "them"; built by and for the people living it. Bret & Janet aren\'t above the use case — they are it. Leadership and lived experience, the same body. Every other pillar serves this one.'},
+
+/* ============================================================
+   OUR LAYER — SCRIPT (Ep.1 spine)
+   ============================================================ */
+{id:'s0',lane:'script',type:'scriptbeat',t:'M0 · Cold open — the handshake',b:'Consecrated re-enactment: "We\'re going to make history together." Cut to black before we understand it. Detonate first, earn it later.',note:'FORK: detonate vs. save for the climax.'},
+{id:'s1',lane:'script',type:'scriptbeat',t:'M1 · Gratitude',b:'Open for real on Bret thanking Dale for the gift already given — his time, on camera. Prompt: "Why did you say yes?" Models the gift economy; turns the office into a man.'},
+{id:'s2',lane:'script',type:'scriptbeat',t:'M2 · The Three Doors',b:'Where ALL the archival lives. Janet ("1979") → ward footage. Dale ("my dad") → Rev. Gil + MLK + marches. Bret → the wound, I-am-the-use-case. History summoned by naming, never a timeline.'},
+{id:'s3',lane:'script',type:'scriptbeat',t:'M3 · What\'s broken — Dale names it',b:'Draw out his own lines: written off too quickly; broken leg vs. broken emotions; the zero-sum game. Image: the locked ward + the evaporating dollar.'},
+{id:'s4',lane:'script',type:'scriptbeat',t:'M4 · Reframe — movement → moviement',b:'Hand Dale the positive-sum world as the answer to his zero-sum line; leave a piece unfinished so he completes it on camera. The recursion beat: the film showing itself making itself.'},
+{id:'s5',lane:'script',type:'scriptbeat',t:'M5 · The dreaming, conjured together',b:'Studio, Filmanthropy, village, NJ as HeartQuarters. Stay in the dream, not details. Playful seed: "Dale, can you help me reach the Beastie Boys?" (plants Season 3 as joy).'},
+{id:'s6',lane:'script',type:'scriptbeat',t:'M6 · The quest names itself + the ask',b:'Let it emerge so Dale half-says it. Season 1 = $5M cash + gifted resources → the pilot village. The real ask: not money — be recurring. Keep dreaming this with us.',note:'Climax: "how in is he?" pays off.'},
+{id:'s7',lane:'script',type:'scriptbeat',t:'M7 · Threshold crossed — film opens',b:'Reveal: the meeting WAS the moviement happening. Gratitude bookend, back to the handshake. Turn outward — the festival audience has an ingredient too. Dale = thread into Ep.2.'},
+
+/* ============================================================
+   OUR LAYER — QUEST (the seasons)
+   ============================================================ */
+{id:'q1',lane:'quest',type:'quest',t:'Season 1 — Faith ($5M)',b:'26 episodes. Goal: $5M in cash AND gifted resources (gifts go further — land, materials, labor). The pot fills visibly across episodes; Ep.26 is faith vindicated, not a miracle.'},
+{id:'q2',lane:'quest',type:'quest',t:'Season 2 — Function (the village)',b:'Build the pilot village — the $5M seed of the $90M model dreamed with Dale. People move in. It functions as respite. Bret lives there. Seeds the concert. Heart: one person\'s "I moved in."'},
+{id:'q3',lane:'quest',type:'quest',t:'Season 3 — Culture (the concert)',b:'The Tibetan-Freedom-Concert lineage turned toward the soul. The movement large enough to fill a room.'},
+{id:'q4',lane:'quest',type:'quest',t:'Season 4 — Scale ($90M)',b:'The $90M village rises — the model the concert made thinkable.'},
+{id:'q5',lane:'quest',type:'quest',t:'Season 5 — System ($1B)',b:'A repeatable, fully-regenerative transmedium system scaling mental-health care across NJ. Land & assets in trust; the receivers are the beneficiaries.'},
+{id:'q6',lane:'quest',type:'quest',t:'The ladder + the big ask',b:'Faith → Function → Culture → Scale → System. Each season\'s miracle is the next season\'s permission. The big ask to Dale isn\'t money — it\'s to be a recurring character.'},
+
+/* ============================================================
+   OUR LAYER — DEVICES & CONCEPTS
+   ============================================================ */
+{id:'d1',lane:'device',type:'device',t:'The conversation that contains the film',b:'The Dale meeting is the riverbed; everything else (archival, stills, history) flows from what\'s said in the room. The talk generates the cutaways.'},
+{id:'d2',lane:'device',type:'device',t:'"How in is he?" — the secret engine',b:'Dale\'s presence is the premise; his depth of yes is the reveal. A passenger who turns out to be crew. That dramatic question makes 20 minutes of talk a story.'},
+{id:'d3',lane:'device',type:'device',t:'Archival as evidence, never timeline',b:'History never appears as "and then in 1985…" — it\'s summoned as testimony in service of a present-tense case.'},
+{id:'d4',lane:'device',type:'device',t:'Fact + fiction = consecration',b:'Re-enact only what truly happened (the handshake), bounded by what Dale is actually willing to do. Nothing more, nothing less. Artifice as the mechanism that makes a private act transmissible.'},
+{id:'d5',lane:'device',type:'device',t:'Ambient capture / the AI co-editor',b:'Screens recording the real work — emails, typing, this very design session — flowing to an editor that mines thousands of hours for the ten seconds where truth flashes. Consensual, opt-in as a rite of joining.'},
+{id:'d6',lane:'device',type:'device',t:'The 4 leads as functions',b:'Bret = carrier (sees the form). Janet = keeper (the mycelium/soul). Dale = threshold (the institution crossing). Ron = credibility through proximity to power. Witnesses: Anne, Lynn, Emily.'},
+{id:'d7',lane:'device',type:'device',t:'Two images in one frame',b:'Zero-sum: locked ward + evaporating dollar. Positive-sum: full pot + key in the hand. Does the short ever put them in the same frame?'},
+{id:'d8',lane:'device',type:'device',t:'New-footage shopping list',b:'Cheap & doable: the 90-min Dale conversation · the consecrated handshake · a Bret solo carrier piece-to-camera · Bret-and-Janet connective talk · screen-recordings of the work. Everything else you already own.'},
+{id:'d9',lane:'device',type:'device',t:'The crafty constraint',b:'Use only the footage you already have + a few new minutes. Scarcity is the aesthetic, not the apology. The Ledger\'s thesis: strip what money buys and the un-counterfeitable human thing becomes the whole point.'},
+{id:'d10',lane:'device',type:'device',t:'Stone Synergy Soup — the assembly',b:'No one has the meal; everyone has an ingredient; the pot is more than the sum. Each episode lights one node and hands the spoon to the next — the mycelium fruiting on camera.'},
+];
+
+/* ============================================================
+   STATE + PERSISTENCE
+   ============================================================ */
+const KEY='scenius_wall_v1';
+let state = load() || fresh();
+
+function fresh(){
+  const cards = SEED.map(c=>({...c, x:0,y:0, star:false, mine:'', moved:false}));
+  layout(cards);
+  return {cards, links:[], view:{px:60,py:150,z:.72}};
+}
+function load(){ try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null} }
+let saveT;
+function save(){ try{clearTimeout(saveT);saveT=setTimeout(()=>localStorage.setItem(KEY,JSON.stringify(state)),250)}catch(e){} }
+
+/* auto lane layout */
+function layout(cards){
+  const colW=290, top=70, gapY=14;
+  const yByLane={}; LANES.forEach((l,i)=>yByLane[l.k]=top);
+  const xByLane={}; LANES.forEach((l,i)=>xByLane[l.k]=i*colW);
+  cards.forEach(c=>{
+    const lx=xByLane[c.lane]; if(lx===undefined)return;
+    c.x = lx;
+    c.y = yByLane[c.lane];
+    const h = estHeight(c);
+    yByLane[c.lane]+= h+gapY;
+  });
+}
+function estHeight(c){
+  let h=70;
+  h+= Math.ceil((c.b||'').length/34)*15;
+  if(c.note) h+= 26+Math.ceil(c.note.length/40)*13;
+  if(c.mine) h+= 26+Math.ceil(c.mine.length/40)*13;
+  if(c.links&&c.links.length) h+=24;
+  return Math.max(96,h);
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const stage=document.getElementById('stage'), world=document.getElementById('world'),
+      wires=document.getElementById('wires');
+let view=state.view;
+const cardEls=new Map();
+
+function cssvar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+
+function renderAll(){
+  document.querySelectorAll('.lane-label').forEach(e=>e.remove());
+  LANES.forEach((l,i)=>{
+    const lab=document.createElement('div');
+    lab.className='lane-label';
+    lab.style.left=(i*290)+'px'; lab.style.top='18px';
+    lab.style.color=cssvar(l.c);
+    lab.innerHTML=`${l.n}<small>${l.s}</small>`;
+    world.appendChild(lab);
+  });
+  state.cards.forEach(renderCard);
+  applyTransform(); drawWires(); applyFilter();
+}
+function renderCard(c){
+  let el=cardEls.get(c.id);
+  if(!el){ el=document.createElement('div'); el.className='card'; el.dataset.id=c.id;
+    world.appendChild(el); cardEls.set(c.id,el); attachCard(el,c); }
+  el.style.setProperty('--c', cssvar(LANE[c.lane]?LANE[c.lane].c:'--L-meta'));
+  el.style.left=c.x+'px'; el.style.top=c.y+'px';
+  const links=(c.links||[]).map(([l,u])=> u?`<a href="${u}" target="_blank" rel="noopener">${esc(l)} ↗</a>`:`<span>${esc(l)} · find link</span>`).join('');
+  el.innerHTML=`
+    <span class="c-star ${c.star?'on':''}" data-star>${c.star?'★':'☆'}</span>
+    <span class="c-type">${c.type}</span>
+    <p class="c-title">${esc(c.t)}</p>
+    <div class="c-body">${esc(c.b||'')}</div>
+    ${c.note?`<div class="c-note"><b>Janet</b>${esc(c.note)}</div>`:''}
+    ${c.mine?`<div class="c-mine"><b>My remix</b>${esc(c.mine)}</div>`:''}
+    ${links?`<div class="c-links">${links}</div>`:''}`;
+}
+function esc(s){return (s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+
+/* ============================================================
+   PAN / ZOOM  (pointer events, touch + mouse)
+   ============================================================ */
+function applyTransform(){ world.style.transform=`translate(${view.px}px,${view.py}px) scale(${view.z})`; }
+const pointers=new Map(); let panStart=null, pinchStart=null, dragging=null;
+
+stage.addEventListener('pointerdown',e=>{
+  stage.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const cardEl=e.target.closest('.card');
+  if(linkMode && cardEl){ handleLink(cardEl.dataset.id); return; }
+  if(e.target.closest('[data-star]')){ return; }
+  if(cardEl){
+    const c=byId(cardEl.dataset.id);
+    dragging={el:cardEl,c,ox:e.clientX,oy:e.clientY,sx:c.x,sy:c.y,moved:false};
+    cardEl.classList.add('drag');
+    return;
+  }
+  if(pointers.size===1){ panStart={px:view.px,py:view.py,x:e.clientX,y:e.clientY}; stage.classList.add('grabbing'); }
+  if(pointers.size===2){ startPinch(); }
+});
+stage.addEventListener('pointermove',e=>{
+  if(!pointers.has(e.pointerId))return;
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pointers.size===2 && pinchStart){ doPinch(); return; }
+  if(dragging){
+    const dx=(e.clientX-dragging.ox)/view.z, dy=(e.clientY-dragging.oy)/view.z;
+    if(Math.abs(e.clientX-dragging.ox)+Math.abs(e.clientY-dragging.oy)>3) dragging.moved=true;
+    dragging.c.x=dragging.sx+dx; dragging.c.y=dragging.sy+dy;
+    dragging.el.style.left=dragging.c.x+'px'; dragging.el.style.top=dragging.c.y+'px';
+    drawWires(); return;
+  }
+  if(panStart){ view.px=panStart.px+(e.clientX-panStart.x); view.py=panStart.py+(e.clientY-panStart.y); applyTransform(); }
+});
+function endPtr(e){
+  pointers.delete(e.pointerId);
+  if(dragging){
+    dragging.el.classList.remove('drag');
+    if(dragging.moved){ dragging.c.moved=true; save(); }
+    else { openInspector(dragging.c.id); }
+    dragging=null;
+  }
+  if(pointers.size<2) pinchStart=null;
+  if(pointers.size===0){ panStart=null; stage.classList.remove('grabbing'); save(); }
+}
+stage.addEventListener('pointerup',endPtr);
+stage.addEventListener('pointercancel',endPtr);
+
+function startPinch(){
+  const p=[...pointers.values()];
+  pinchStart={d:dist(p[0],p[1]), z:view.z, mx:(p[0].x+p[1].x)/2, my:(p[0].y+p[1].y)/2, px:view.px, py:view.py};
+}
+function doPinch(){
+  const p=[...pointers.values()]; if(p.length<2)return;
+  const d=dist(p[0],p[1]); let nz=clamp(pinchStart.z*(d/pinchStart.d),.2,2.4);
+  const wx=(pinchStart.mx-pinchStart.px)/pinchStart.z, wy=(pinchStart.my-pinchStart.py)/pinchStart.z;
+  view.z=nz; view.px=pinchStart.mx-wx*nz; view.py=pinchStart.my-wy*nz; applyTransform();
+}
+stage.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const f=e.deltaY<0?1.12:0.89; const nz=clamp(view.z*f,.2,2.4);
+  const wx=(e.clientX-view.px)/view.z, wy=(e.clientY-view.py)/view.z;
+  view.z=nz; view.px=e.clientX-wx*nz; view.py=e.clientY-wy*nz; applyTransform();
+},{passive:false});
+
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function byId(id){return state.cards.find(c=>c.id===id)}
+
+/* zoom buttons */
+function zoomBy(f){ const cx=innerWidth/2,cy=innerHeight/2; const nz=clamp(view.z*f,.2,2.4);
+  const wx=(cx-view.px)/view.z, wy=(cy-view.py)/view.z; view.z=nz; view.px=cx-wx*nz; view.py=cy-wy*nz; applyTransform(); save(); }
+document.getElementById('z-in').onclick=()=>zoomBy(1.18);
+document.getElementById('z-out').onclick=()=>zoomBy(.85);
+document.getElementById('z-fit').onclick=fitAll;
+function fitAll(){
+  const xs=state.cards.map(c=>c.x), ys=state.cards.map(c=>c.y);
+  const minx=Math.min(...xs)-40, maxx=Math.max(...xs)+290, miny=Math.min(...ys)-60, maxy=Math.max(...ys)+220;
+  const w=maxx-minx, h=maxy-miny;
+  const z=clamp(Math.min((innerWidth-40)/w,(innerHeight-150)/h),.2,1.2);
+  view.z=z; view.px=20-minx*z; view.py=120-miny*z; applyTransform(); save();
+}
+
+/* ============================================================
+   WIRES (links)
+   ============================================================ */
+function drawWires(){
+  wires.innerHTML='';
+  state.links.forEach(([a,b])=>{
+    const ca=byId(a),cb=byId(b); if(!ca||!cb)return;
+    const ea=cardEls.get(a),eb=cardEls.get(b); if(!ea||!eb)return;
+    const ax=ca.x+ea.offsetWidth/2, ay=ca.y+ea.offsetHeight/2;
+    const bx=cb.x+eb.offsetWidth/2, by=cb.y+eb.offsetHeight/2;
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',ax);ln.setAttribute('y1',ay);ln.setAttribute('x2',bx);ln.setAttribute('y2',by);
+    wires.appendChild(ln);
+  });
+}
+let linkMode=false, linkSrc=null;
+document.getElementById('b-link').onclick=function(){
+  linkMode=!linkMode; this.classList.toggle('on',linkMode);
+  linkSrc=null; document.querySelectorAll('.link-src').forEach(e=>e.classList.remove('link-src'));
+  hint(linkMode?'Link mode — tap one card, then another, to connect or disconnect them':'');
+};
+function handleLink(id){
+  if(!linkSrc){ linkSrc=id; cardEls.get(id).classList.add('link-src'); return; }
+  if(linkSrc===id){ cardEls.get(id).classList.remove('link-src'); linkSrc=null; return; }
+  const i=state.links.findIndex(([a,b])=>(a===linkSrc&&b===id)||(a===id&&b===linkSrc));
+  if(i>=0) state.links.splice(i,1); else state.links.push([linkSrc,id]);
+  cardEls.get(linkSrc).classList.remove('link-src'); linkSrc=null; drawWires(); save();
+}
+
+/* ============================================================
+   INSPECTOR
+   ============================================================ */
+const insp=document.getElementById('insp'); let curId=null;
+const I={h:'i-h',title:'i-title',body:'i-body',note:'i-note',mine:'i-mine',links:'i-links',lane:'i-lane',type:'i-type'};
+LANES.forEach(l=>{const o=document.createElement('option');o.value=l.k;o.textContent=l.n;document.getElementById('i-lane').appendChild(o)});
+TYPES.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;document.getElementById('i-type').appendChild(o)});
+
+function openInspector(id){
+  curId=id; const c=byId(id); if(!c)return;
+  document.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel'));
+  cardEls.get(id).classList.add('sel');
+  i('h').textContent=c.t||'Card'; i('title').value=c.t||''; i('body').value=c.b||'';
+  i('note').value=c.note||''; i('mine').value=c.mine||'';
+  i('links').value=(c.links||[]).map(([l,u])=>u?`${l} | ${u}`:l).join('\n');
+  i('lane').value=c.lane; i('type').value=c.type;
+  document.getElementById('i-starbtn').classList.toggle('on',c.star);
+  insp.classList.add('open');
+}
+function i(k){return document.getElementById(I[k])}
+document.getElementById('i-close').onclick=()=>{insp.classList.remove('open');document.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel'))};
+document.getElementById('i-save').onclick=()=>{
+  const c=byId(curId); if(!c)return;
+  c.t=i('title').value; c.b=i('body').value; c.note=i('note').value; c.mine=i('mine').value;
+  c.lane=i('lane').value; c.type=i('type').value;
+  c.links=i('links').value.split('\n').map(s=>s.trim()).filter(Boolean).map(s=>{
+    const p=s.split('|'); return p.length>1?[p[0].trim(),p.slice(1).join('|').trim()]:[p[0].trim(),null]; });
+  renderCard(c); applyFilter(); drawWires(); save(); buildRail();
+  insp.classList.remove('open');
+};
+document.getElementById('i-starbtn').onclick=()=>{const c=byId(curId);c.star=!c.star;renderCard(c);document.getElementById('i-starbtn').classList.toggle('on',c.star);applyFilter();save()};
+document.getElementById('i-del').onclick=()=>{
+  const c=byId(curId); if(!c)return;
+  if(!confirm('Delete this card? (Export first if unsure.)'))return;
+  state.cards=state.cards.filter(x=>x.id!==curId);
+  state.links=state.links.filter(([a,b])=>a!==curId&&b!==curId);
+  cardEls.get(curId)?.remove(); cardEls.delete(curId);
+  insp.classList.remove('open'); drawWires(); save();
+};
+stage.addEventListener('click',e=>{
+  const s=e.target.closest('[data-star]'); if(!s)return;
+  const id=e.target.closest('.card').dataset.id; const c=byId(id);
+  c.star=!c.star; renderCard(c); applyFilter(); save();
+});
+function attachCard(){}
+
+/* add card */
+document.getElementById('b-add').onclick=()=>{
+  const id='u'+Date.now().toString(36);
+  const cx=(innerWidth/2-view.px)/view.z, cy=(innerHeight/2-view.py)/view.z;
+  const c={id,lane:'device',type:'note',t:'New card',b:'',note:'',mine:'',links:[],x:cx,y:cy,star:false,moved:true};
+  state.cards.push(c); renderCard(c); openInspector(id); save();
+};
+
+/* ============================================================
+   FILTER RAIL  (lanes · types · layer · starred)
+   ============================================================ */
+const railEl=document.getElementById('rail');
+let laneOff=new Set(), typeOff=new Set(), starOnly=false, q='';
+function buildRail(){
+  railEl.innerHTML='';
+  const mk=(txt,cls,on,fn,sw)=>{const c=document.createElement('span');c.className='chip '+cls+(on?'':' off');
+    c.innerHTML=(sw?`<span class="sw" style="background:${sw}"></span>`:'')+txt; c.onclick=fn; railEl.appendChild(c); return c;};
+  mk('JANET LAYER','layer',true,()=>toggleLayer('janet'));
+  mk('OUR LAYER','layer',true,()=>toggleLayer('our'));
+  const sep=document.createElement('span');sep.style.cssText='flex:0 0 1px;height:18px;background:rgba(242,237,227,.2);margin:0 2px';railEl.appendChild(sep);
+  LANES.forEach(l=>mk(l.n.replace('OUR ','').replace(' · ',' '),'',!laneOff.has(l.k),()=>{laneOff.has(l.k)?laneOff.delete(l.k):laneOff.add(l.k);buildRail();applyFilter()},cssvar(l.c)));
+}
+const OUR=new Set(['pillar','script','quest','device']);
+function toggleLayer(which){
+  const keys=LANES.filter(l=> which==='our'?OUR.has(l.k):!OUR.has(l.k)).map(l=>l.k);
+  const allOn=keys.every(k=>!laneOff.has(k));
+  keys.forEach(k=> allOn?laneOff.add(k):laneOff.delete(k));
+  buildRail(); applyFilter();
+}
+function applyFilter(){
+  const qq=q.trim().toLowerCase();
+  state.cards.forEach(c=>{
+    const el=cardEls.get(c.id); if(!el)return;
+    let show=true;
+    if(laneOff.has(c.lane)) show=false;
+    if(starOnly && !c.star) show=false;
+    if(qq){ const hay=(c.t+' '+c.b+' '+(c.note||'')+' '+(c.mine||'')+' '+c.type+' '+(c.links||[]).map(l=>l[0]).join(' ')).toLowerCase();
+      if(!hay.includes(qq)) show=false; }
+    el.classList.toggle('dim',!show);
+  });
+  drawWires();
+}
+document.getElementById('search').addEventListener('input',e=>{q=e.target.value;applyFilter()});
+document.getElementById('b-star').onclick=function(){starOnly=!starOnly;this.classList.toggle('on',starOnly);applyFilter()};
+
+/* tidy */
+document.getElementById('b-tidy').onclick=()=>{
+  if(!confirm('Re-arrange every card back into its lane column? (Your links & stars stay.)'))return;
+  layout(state.cards); state.cards.forEach(renderCard); drawWires(); fitAll(); save();
+};
+
+/* emergent */
+document.getElementById('b-emergent').onclick=()=>{
+  const vis=state.cards.filter(c=>!cardEls.get(c.id).classList.contains('dim'));
+  if(!vis.length)return; const c=vis[Math.floor(Math.random()*vis.length)];
+  const el=cardEls.get(c.id);
+  const cx=c.x+el.offsetWidth/2, cy=c.y+el.offsetHeight/2;
+  view.z=clamp(1.0,.2,2.4); view.px=innerWidth/2-cx*view.z; view.py=innerHeight/2-cy*view.z; applyTransform();
+  el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
+  hint('✦ '+c.t); setTimeout(()=>hint(''),2600); save();
+};
+
+/* ============================================================
+   PULSE (blind-spots) + SAVE popovers
+   ============================================================ */
+const statpop=document.getElementById('statpop'), iopop=document.getElementById('iopop');
+document.getElementById('b-stats').onclick=()=>{iopop.classList.remove('open');statpop.classList.toggle('open');renderStats()};
+document.getElementById('b-io').onclick=()=>{statpop.classList.remove('open');iopop.classList.toggle('open')};
+function renderStats(){
+  const rows=document.getElementById('stat-rows'); rows.innerHTML='';
+  let quietest=null,quietScore=2;
+  LANES.forEach(l=>{
+    const cards=state.cards.filter(c=>c.lane===l.k); if(!cards.length)return;
+    const touched=cards.filter(c=>c.moved||c.star||c.mine).length;
+    const ratio=touched/cards.length; if(ratio<quietScore){quietScore=ratio;quietest=l}
+    const row=document.createElement('div'); row.className='row';
+    row.innerHTML=`<span>${l.n.replace('OUR ','')}</span><span style="font-family:'IBM Plex Mono',monospace;color:var(--ink-40)">${touched}/${cards.length}</span>`;
+    const bw=document.createElement('div'); bw.style.cssText=`width:100%;height:6px;border-radius:3px;background:rgba(20,27,46,.08);margin:0 0 6px`;
+    const bf=document.createElement('div'); bf.style.cssText=`height:6px;border-radius:3px;width:${Math.round(ratio*100)}%;background:${cssvar(l.c)}`;
+    bw.appendChild(bf); rows.appendChild(row); rows.appendChild(bw);
+  });
+  document.getElementById('stat-lead').textContent = quietest
+    ? `Your quietest lane right now is "${quietest.n.replace('OUR ','')}". Not a verdict — a nudge toward where you haven\'t looked yet.`
+    : 'Move, star, or annotate cards and this fills in.';
+}
+
+/* export / import / reset */
+document.getElementById('io-export').onclick=()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='scenius-wall-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+};
+document.getElementById('io-import').onchange=e=>{
+  const f=e.target.files[0]; if(!f)return; const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result); if(!d.cards)throw 0;
+    state=d; view=state.view||{px:60,py:150,z:.72};
+    cardEls.forEach(el=>el.remove()); cardEls.clear(); renderAll(); buildRail(); fitAll(); save();
+    iopop.classList.remove('open');
+  }catch(err){alert('That file could not be read as a board export.')}};
+  r.readAsText(f);
+};
+document.getElementById('io-reset').onclick=()=>{
+  if(!confirm('Reset to the original atomized set? This clears your moves, links, stars & remix notes in THIS browser. Export first if you want to keep them.'))return;
+  state=fresh(); view=state.view;
+  cardEls.forEach(el=>el.remove()); cardEls.clear(); renderAll(); buildRail(); fitAll(); save();
+  iopop.classList.remove('open');
+};
+
+/* hint helper */
+const hintEl=document.getElementById('hint'); let hintBase=hintEl.textContent;
+function hint(t){ hintEl.textContent=t||hintBase; }
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+renderAll(); buildRail();
+applyTransform();
+</script>
+</body>
+</html>
