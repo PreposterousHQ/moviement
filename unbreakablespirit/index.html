@@ -3609,8 +3609,471 @@ window.addEventListener('load', function() {
     <p>A calling sheet does not summon a crew to a slot; it names what each person is called toward — the gift only they can bring to the pot. Where a call sheet lists roles, a calling sheet lists callings: not &#8220;the Lieutenant Governor, 8 a.m.,&#8221; but a whole human being arriving with an ingredient no one else carries.</p>
     <p>It is the Stone Soup made into a document — proof, on a single page, that the feast was never about the stone, and never about the call time. It was always about who chose to come, and what they chose to bring.</p>
   </div>
-</div></body>
-</html>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     MHRC MIND AI — panel, universal button, edit assist
+     ═══════════════════════════════════════════════════ -->
+<style>
+/* AI panel */
+#ai-panel {
+  position: fixed; top: 0; right: -420px; width: 380px; max-width: 100vw;
+  height: 100vh; z-index: 8000;
+  background: rgba(8,6,18,0.97); backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(212,160,68,0.15);
+  display: flex; flex-direction: column;
+  transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+  font-family: 'Georgia', serif;
+}
+#ai-panel.ai-open { right: 0; }
+.ai-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid rgba(212,160,68,0.12);
+  flex-shrink: 0;
+}
+.ai-panel-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: rgba(212,160,68,0.8);
+  font-family: 'Georgia', serif;
+}
+.ai-mode-badge {
+  font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 10px;
+  background: rgba(212,160,68,0.12); color: rgba(212,160,68,0.6);
+  border: 1px solid rgba(212,160,68,0.15);
+}
+.ai-header-btns { display: flex; gap: 6px; }
+.ai-icon-btn {
+  background: none; border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50%; width: 26px; height: 26px;
+  color: rgba(255,255,255,0.3); cursor: pointer; font-size: 11px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.ai-icon-btn:hover { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.2); }
+.ai-context-bar {
+  padding: 8px 16px; font-size: 11px; color: rgba(255,255,255,0.35);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  flex-shrink: 0; font-style: italic; min-height: 32px;
+}
+#ai-messages {
+  flex: 1; overflow-y: auto; padding: 16px;
+  display: flex; flex-direction: column; gap: 14px;
+  scroll-behavior: smooth;
+}
+#ai-messages::-webkit-scrollbar { width: 3px; }
+#ai-messages::-webkit-scrollbar-thumb { background: rgba(212,160,68,0.2); border-radius: 2px; }
+.ai-msg { max-width: 100%; line-height: 1.6; font-size: 13.5px; }
+.ai-msg-user {
+  align-self: flex-end;
+  background: rgba(212,160,68,0.1); border: 1px solid rgba(212,160,68,0.18);
+  border-radius: 14px 14px 2px 14px;
+  padding: 9px 14px; color: rgba(255,255,255,0.75);
+  max-width: 85%;
+}
+.ai-msg-assistant {
+  align-self: flex-start;
+  color: rgba(255,255,255,0.82);
+  padding: 2px 0;
+}
+.ai-msg-assistant p { margin: 0 0 10px; }
+.ai-msg-assistant p:last-child { margin: 0; }
+.ai-msg-thinking {
+  align-self: flex-start; color: rgba(212,160,68,0.4);
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  animation: ai-pulse 1.4s ease-in-out infinite;
+}
+@keyframes ai-pulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+.ai-empty-state {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.18); font-size: 12px;
+  letter-spacing: 1px; text-align: center; gap: 10px;
+  padding: 20px;
+}
+.ai-empty-state .ai-empty-icon { font-size: 28px; opacity: 0.4; }
+.ai-input-row {
+  display: flex; align-items: flex-end; gap: 8px;
+  padding: 12px 14px 14px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+#ai-input {
+  flex: 1; background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+  color: rgba(255,255,255,0.8); font-family: 'Georgia', serif;
+  font-size: 13px; padding: 9px 12px; resize: none;
+  outline: none; line-height: 1.5; max-height: 120px; overflow-y: auto;
+  transition: border-color 0.2s;
+}
+#ai-input:focus { border-color: rgba(212,160,68,0.35); }
+#ai-input::placeholder { color: rgba(255,255,255,0.18); }
+#ai-send-btn {
+  background: rgba(212,160,68,0.15); border: 1px solid rgba(212,160,68,0.3);
+  border-radius: 50%; width: 36px; height: 36px; flex-shrink: 0;
+  color: rgba(212,160,68,0.8); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+#ai-send-btn:hover { background: rgba(212,160,68,0.25); color: rgba(212,160,68,1); }
+#ai-send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Universal AI button */
+#ai-universal-btn {
+  position: fixed; bottom: 22px; right: 22px; z-index: 7900;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: rgba(8,6,18,0.88); border: 1px solid rgba(212,160,68,0.35);
+  color: rgba(212,160,68,0.8); font-size: 18px; cursor: pointer;
+  backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;
+  transition: all 0.25s; box-shadow: 0 0 20px rgba(212,160,68,0.08);
+}
+#ai-universal-btn:hover { border-color: rgba(212,160,68,0.7); color: rgba(212,160,68,1); box-shadow: 0 0 30px rgba(212,160,68,0.2); }
+#ai-universal-btn.ai-open { border-color: rgba(212,160,68,0.7); color: rgba(212,160,68,1); }
+
+/* Holon AI button — injected into #panel */
+.ai-holon-btn {
+  display: flex; align-items: center; gap: 6px;
+  margin: 12px 16px 4px;
+  background: rgba(212,160,68,0.07); border: 1px solid rgba(212,160,68,0.18);
+  border-radius: 20px; padding: 7px 14px; cursor: pointer;
+  color: rgba(212,160,68,0.7); font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; font-family: 'Georgia', serif;
+  transition: all 0.2s; width: calc(100% - 32px);
+}
+.ai-holon-btn:hover { background: rgba(212,160,68,0.14); color: rgba(212,160,68,1); border-color: rgba(212,160,68,0.35); }
+.ai-holon-btn span { font-size: 14px; }
+
+/* Edit assist button */
+.ai-edit-assist {
+  background: none; border: none; cursor: pointer;
+  color: rgba(212,160,68,0.5); font-size: 13px; padding: 2px 4px;
+  transition: color 0.2s; vertical-align: middle;
+}
+.ai-edit-assist:hover { color: rgba(212,160,68,0.9); }
+
+/* Backdrop overlay when panel open */
+#ai-backdrop {
+  display: none; position: fixed; inset: 0; z-index: 7800;
+  background: rgba(0,0,0,0.3);
+}
+#ai-backdrop.ai-open { display: block; }
+</style>
+
+<!-- AI Panel -->
+<div id="ai-backdrop"></div>
+<div id="ai-panel">
+  <div class="ai-panel-header">
+    <div class="ai-panel-title">
+      <span>&#10022;</span>
+      <span>MHRC Mind</span>
+      <span class="ai-mode-badge" id="ai-mode-badge">Universal</span>
+    </div>
+    <div class="ai-header-btns">
+      <button class="ai-icon-btn" id="ai-clear-btn" title="Clear this conversation">&#8635;</button>
+      <button class="ai-icon-btn" id="ai-close-btn" title="Close">&#x2715;</button>
+    </div>
+  </div>
+  <div class="ai-context-bar" id="ai-context-bar">Asking about the whole map</div>
+  <div id="ai-messages">
+    <div class="ai-empty-state" id="ai-empty-state">
+      <div class="ai-empty-icon">&#10022;</div>
+      <div>Ask anything about the movement,<br>the co-stars, or the strategic arc.</div>
+    </div>
+  </div>
+  <div class="ai-input-row">
+    <textarea id="ai-input" placeholder="Ask the Mind AI..." rows="1"></textarea>
+    <button id="ai-send-btn">&#8593;</button>
+  </div>
+</div>
+
+<!-- Universal AI trigger -->
+<button id="ai-universal-btn" title="Ask MHRC Mind">&#10022;</button>
+
+<script>
+/* ── MHRC Mind AI ── */
+(function() {
+
+  /* ── State ── */
+  var AI_MODE     = 'universal'; // 'universal' | 'holon' | 'edit'
+  var AI_HOLON    = null;        // current holon context object
+  var AI_BUSY     = false;
+  var AI_ENDPOINT = '/.netlify/functions/mhrc-ai';
+
+  var panel       = document.getElementById('ai-panel');
+  var backdrop    = document.getElementById('ai-backdrop');
+  var messages    = document.getElementById('ai-messages');
+  var input       = document.getElementById('ai-input');
+  var sendBtn     = document.getElementById('ai-send-btn');
+  var clearBtn    = document.getElementById('ai-clear-btn');
+  var closeBtn    = document.getElementById('ai-close-btn');
+  var modeBadge   = document.getElementById('ai-mode-badge');
+  var contextBar  = document.getElementById('ai-context-bar');
+  var emptyState  = document.getElementById('ai-empty-state');
+  var univBtn     = document.getElementById('ai-universal-btn');
+
+  /* ── History storage (persists in localStorage) ── */
+  function histKey() {
+    if (AI_MODE === 'holon' && AI_HOLON) return 'mhr_ai_h_' + (AI_HOLON.id || AI_HOLON.name || 'h');
+    if (AI_MODE === 'edit'  && AI_HOLON) return 'mhr_ai_e_' + (AI_HOLON.id || AI_HOLON.name || 'e');
+    return 'mhr_ai_h_universal';
+  }
+  function getHistory() {
+    try { return JSON.parse(localStorage.getItem(histKey()) || '[]'); } catch(_) { return []; }
+  }
+  function saveHistory(hist) {
+    try { localStorage.setItem(histKey(), JSON.stringify(hist.slice(-40))); } catch(_) {}
+  }
+  function clearHistory() {
+    try { localStorage.removeItem(histKey()); } catch(_) {}
+    renderHistory([]);
+  }
+
+  /* ── Map state snapshot ── */
+  function getMapState() {
+    try {
+      return {
+        children:    JSON.parse(localStorage.getItem('sss_children')        || '[]'),
+        ingredients: JSON.parse(localStorage.getItem('sss_ingredients_v1')  || '{}'),
+        resonances:  JSON.parse(localStorage.getItem('sss_resonances')      || '{}'),
+      };
+    } catch(_) { return {}; }
+  }
+
+  /* ── Panel open/close ── */
+  function openPanel(mode, holon) {
+    AI_MODE  = mode  || 'universal';
+    AI_HOLON = holon || null;
+
+    var labels = { universal: 'Universal', holon: 'Holon', edit: 'Edit Assist' };
+    modeBadge.textContent = labels[AI_MODE] || 'Universal';
+
+    if (AI_MODE === 'holon' && AI_HOLON) {
+      contextBar.textContent = 'About: ' + (AI_HOLON.title || AI_HOLON.name || 'this holon');
+    } else if (AI_MODE === 'edit' && AI_HOLON) {
+      contextBar.textContent = 'Editing: ' + (AI_HOLON.title || AI_HOLON.name || 'this holon');
+    } else {
+      contextBar.textContent = 'Asking about the whole map';
+    }
+
+    renderHistory(getHistory());
+    panel.classList.add('ai-open');
+    backdrop.classList.add('ai-open');
+    univBtn.classList.add('ai-open');
+    setTimeout(function() { input.focus(); }, 350);
+  }
+
+  function closePanel() {
+    panel.classList.remove('ai-open');
+    backdrop.classList.remove('ai-open');
+    univBtn.classList.remove('ai-open');
+  }
+
+  /* ── Render messages ── */
+  function renderHistory(hist) {
+    messages.innerHTML = '';
+    if (!hist.length) {
+      messages.appendChild(emptyState);
+      return;
+    }
+    hist.forEach(function(m) { appendBubble(m.role, m.content, false); });
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function appendBubble(role, text, scroll) {
+    if (emptyState.parentNode === messages) messages.removeChild(emptyState);
+    var div = document.createElement('div');
+    div.className = role === 'user' ? 'ai-msg ai-msg-user' : 'ai-msg ai-msg-assistant';
+    if (role === 'assistant') {
+      // simple paragraph rendering
+      div.innerHTML = text.split('\n\n').map(function(p) {
+        return '<p>' + p.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>') + '</p>';
+      }).join('');
+    } else {
+      div.textContent = text;
+    }
+    messages.appendChild(div);
+    if (scroll !== false) messages.scrollTop = messages.scrollHeight;
+  }
+
+  function showThinking() {
+    if (emptyState.parentNode === messages) messages.removeChild(emptyState);
+    var div = document.createElement('div');
+    div.className = 'ai-msg ai-msg-thinking';
+    div.id = 'ai-thinking';
+    div.textContent = '● ● ●';
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function removeThinking() {
+    var t = document.getElementById('ai-thinking');
+    if (t) t.remove();
+  }
+
+  /* ── Send message ── */
+  function send() {
+    var text = input.value.trim();
+    if (!text || AI_BUSY) return;
+
+    AI_BUSY = true;
+    sendBtn.disabled = true;
+    input.value = '';
+    input.style.height = 'auto';
+
+    var hist = getHistory();
+    appendBubble('user', text, true);
+    showThinking();
+
+    var body = {
+      message:      text,
+      mode:         AI_MODE,
+      holonContext: AI_HOLON || null,
+      mapState:     getMapState(),
+      history:      hist,
+    };
+
+    fetch(AI_ENDPOINT, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(body),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      removeThinking();
+      var reply = data.reply || data.error || 'No response.';
+      appendBubble('assistant', reply, true);
+      hist.push({ role: 'user', content: text });
+      hist.push({ role: 'assistant', content: reply });
+      saveHistory(hist);
+    })
+    .catch(function(err) {
+      removeThinking();
+      appendBubble('assistant', 'Connection error — ' + err.message, true);
+    })
+    .finally(function() {
+      AI_BUSY = false;
+      sendBtn.disabled = false;
+      input.focus();
+    });
+  }
+
+  /* ── Wire events ── */
+  sendBtn.addEventListener('click', send);
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+  });
+  input.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  });
+  clearBtn.addEventListener('click', function() { clearHistory(); });
+  closeBtn.addEventListener('click', closePanel);
+  backdrop.addEventListener('click', closePanel);
+  univBtn.addEventListener('click', function() {
+    if (panel.classList.contains('ai-open') && AI_MODE === 'universal') { closePanel(); return; }
+    openPanel('universal', null);
+  });
+
+  /* ── Inject holon AI button into #panel when a pillar opens ── */
+  function injectHolonBtn(pillar) {
+    var existing = document.getElementById('ai-holon-trigger');
+    if (existing) existing.remove();
+    if (!pillar) return;
+
+    var btn = document.createElement('button');
+    btn.id = 'ai-holon-trigger';
+    btn.className = 'ai-holon-btn';
+    btn.innerHTML = '<span>&#10022;</span> Ask AI about this episode';
+    btn.addEventListener('click', function() {
+      openPanel('holon', pillar);
+    });
+
+    // Insert near top of panel, after the bar
+    var panelEl = document.getElementById('panel');
+    var bar     = document.getElementById('panel-bar');
+    if (panelEl && bar && bar.parentNode) {
+      bar.parentNode.parentNode.insertBefore(btn, bar.parentNode.nextSibling);
+    }
+  }
+
+  /* ── Hook into existing openPillar flow ── */
+  var _origSetCoStar = window.setCoStar;
+  if (typeof _origSetCoStar === 'function') {
+    window.setCoStar = function(name) {
+      _origSetCoStar(name);
+      if (name) {
+        // find pillar object from name
+        var pillar = null;
+        if (typeof pillars !== 'undefined') {
+          for (var i = 0; i < pillars.length; i++) {
+            if ((pillars[i].name || pillars[i].label) === name) { pillar = pillars[i]; break; }
+          }
+        }
+        // also check childData for drill holons
+        if (!pillar && typeof childData !== 'undefined') {
+          Object.keys(childData).forEach(function(k) {
+            var arr = childData[k] || [];
+            arr.forEach(function(c) { if ((c.title || c.name) === name) pillar = c; });
+          });
+        }
+        injectHolonBtn(pillar || { name: name, title: name });
+      } else {
+        injectHolonBtn(null);
+      }
+    };
+  }
+
+  /* ── Also watch for drill frames (child holons) ── */
+  var _origEnterDrill = window.enterDrillFrame;
+  if (typeof _origEnterDrill === 'function') {
+    window.enterDrillFrame = function(frame) {
+      _origEnterDrill(frame);
+      if (frame) injectHolonBtn({ name: frame.name, id: frame.id, title: frame.name });
+    };
+  }
+
+  /* ── Admin edit assist: inject ✦ buttons into edit fields ── */
+  function injectEditAssist() {
+    if (!window.ADMIN_MODE) return;
+    var handled = document.querySelectorAll('[data-ai-wired]');
+    if (handled.length) return;
+
+    var textareas = document.querySelectorAll('.child-modal-box textarea, .child-modal-box input[type="text"]');
+    textareas.forEach(function(el) {
+      if (el.dataset.aiWired) return;
+      el.dataset.aiWired = '1';
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'ai-edit-assist';
+      btn.title = 'AI writing assist';
+      btn.textContent = '✦';
+      btn.addEventListener('click', function() {
+        var label = (el.placeholder || el.name || 'this field').toLowerCase();
+        var drill = (typeof currentDrill === 'function') ? currentDrill() : null;
+        var holon = drill || AI_HOLON || null;
+        openPanel('edit', holon);
+        input.value = 'Help me write ' + label + ' for this holon.';
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+      });
+      el.parentNode.insertBefore(btn, el.nextSibling);
+    });
+  }
+
+  /* Poll for edit modal open (since it's dynamically shown) */
+  setInterval(function() {
+    if (window.ADMIN_MODE) injectEditAssist();
+  }, 1000);
+
+  /* expose for external use */
+  window.mhrcAI = { open: openPanel, close: closePanel };
+
+})();
+</script>
+
+</body></html>
 
 
 
