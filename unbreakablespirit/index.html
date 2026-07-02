@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mind Map NJ AWARE Interagency Strategic Vision</title>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <meta name="description" content="Interactive map of the Stone Synergy Soup NJ Consortium pillars: Faith, Mental Health, Workplace, Campus, Film Industry, and A.W.A.R.E.">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -2039,7 +2040,27 @@ renderPillars();
 })();
 
 // ── Holonic drill-down ────────────────────────────────────────────────────
-var ADMIN_MODE = (location.search.indexOf('admin=1') > -1);
+var ADMIN_MODE = false;
+function checkAdminMode() {
+  if (window.netlifyIdentity) {
+    var u = window.netlifyIdentity.currentUser();
+    if (u && u.app_metadata && u.app_metadata.roles && u.app_metadata.roles.indexOf('admin') > -1) return true;
+  }
+  return false;
+}
+function applyAdminMode() {
+  ADMIN_MODE = checkAdminMode();
+  var exportBtn = document.getElementById('export-data-btn');
+  var importBtn = document.getElementById('import-data-btn');
+  var loginBtn = document.getElementById('admin-login-btn');
+  if (exportBtn) exportBtn.style.display = ADMIN_MODE ? 'block' : 'none';
+  if (importBtn) importBtn.style.display = ADMIN_MODE ? 'block' : 'none';
+  if (loginBtn) {
+    loginBtn.style.color = ADMIN_MODE ? 'rgba(212,160,68,0.9)' : 'rgba(255,255,255,0.2)';
+    loginBtn.style.borderColor = ADMIN_MODE ? 'rgba(212,160,68,0.4)' : 'rgba(255,255,255,0.08)';
+    loginBtn.title = ADMIN_MODE ? 'Admin — click to logout' : 'Admin login';
+  }
+}
 var drillStack = [];
 function currentDrill() { return drillStack.length ? drillStack[drillStack.length-1] : null; }
 var childData = {};
@@ -2774,6 +2795,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('child-form-image-url').value = '';
     updateImagePreview('');
   });
+
+  // Netlify Identity
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on('init', function() { applyAdminMode(); });
+    window.netlifyIdentity.on('login', function() { window.netlifyIdentity.close(); applyAdminMode(); });
+    window.netlifyIdentity.on('logout', function() { applyAdminMode(); });
+  }
 });
 
 function saveChildModal() {
@@ -3410,7 +3438,9 @@ window.addEventListener('load', function() {
 </div>
 <button id="back-btn" onclick="drillOut()" style="display:none;position:fixed;top:22px;right:22px;z-index:300;background:rgba(10,10,28,0.88);border:1px solid rgba(255,255,255,0.22);border-radius:22px;color:rgba(255,255,255,0.8);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:9px 20px;font-family:inherit;backdrop-filter:blur(8px);">&#8592; Back</button>
 <button id="undo-btn" onclick="undoChildData()" style="display:none;position:fixed;top:70px;right:22px;z-index:300;background:rgba(10,10,28,0.88);border:1px solid rgba(255,160,60,0.4);border-radius:22px;color:rgba(255,180,80,0.85);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:9px 20px;font-family:inherit;backdrop-filter:blur(8px);">&#8630; Undo</button>
-<script>if(location.search.indexOf('admin=1')>-1){document.write('<button onclick="exportAppData()" style="display:block;position:fixed;bottom:110px;right:22px;z-index:300;background:rgba(10,10,28,0.88);border:1px solid rgba(100,200,100,0.4);border-radius:22px;color:rgba(140,220,140,0.85);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:7px 16px;font-family:inherit;backdrop-filter:blur(8px);">&#8595; Export Data</button><button onclick="importAppData()" style="display:block;position:fixed;bottom:70px;right:22px;z-index:300;background:rgba(10,10,28,0.88);border:1px solid rgba(100,160,255,0.4);border-radius:22px;color:rgba(140,180,255,0.85);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:7px 16px;font-family:inherit;backdrop-filter:blur(8px);">&#8593; Import Data</button>');}</script>
+<button id="export-data-btn" onclick="exportAppData()" style="display:none;position:fixed;bottom:110px;right:22px;z-index:300;background:rgba(10,10,28,0.88);border:1px solid rgba(100,200,100,0.4);border-radius:22px;color:rgba(140,220,140,0.85);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:7px 16px;font-family:inherit;backdrop-filter:blur(8px);">&#8595; Export Data</button>
+<button id="import-data-btn" onclick="importAppData()" style="display:none;position:fixed;bottom:70px;right:22px;z-index:300;background:rgba(10,10,28,0.88);border:1px solid rgba(100,160,255,0.4);border-radius:22px;color:rgba(140,180,255,0.85);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:7px 16px;font-family:inherit;backdrop-filter:blur(8px);">&#8593; Import Data</button>
+<button id="admin-login-btn" onclick="if(window.netlifyIdentity){var u=window.netlifyIdentity.currentUser();if(u){window.netlifyIdentity.logout();}else{window.netlifyIdentity.open();}}" style="display:block;position:fixed;bottom:22px;left:22px;z-index:300;background:rgba(10,10,28,0.5);border:1px solid rgba(255,255,255,0.08);border-radius:50%;width:28px;height:28px;color:rgba(255,255,255,0.2);font-size:13px;cursor:pointer;font-family:inherit;backdrop-filter:blur(8px);line-height:26px;text-align:center;padding:0;" title="Admin login">&#9651;</button>
 <div id="child-modal">
   <div class="child-modal-box">
     <div class="child-modal-heading" id="child-modal-heading">Add Theme</div>
