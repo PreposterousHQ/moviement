@@ -3998,30 +3998,31 @@ window.addEventListener('load', function() {
     }
   }
 
-  /* ── Hook into existing openPillar flow ── */
-  var _origSetCoStar = window.setCoStar;
-  if (typeof _origSetCoStar === 'function') {
-    window.setCoStar = function(name) {
-      _origSetCoStar(name);
-      if (name) {
-        // find pillar object from name
-        var pillar = null;
-        if (typeof pillars !== 'undefined') {
-          for (var i = 0; i < pillars.length; i++) {
-            if ((pillars[i].name || pillars[i].label) === name) { pillar = pillars[i]; break; }
-          }
-        }
-        // also check childData for drill holons
-        if (!pillar && typeof childData !== 'undefined') {
-          Object.keys(childData).forEach(function(k) {
-            var arr = childData[k] || [];
-            arr.forEach(function(c) { if ((c.title || c.name) === name) pillar = c; });
-          });
-        }
-        injectHolonBtn(pillar || { name: name, title: name });
-      } else {
-        injectHolonBtn(null);
-      }
+  /* ── Strip HTML tags to plain text ── */
+  function stripHtml(s) {
+    if (!s) return '';
+    return s.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').trim();
+  }
+
+  /* ── Build a clean holon context from a PILLARS entry ── */
+  function pillarToContext(p) {
+    if (!p) return null;
+    return {
+      id:       p.id   || '',
+      name:     p.name || p.label || '',
+      subtitle: p.subtitle || '',
+      bio:      stripHtml(p.full || ''),
+      bullets:  (p.bullets || []).map(stripHtml).filter(Boolean),
+      color:    p.color || '',
+    };
+  }
+
+  /* ── Hook into openPanel (receives full pillar object) ── */
+  var _origOpenPanel = window.openPanel;
+  if (typeof _origOpenPanel === 'function') {
+    window.openPanel = function(p) {
+      _origOpenPanel(p);
+      injectHolonBtn(pillarToContext(p));
     };
   }
 
@@ -4030,7 +4031,7 @@ window.addEventListener('load', function() {
   if (typeof _origEnterDrill === 'function') {
     window.enterDrillFrame = function(frame) {
       _origEnterDrill(frame);
-      if (frame) injectHolonBtn({ name: frame.name, id: frame.id, title: frame.name });
+      if (frame) injectHolonBtn({ name: frame.name || frame.title, id: frame.id, title: frame.name || frame.title });
     };
   }
 
