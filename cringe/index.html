@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>cringe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  #stage {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    cursor: pointer;
+  }
+  .slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+    will-change: opacity, transform;
+  }
+  .slide.on {
+    opacity: 1;
+  }
+  /* gentle ken-burns drift while a slide is showing */
+  .slide.on {
+    animation: drift 7s ease-out forwards;
+  }
+  @keyframes drift {
+    from { transform: scale(1.0); }
+    to   { transform: scale(1.08); }
+  }
+
+  /* pause indicator */
+  #pauseHint {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .35s ease;
+  }
+  #pauseHint.show { opacity: 1; }
+  #pauseHint .glyph {
+    width: 96px; height: 96px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #pauseHint svg { width: 42px; height: 42px; fill: #fff; }
+
+  /* progress dots */
+  #dots {
+    position: fixed;
+    left: 0; right: 0;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    pointer-events: none;
+    z-index: 5;
+  }
+  #dots i {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.35);
+    transition: background .4s ease, transform .4s ease;
+  }
+  #dots i.active {
+    background: rgba(255,255,255,.95);
+    transform: scale(1.35);
+  }
+
+  /* loading */
+  #loader {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: #000; z-index: 10;
+    transition: opacity .5s ease;
+  }
+  #loader.hide { opacity: 0; pointer-events: none; }
+  #loader .spin {
+    width: 34px; height: 34px;
+    border: 3px solid rgba(255,255,255,.2);
+    border-top-color: rgba(255,255,255,.9);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+  <div id="stage" aria-label="Photo slideshow. Tap to pause or play."></div>
+
+  <div id="pauseHint">
+    <div class="glyph">
+      <svg id="hintIcon" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+    </div>
+  </div>
+
+  <div id="dots"></div>
+
+  <div id="loader"><div class="spin"></div></div>
+
+<script>
+(function () {
+  var IMAGES = [
+    'img/01.jpg','img/02.jpg','img/03.jpg','img/04.jpg','img/05.jpg',
+    'img/06.jpg','img/07.jpg','img/08.jpg','img/09.jpg','img/10.jpg'
+  ];
+
+  var HOLD = 4000;   // ms a photo stays fully visible
+  var FADE = 2000;   // ms crossfade (must match CSS transition)
+
+  var stage   = document.getElementById('stage');
+  var loader  = document.getElementById('loader');
+  var dotsBox = document.getElementById('dots');
+  var hint    = document.getElementById('pauseHint');
+  var hintIcon= document.getElementById('hintIcon');
+
+  var slides = [];
+  var dots   = [];
+  var index  = 0;
+  var playing = true;
+  var timer  = null;
+
+  var PLAY_PATH  = 'M8 5v14l11-7z';
+  var PAUSE_PATH = 'M6 5h4v14H6zM14 5h4v14h-4z';
+
+  // Build slide layers + dots
+  IMAGES.forEach(function (src, i) {
+    var el = document.createElement('div');
+    el.className = 'slide';
+    el.style.backgroundImage = 'url("' + src + '")';
+    stage.appendChild(el);
+    slides.push(el);
+
+    var d = document.createElement('i');
+    dotsBox.appendChild(d);
+    dots.push(d);
+  });
+
+  function setDots() {
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].classList.toggle('active', i === index);
+    }
+  }
+
+  function show(i) {
+    slides.forEach(function (s, n) {
+      if (n === i) {
+        // restart ken-burns drift cleanly
+        s.classList.remove('on');
+        void s.offsetWidth;
+        s.classList.add('on');
+      } else {
+        s.classList.remove('on');
+      }
+    });
+    index = i;
+    setDots();
+  }
+
+  function next() {
+    show((index + 1) % slides.length);
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!playing) return;
+    timer = setTimeout(function () {
+      next();
+      schedule();
+    }, HOLD + FADE);
+  }
+
+  function flashHint() {
+    hintIcon.setAttribute('d', playing ? PLAY_PATH : PAUSE_PATH);
+    // Show the icon representing the NEW state briefly
+    hint.classList.add('show');
+    clearTimeout(flashHint._t);
+    flashHint._t = setTimeout(function () {
+      hint.classList.remove('show');
+    }, 650);
+  }
+
+  function toggle() {
+    playing = !playing;
+    if (playing) {
+      // resume: advance and continue
+      schedule();
+    } else {
+      clearTimeout(timer);
+    }
+    flashHint();
+  }
+
+  stage.addEventListener('click', toggle);
+
+  // Preload all images, then start
+  var loaded = 0;
+  function done() {
+    loaded++;
+    if (loaded >= IMAGES.length) start();
+  }
+  IMAGES.forEach(function (src) {
+    var img = new Image();
+    img.onload = done;
+    img.onerror = done;
+    img.src = src;
+  });
+  // Safety: don't wait forever
+  setTimeout(function () { if (!started) start(); }, 4000);
+
+  var started = false;
+  function start() {
+    if (started) return;
+    started = true;
+    loader.classList.add('hide');
+    show(0);
+    schedule();
+  }
+
+  // Pause when tab hidden, resume when visible (only if it was playing)
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      clearTimeout(timer);
+    } else if (playing) {
+      schedule();
+    }
+  });
+})();
+</script>
+</body>
+</html>
