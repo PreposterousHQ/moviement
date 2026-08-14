@@ -165,7 +165,7 @@ body.scene-room .c-unfile{display:block}
 .hm-header-row{display:flex;align-items:center;gap:8px}
 .hm-panel-label{font-family:Fraunces,serif;font-size:14px;font-weight:600;color:var(--paper)}
 .hm-panel-sub{font-family:"IBM Plex Mono",monospace;font-size:10px;color:rgba(242,237,227,.35)}
-.hm-card-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:4px 12px 52px;overflow-y:auto;overflow-x:hidden;align-content:start}
+.hm-card-grid{height:0;flex-grow:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:4px 12px 52px;overflow-y:auto;overflow-x:hidden;align-content:start}
 .hm-card-item{background:var(--paper);color:var(--ink);border-radius:10px;padding:10px 12px 10px 16px;overflow:hidden;position:relative;border:1px solid rgba(20,27,46,.1);font-size:12px}
 .hm-card-item:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c,#8A7F6E);border-radius:10px 0 0 10px}
 .hm-edit{position:absolute;top:7px;right:28px;font-size:13px;color:rgba(20,27,46,.22);cursor:pointer;padding:2px 4px;border-radius:4px;touch-action:manipulation}
@@ -178,7 +178,7 @@ body.scene-room .c-unfile{display:block}
 .hm-detail-num{font-family:Fraunces,serif;font-size:22px;font-weight:800;color:var(--gold)}
 .hm-detail-theme{flex:1;font-size:14px;color:rgba(242,237,227,.8)}
 .hm-detail-count{font-family:"IBM Plex Mono",monospace;font-size:10px;color:rgba(242,237,227,.35)}
-.hm-detail-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px;overflow-y:auto;overflow-x:hidden;align-content:start}
+.hm-detail-grid{height:0;flex-grow:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px;overflow-y:auto;overflow-x:hidden;align-content:start}
 #scene-picker{display:none;position:fixed;inset:0;z-index:65;background:rgba(10,14,28,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center}
 #scene-picker.open{display:flex}
 #sp-inner{background:rgba(20,27,46,.97);border:1px solid rgba(242,237,227,.15);border-radius:16px;padding:18px;width:min(620px,95vw);max-height:90vh;overflow-y:auto}
@@ -229,9 +229,9 @@ body.scene-room .c-unfile{display:block}
 .vf-scene-theme-mini{font-size:8px;color:rgba(242,237,227,.62);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px;width:100%}
 .vf-scene-cnt{font-family:"IBM Plex Mono",monospace;font-size:8px;color:rgba(242,237,227,.38)}
 /* Back button (ubiquitous in home mode) */
-#hm-back-btn{position:fixed;bottom:62px;left:12px;z-index:36;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;display:none;padding:7px 13px;background:rgba(20,27,46,.8);border:1px solid rgba(242,237,227,.2);color:rgba(242,237,227,.75);border-radius:9px;cursor:pointer;touch-action:manipulation;transition:.15s}
-#hm-back-btn:hover:not(:disabled){color:var(--paper);border-color:rgba(242,237,227,.5)}
-#hm-back-btn:disabled{opacity:.28;cursor:default}
+#b-back:disabled{opacity:.25;pointer-events:none}
+#b-syntony{background:rgba(217,164,65,.1);border-color:rgba(217,164,65,.4);color:var(--gold)}
+#b-syntony:hover{background:rgba(217,164,65,.2)}
 /* card linking in home mode */
 .hm-link-btn{display:inline-flex;align-items:center;gap:2px;font-size:10px;color:rgba(20,27,46,.3);cursor:pointer;padding:2px 5px;border-radius:4px;background:none;border:none;touch-action:manipulation;margin-top:4px}
 .hm-ai-btn{font-size:13px;cursor:pointer;padding:2px 4px;border-radius:4px;background:none;border:none;color:rgba(20,27,46,.28);touch-action:manipulation;line-height:1;transition:color .15s,background .15s}
@@ -259,12 +259,13 @@ body.scene-room .c-unfile{display:block}
   <button class="btn ghost" id="b-send">→ Send starred</button>
   <button class="btn ghost" id="b-emergent">✦ Emergent</button>
   <button class="btn ghost" id="b-add">＋ Card</button>
-  <button class="btn ghost" id="b-tidy">⊞ Tidy</button>
   <button class="btn ghost" id="b-stats">◴ Pulse</button>
   <button class="btn ghost" id="b-io">⇄ Save</button>
   <button class="btn on" id="b-mode">◈ Home</button>
+  <button class="btn ghost" id="b-back" disabled>← Back</button>
   <button class="btn ghost" id="b-viz-panels">⬡ Panels</button>
   <button class="btn ghost" id="b-viz-scenes">◉ Scenes</button>
+  <button class="btn ghost" id="b-syntony">💡 SynTony</button>
 </div>
 
 <!-- scene room header bar -->
@@ -278,8 +279,6 @@ body.scene-room .c-unfile{display:block}
 
 <!-- home mode (panels view) -->
 <div id="home-mode" style="display:none"></div>
-
-<button id="hm-back-btn" disabled>← Back</button>
 
 <!-- 3D prism visualizer -->
 <div id="visualizer">
@@ -1215,22 +1214,74 @@ document.getElementById('search').addEventListener('input',e=>{q=e.target.value;
 document.getElementById('b-star').onclick=function(){starOnly=!starOnly;this.classList.toggle('on',starOnly);applyFilter();};
 
 /* ============================================================
-   TIDY
+   NAVIGATION STACK — holonic back/forward across all views
    ============================================================ */
-document.getElementById('b-tidy').onclick=()=>{
-  if(currentView==='scene'&&activeSceneId!=null){
-    if(!confirm('Re-grid the cards in this scene?'))return;
-    layoutSceneRoomTidy(activeSceneId);save();
-  } else {
-    if(!confirm('Snap all unfiled cards to the 24px grid?'))return;
-    state.cards.forEach(c=>{
-      if(c.sceneId!=null)return;
-      c.x=snap(c.x);c.y=snap(c.y);
-      const el=cardEls.get(c.id);if(el){el.style.left=c.x+'px';el.style.top=c.y+'px';}
-    });
-    drawWires();save();
+const navStack=[];
+
+function pushNav(label){
+  navStack.push({
+    label:label||'Back',
+    mode:appMode,
+    homeView,
+    homePanel,
+    homeDetailScene,
+  });
+  if(navStack.length>20)navStack.shift();
+  syncBackBtn();
+}
+
+function popNav(){
+  const prev=navStack.pop();
+  syncBackBtn();
+  if(!prev)return;
+  if(prev.mode!==appMode){
+    // switch mode silently (don't push again)
+    appMode=prev.mode;
+    const hm=document.getElementById('home-mode');
+    const stage=document.getElementById('stage');
+    if(prev.mode==='home'){hm.style.display='flex';stage.style.display='none';}
+    else{hm.style.display='none';stage.style.display='';renderForCurrentView();applyTransform();}
+    document.getElementById('b-mode').classList.toggle('on',prev.mode==='home');
   }
-};
+  if(prev.mode==='home'){
+    if(prev.homeView==='panels'){homePanel=prev.homePanel||0;buildHomePanels();}
+    else if(prev.homeView==='scene-detail'&&prev.homeDetailScene)showHomeSceneDetail(prev.homeDetailScene);
+  }
+}
+
+function syncBackBtn(){
+  const btn=document.getElementById('b-back');if(!btn)return;
+  const has=navStack.length>0;
+  btn.disabled=!has;
+  const lbl=has?navStack[navStack.length-1].label:'Back';
+  btn.textContent=`← ${lbl}`;
+}
+
+/* ── SynTony — context-aware AI opener ── */
+function getSynTonyContext(){
+  if(document.getElementById('insp')?.classList.contains('open')&&curId){
+    const c=byId(curId);
+    if(c)return `I'm looking at card "${c.t}" (${c.type}${c.b?' — '+c.b.slice(0,120):''}, Scene ${c.sceneId||'none'}). Help me think through it — connections, story role, what's missing.`;
+  }
+  if(appMode==='home'){
+    if(homeView==='scene-detail'&&homeDetailScene){
+      const sc=(state?.scenes||[]).find(s=>s.id===homeDetailScene)||{};
+      const cards=(state?.cards||[]).filter(c=>c.sceneId===homeDetailScene);
+      return `I'm inside Scene ${homeDetailScene}: "${sc.theme||'untitled'}" with ${cards.length} card${cards.length!==1?'s':''}${cards.length?': '+cards.slice(0,8).map(c=>c.t).join(' · ')+(cards.length>8?'...':''):'.'}. Help me develop this scene — what's its emotional arc? What's missing?`;
+    }
+    if(homePanel===0){
+      const totals=Array.from({length:20},(_,i)=>{const n=(state?.cards||[]).filter(c=>c.sceneId===i+1).length;return n?`S${i+1}:${n}`:null;}).filter(Boolean);
+      return `I'm looking at all 20 scenes. Card distribution: ${totals.join(', ')||'(empty)'}. Help me see the overall narrative shape — where are the gaps? What scenes need more material?`;
+    }
+    const unfiled=sortedUnfiled();const pg=unfiled.slice((homePanel-1)*20,homePanel*20);
+    const pt=activeBoard?.panelTitles?.[homePanel]||`Panel ${homePanel}`;
+    return `I'm looking at panel "${pt}" (${pg.length} cards): ${pg.slice(0,10).map(c=>c.t).join(' · ')}${pg.length>10?'...':''}. Help me find themes and decide which scenes these cards belong in.`;
+  }
+  return 'Help me think through the Scenius Wall for the Civil Rights MOVIEment documentary. What patterns do you see across the cards and scenes?';
+}
+
+document.getElementById('b-syntony').addEventListener('click',()=>openAIWith(getSynTonyContext()));
+document.getElementById('b-back').addEventListener('click',popNav);
 
 /* ============================================================
    EMERGENT
@@ -1447,7 +1498,7 @@ let homeView='panels'; // 'panels' | 'scene-detail'
 let homeDetailScene=null;
 let spTargetCardId=null;
 let hmSwipeSetup=false;
-let prevHomeState=null; // {type:'panels',panel:N} — for Back button
+// prevHomeState replaced by navStack (see NAVIGATION STACK section)
 let hmLinkSrc=null;    // card id being linked from
 
 /* ── card drag-to-reorder state ── */
@@ -1455,6 +1506,7 @@ let hmDrag=null; // {c, el, ghost, page}
 let hmDragOver=null;
 
 function switchMode(mode){
+  if(mode!==appMode)pushNav(appMode==='home'?(homeView==='scene-detail'?`Scene ${homeDetailScene}`:`Panel ${homePanel}`):'Miro');
   appMode=mode;
   const hm=document.getElementById('home-mode');
   const btn=document.getElementById('b-mode');
@@ -1467,14 +1519,12 @@ function switchMode(mode){
     document.body.classList.remove('scene-room');
     btn.textContent='⚡ Miro';btn.classList.add('on');
     if(!hmSwipeSetup){hmSwipeSetup=true;setupHomeSwipe();}
-    document.getElementById('hm-back-btn').style.display='';
     buildHomePanels();
   } else {
     hm.style.display='none';
     document.getElementById('stage').style.display='';
     document.getElementById('zoomwrap').style.display='';
     document.getElementById('hint').style.display='';
-    document.getElementById('hm-back-btn').style.display='none';
     btn.textContent='◈ Home';btn.classList.remove('on');
     renderForCurrentView();applyTransform();
   }
@@ -1508,8 +1558,7 @@ function compactHmOrder(){
 }
 
 function buildHomePanels(){
-  homeView='panels';prevHomeState=null;clearLinkMode();
-  const bb=document.getElementById('hm-back-btn');if(bb)bb.disabled=true;
+  homeView='panels';clearLinkMode();
   const hm=document.getElementById('home-mode');
   hm.innerHTML='<div id="hm-track"></div><button class="hm-nav" id="hm-prev">‹</button><button class="hm-nav" id="hm-next">›</button><div id="hm-dots"></div>';
   document.getElementById('hm-prev').addEventListener('click',()=>navigateHome(-1));
@@ -1604,6 +1653,12 @@ function buildHomeCardItem(c,panelIdx){
   item.querySelector('.hm-ai-btn').addEventListener('click',e=>{e.stopPropagation();openAIWith(`Help me think about this card: "${c.t}"${c.b?' — '+c.b.slice(0,120):''}. Type: ${c.type}. How does it connect to the Civil Rights MOVIEment story?`);});
   item.querySelector('.hm-file-btn').addEventListener('click',e=>{e.stopPropagation();openScenePicker(c.id,panelIdx);});
   item.querySelector('.hm-link-btn').addEventListener('click',e=>{e.stopPropagation();hmTapLink(c.id,item);});
+  // tapping the card body (title/body text area) opens inspector with nav push
+  item.querySelector('.c-title').addEventListener('click',e=>{
+    e.stopPropagation();
+    if(hmLinkSrc){commitLink(c.id);return;}
+    pushNav(`Panel ${panelIdx}`);openInspector(c.id);
+  });
   item.addEventListener('click',()=>{if(hmLinkSrc&&hmLinkSrc!==c.id)commitLink(c.id);});
   return item;
 }
@@ -1666,10 +1721,9 @@ function setupGridDrag(grid){
 }
 
 function showHomeSceneDetail(sceneId){
-  if(homeView!=='scene-detail'||homeDetailScene!==sceneId)prevHomeState={type:'panels',panel:homePanel};
+  if(homeView!=='scene-detail'||homeDetailScene!==sceneId)pushNav(homeView==='panels'?`Panel ${homePanel||0}`:`Scene ${homeDetailScene}`);
   homeView='scene-detail';homeDetailScene=sceneId;
   clearLinkMode();
-  const bb=document.getElementById('hm-back-btn');if(bb){bb.disabled=false;}
   const hm=document.getElementById('home-mode');
   const sc=(state?.scenes||[]).find(s=>s.id===sceneId)||{id:sceneId,theme:''};
   const cards=(state?.cards||[]).filter(c=>c.sceneId===sceneId).sort((a,b)=>a.sceneOrder-b.sceneOrder);
@@ -1690,6 +1744,7 @@ function showHomeSceneDetail(sceneId){
     item.querySelector('.hm-star').addEventListener('click',e=>{e.stopPropagation();c.star=!c.star;e.target.textContent=c.star?'★':'☆';e.target.classList.toggle('on',c.star);save();});
     item.querySelector('.hm-ai-btn').addEventListener('click',e=>{e.stopPropagation();openAIWith(`Help me think about this card in Scene ${sceneId}: "${c.t}"${c.b?' — '+c.b.slice(0,120):''}. How does it fit the scene theme "${sc.theme||'untitled'}"?`);});
     item.querySelector('.hm-link-btn').addEventListener('click',e=>{e.stopPropagation();hmTapLink(c.id,item);});
+    item.querySelector('.c-title').addEventListener('click',e=>{e.stopPropagation();if(hmLinkSrc){commitLink(c.id);return;}pushNav(`Scene ${sceneId}`);openInspector(c.id);});
     item.addEventListener('click',()=>{if(hmLinkSrc&&hmLinkSrc!==c.id)commitLink(c.id);});
     item.querySelector('.hm-unfile-btn').addEventListener('click',e=>{
       e.stopPropagation();
@@ -1759,12 +1814,6 @@ function refreshHomeView(){
 
 document.getElementById('b-mode').addEventListener('click',()=>switchMode(appMode==='home'?'miro':'home'));
 document.getElementById('sp-close').addEventListener('click',()=>document.getElementById('scene-picker').classList.remove('open'));
-document.getElementById('hm-back-btn').addEventListener('click',()=>{
-  if(!prevHomeState)return;
-  const ps=prevHomeState;prevHomeState=null;
-  if(ps.type==='panels'){homePanel=ps.panel||0;buildHomePanels();}
-  else if(ps.type==='scene'){showHomeSceneDetail(ps.sceneId);}
-});
 function clearLinkMode(){
   hmLinkSrc=null;
   document.querySelectorAll('.hm-card-item.hm-link-src,.hm-card-item.hm-link-tgt').forEach(el=>el.classList.remove('hm-link-src','hm-link-tgt'));
