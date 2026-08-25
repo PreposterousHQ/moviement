@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Storylivingry Studio — The Slate</title>
+<meta name="description" content="Storylivingry Studio — a slate of seven instruments. Unbreakable Spirit, The Filmanthropy Ledger, DePsy, A One Mind Show, StorylivingryX, the Mental Health Reformation Consortium, and The Moonshot. A Social Effects production.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://moviement.productions/storylivingrystudiodeck">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Moviement Productions">
+<meta property="og:url" content="https://moviement.productions/storylivingrystudiodeck">
+<meta property="og:title" content="Storylivingry Studio — The Slate">
+<meta property="og:description" content="Seven instruments, one movement. Pick your rung — $250K to $241M. It's more than a movie. It's a Moviement.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Storylivingry Studio — The Slate">
+<meta name="twitter:description" content="Seven instruments, one movement. Pick your rung — $250K to $241M.">
+<meta name="theme-color" content="#140F0A">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&family=Alfa+Slab+One&family=Public+Sans:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#140F0A;
+  --ink-2:#1C1610;
+  --ink-3:#241B12;
+  --cream:#EFE7D3;
+  --cream-dim:#A99B80;
+  --brass:#D9C27A;
+  --ember:#C96A2E;
+  --rule:rgba(239,231,211,.13);
+  --display:"Bodoni Moda",Didot,Georgia,serif;
+  --slab:"Alfa Slab One",Georgia,serif;
+  --body:"Public Sans",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--ink);color:var(--cream);font-family:var(--body);font-weight:300;text-rendering:optimizeLegibility}
+.deck{scroll-snap-type:y mandatory;overflow-y:scroll;height:100vh}
+section{
+  scroll-snap-align:start;min-height:100vh;
+  padding:clamp(28px,5vw,72px);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;border-bottom:1px solid var(--rule);
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 45%,rgba(201,106,46,.10),transparent 70%),
+    var(--ink);
+}
+section.dark{background:radial-gradient(ellipse 70% 55% at 50% 45%,rgba(217,194,122,.07),transparent 70%),var(--ink-2)}
+.wrap{max-width:1080px;margin:0 auto;width:100%}
+
+
+/* Bodoni Moda is variable on the opsz axis. Left to 'auto' the browser picks
+   opsz 96 at headline sizes — hairlines so thin Windows drops them and letters
+   look gappy/broken. Pin to the text cut. */
+h1,h2,h2 em,.project-name,.ask .num,.stat .n,.practice h4,.bigline,.way h4{
+  font-optical-sizing:none;
+  font-variation-settings:"opsz" 34;
+}
+.eyebrow{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--brass);
+  display:flex;gap:1.6em;flex-wrap:wrap;margin-bottom:clamp(18px,3vw,36px);
+}
+.eyebrow .sub{color:var(--cream-dim);letter-spacing:.2em}
+
+h1{
+  font-family:var(--display);font-style:italic;font-weight:500;
+  font-size:clamp(3rem,9vw,7.5rem);line-height:.9;
+  letter-spacing:-.01em;margin:0 0 .32em;
+  text-shadow:0 0 70px rgba(217,194,122,.22);
+}
+h2{
+  font-family:var(--display);font-weight:500;
+  font-size:clamp(1.9rem,4.5vw,3.4rem);line-height:1.06;
+  letter-spacing:-.01em;margin:0 0 .55em;max-width:21ch;
+}
+h2 em{font-style:italic;color:var(--brass)}
+h3{font-family:var(--mono);font-weight:500;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ember);margin:0 0 1em}
+p{font-size:clamp(1rem,1.5vw,1.18rem);line-height:1.64;max-width:62ch;margin:0 0 1.1em;color:#D9CFB8}
+p.lede{font-size:clamp(1.12rem,2vw,1.5rem);line-height:1.5;color:var(--cream);max-width:52ch}
+strong{font-weight:600;color:var(--cream)}
+.dim{color:var(--cream-dim)}
+
+/* the MOVIEMENT lockup, per the house treatment */
+.lockup{text-align:center;margin:clamp(16px,3vw,34px) 0}
+.lockup .kick{font-family:var(--mono);font-size:clamp(.66rem,1.5vw,.95rem);letter-spacing:.42em;color:var(--brass);display:block;margin-bottom:.7em}
+.lockup .word{
+  font-family:var(--slab);font-size:clamp(2.6rem,11vw,8rem);
+  line-height:.9;letter-spacing:-.005em;color:var(--cream);
+  display:block;
+}
+.lockup .word i{font-style:normal;color:var(--ember);text-shadow:0 0 46px rgba(201,106,46,.55)}
+.lockup .rules{border-top:1px solid var(--brass);border-bottom:1px solid var(--brass);padding:clamp(16px,3vw,34px) 0}
+
+/* SIGNATURE: one rail, every project placed on it */
+.rail{margin-top:auto;padding-top:clamp(24px,4vw,44px)}
+.rail-cap{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:14px}
+.rail-track{position:relative;height:2px;background:var(--rule);width:100%}
+.rail-track::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--ember),var(--brass));opacity:.3}
+.tick{position:absolute;top:-5px;width:1px;height:12px;background:var(--rule)}
+.marker{position:absolute;top:50%;transform:translate(-50%,-50%);width:13px;height:13px;border-radius:50%;background:var(--ember);box-shadow:0 0 0 5px rgba(201,106,46,.2),0 0 26px rgba(201,106,46,.5)}
+.marker.wide{width:auto;height:5px;border-radius:3px;transform:translate(0,-50%);background:linear-gradient(90deg,var(--ember),var(--brass));box-shadow:none}
+.rail-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;color:var(--cream-dim);margin-top:12px}
+
+.ask{display:flex;align-items:baseline;gap:.7em;flex-wrap:wrap;margin:clamp(16px,2.5vw,28px) 0 0}
+.ask .num{font-family:var(--display);font-weight:500;font-size:clamp(2.6rem,6.2vw,4.4rem);line-height:1;color:var(--brass);letter-spacing:-.02em}
+.ask .unit{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-dim)}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:start}
+@media(max-width:860px){.cols{grid-template-columns:1fr}}
+
+.ledger{width:100%;border-collapse:collapse;font-size:clamp(.86rem,1.25vw,1rem)}
+.ledger td{padding:.72em 0;border-bottom:1px solid var(--rule);vertical-align:baseline}
+.ledger td:first-child{color:var(--cream)}
+.ledger td:last-child{text-align:right;font-family:var(--mono);color:var(--brass);white-space:nowrap;font-size:.92em}
+.ledger tr.total td{border-bottom:none;padding-top:1.2em;font-weight:600}
+.ledger tr.total td:last-child{color:var(--ember)}
+.ledger .note{display:block;font-size:.82em;color:var(--cream-dim);margin-top:.28em}
+
+.stat{border-left:2px solid var(--ember);padding-left:1.1em;margin-bottom:1.5em}
+.stat .n{font-family:var(--display);font-size:clamp(1.9rem,4vw,2.8rem);line-height:1;color:var(--cream);display:block}
+.stat .l{font-size:.9rem;color:var(--cream-dim);display:block;margin-top:.45em;max-width:34ch}
+
+.practices{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(18px,3vw,38px);margin-top:.6em}
+@media(max-width:860px){.practices{grid-template-columns:1fr}}
+.practice{border-top:2px solid var(--ember);padding-top:1em}
+.practice h4{font-family:var(--display);font-weight:500;font-size:1.32rem;margin:0 0 .55em}
+.practice p{font-size:.95rem;margin:0;color:var(--cream-dim)}
+
+
+.project-name{
+  font-family:var(--display);font-weight:500;
+  font-size:clamp(2.5rem,7.2vw,5.4rem);line-height:.94;
+  letter-spacing:-.02em;color:var(--cream);
+  margin:0 0 .42em;
+  text-shadow:0 0 60px rgba(201,106,46,.28);
+}
+.project-name .rn{
+  font-family:var(--mono);font-weight:400;
+  font-size:.2em;letter-spacing:.24em;color:var(--ember);
+  display:block;margin-bottom:.9em;
+}
+.project-name + h2{
+  font-size:clamp(1.3rem,2.7vw,2rem);font-style:italic;
+  color:var(--cream-dim);max-width:30ch;margin-bottom:.9em;
+}
+.project-name + h2 em{font-style:italic;color:var(--brass)}
+
+.stack{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.55em .8em;
+  font-family:var(--mono);font-size:clamp(.7rem,1.35vw,.92rem);
+  letter-spacing:.1em;text-transform:uppercase;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  padding:clamp(14px,2.4vw,22px) 0;margin:0 0 clamp(22px,3.5vw,40px);
+}
+.stack span{color:var(--cream)}
+.stack b{color:var(--cream-dim);font-weight:400}
+.stack b.eq{color:var(--ember)}
+.stack .out{color:var(--ember);text-shadow:0 0 30px rgba(201,106,46,.45)}
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(16px,2.4vw,30px);margin-bottom:clamp(20px,3vw,34px)}
+@media(max-width:1100px){.tiers{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:860px){.tiers{grid-template-columns:1fr}}
+.tier{border-top:2px solid var(--brass);padding-top:1em}
+.tier h4{font-family:var(--display);font-weight:500;font-size:1.3rem;margin:0 0 .2em;color:var(--cream)}
+.tier p{font-size:.92rem;margin:0 0 .7em;color:var(--cream-dim)}
+.tier p.rec{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ember);margin-bottom:1em}
+.tier p.who{font-size:.82rem;color:var(--cream);opacity:.75;margin-bottom:.35em}
+
+.src{font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;color:rgba(169,155,128,.7);line-height:1.7;margin-top:1.4em;text-transform:none}
+.bigline{font-family:var(--display);font-style:italic;font-weight:500;
+  font-size:clamp(1.5rem,3.4vw,2.6rem);line-height:1.24;color:var(--cream);
+  border-left:2px solid var(--ember);padding-left:.7em;margin:clamp(18px,3vw,32px) 0;max-width:24ch}
+.twoway{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,3vw,38px);margin-top:.4em}
+@media(max-width:860px){.twoway{grid-template-columns:1fr}}
+.way{border-top:2px solid var(--brass);padding-top:1em}
+.way h4{font-family:var(--display);font-weight:500;font-size:1.3rem;margin:0 0 .2em;color:var(--cream)}
+.way p.rec{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ember);margin:0 0 .9em}
+.way p{font-size:.93rem;margin:0 0 .6em;color:var(--cream-dim)}
+.pill{display:inline-block;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--rule);padding:.44em .82em;color:var(--cream-dim);margin:0 .5em .5em 0}
+.pill.hot{border-color:var(--brass);color:var(--brass)}
+
+.quote{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(1.35rem,3vw,2.25rem);line-height:1.34;max-width:26ch;color:var(--cream)}
+.attrib{font-family:var(--mono);font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-dim);margin-top:1.6em}
+
+.foot{position:absolute;bottom:clamp(16px,2.6vw,30px);left:clamp(28px,5vw,72px);right:clamp(28px,5vw,72px);display:flex;justify-content:space-between;font-family:var(--mono);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(169,155,128,.55)}
+
+@media print{.deck{height:auto;overflow:visible}section{min-height:auto;page-break-after:always;border:none}}
+@media (prefers-reduced-motion:no-preference){
+  section .wrap>*{animation:rise .6s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+}
+:focus-visible{outline:2px solid var(--ember);outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 01 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow"><span>Fractal Impact Entertainment</span><span class="sub">Est. 2026 · New Jersey</span></div>
+    <h1>Storylivingry<br>Studio</h1>
+    <p style="font-family:var(--mono);font-size:clamp(.7rem,1.6vw,.95rem);letter-spacing:.34em;text-transform:uppercase;color:var(--ember);margin:-.4em 0 1.4em">Mental Health Reformation</p>
+    <p class="lede">One studio, one mission: transforming perceived mental illness into a blessing. Seven instruments under a single banner — and every one of them fundable on its own.</p>
+    <div class="rail">
+      <div class="rail-cap">The slate, at scale</div>
+      <div class="rail-track"><span class="marker wide" style="left:0;width:100%"></span></div>
+      <div class="rail-labels"><span>$250K</span><span>$2.9M</span><span>$241M</span></div>
+    </div>
+  </div>
+  <div class="foot"><span>storylivingrystudio.info</span><span>01 / 16</span></div>
+</section>
+
+<!-- 02 -->
+<section class="dark">
+  <div class="wrap">
+    <div class="eyebrow"><span>The claim</span><span class="sub">Why a studio and not a production company</span></div>
+    <h2>Story is load-bearing civilizational <em>infrastructure</em>.</h2>
+    <p>Story is how humans coordinate, govern, evolve, and become themselves. Treated that way, a studio is closer to civic architecture than to media production.</p>
+    <p>Every civil rights movement has had a carrier — the medium through which a people narrated themselves into being heard. Abolition had the narratives of the enslaved. Civil rights had the pulpit and the song. Gay liberation had theatre and public memoir.</p>
+    <p><strong>The mental health reformation has innovations of all kinds coming together, focusing especially on film, performance, IT and AI, and participatory media.</strong> That is not branding. It is a decision about where the work actually lives.</p>
+  </div>
+  <div class="foot"><span>The claim</span><span>02 / 16</span></div>
+</section>
+
+<!-- 03 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow"><span>The word</span><span class="sub">Buckminster Fuller, 1970</span></div>
+    <div class="cols">
+      <div>
+        <p class="quote">It is a matter of converting the high technology from weaponry to livingry.</p>
+        <div class="attrib">Buckminster Fuller</div>
+      </div>
+      <div>
+        <h3>What we make</h3>
+        <p>Livingry is Fuller's opposite of weaponry: technology in service to life. Storylivingry is livingry made of story.</p>
+        <p>We don't fix the broken model. <strong>We build the alternative well enough to make the old one obsolete.</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Livingry</span><span>03 / 16</span></div>
+</section>
+
+<!-- 04 -->
+<section class="dark">
+  <div class="wrap">
+    <div class="eyebrow"><span>The method</span><span class="sub">Three practices, one category</span></div>
+    <div class="practices">
+      <div class="practice">
+        <h4>Filmanthropy</h4>
+        <p>Every way the love of film and the love of humanity meet — proceeds, materials, presence, equity, the change a story works in the people who watch it, or something permanent left behind. <strong>By Design</strong> is the discipline: giving built in from the first day, not improvised at wrap.</p>
+      </div>
+      <div class="practice">
+        <h4>Regenerative Filmmaking</h4>
+        <p>Budgets that build permanent assets instead of disposable spectacle. To sustain is to leave a place no worse. To regenerate is to leave it more alive than the production found it.</p>
+      </div>
+      <div class="practice">
+        <h4>Transmedium Production</h4>
+        <p>Every medium is a medium — theater, film, platform, AI, governance, economics. The narrative lives across all of them, and the work continues after the cameras leave.</p>
+      </div>
+    </div>
+    <p style="margin-top:2.4em"><strong>Fractal Impact Entertainment</strong> is the category these three produce. Media within media: every production stands alone and also belongs to a larger universe, fact and fiction woven together, social impact integrated into the narrative rather than bolted onto it, and real-time feedback loops so the audience shapes what comes next. <span class="dim">Benefit that repeats at every scale, from a wardrobe donation to a land trust held forever — the same shape at $250K and at $241M. That is why the slate can be entered at any rung.</span></p>
+  </div>
+  <div class="foot"><span>Practices</span><span>04 / 16</span></div>
+</section>
+
+<!-- 05 THE FLAGSHIP -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow"><span>The flagship</span><span class="sub">The banner every instrument serves</span></div>
+    <div class="lockup">
+      <div class="rules">
+        <span class="kick">A CIVIL RIGHTS</span>
+        <span class="word">M<i>OVIE</i>MENT</span>
+        <span class="kick" style="margin:.7em 0 0">FOR THE SOUL</span>
+      </div>
+    </div>
+    <p style="margin:2em auto 0;text-align:center;max-width:60ch">The <strong>i</strong> is not a typo. A moviement is what a movement becomes when its primary carrier is story. <strong>This is not one project among the eight — it is the sum of them.</strong> Every instrument on this slate is a limb of it.</p>
+    <p style="margin:1em auto 0;text-align:center;max-width:60ch" class="dim">For more than a century, psychiatry has held sole authority to define the human mind. This returns that authority — respectfully, firmly, without apology — to the people whose minds are being defined. A person in crisis is a relationship waiting to be understood, not a malfunction to be managed.</p>
+  </div>
+  <div class="foot"><span>The Moviement</span><span>05 / 16</span></div>
+</section>
+
+<!-- 06 LADDER -->
+<section class="dark">
+  <div class="wrap">
+    <div class="eyebrow"><span>The ladder</span><span class="sub">Every entry point, with its number</span></div>
+    <div class="cols">
+      <div>
+        <h2>Pick your <em>rung</em>.</h2>
+        <p>Nothing here waits on anything else. Each instrument stands alone, and each one makes the next cheaper to build.</p>
+        <p class="dim">Unbreakable Spirit is a trilogy — Part Two ($1M) and Part Three ($1.5M) sit above the entry tier; $2.8M takes all thirty-nine episodes. The Moonshot and the Studio are their own conversations.</p>
+      </div>
+      <div>
+        <table class="ledger">
+          <tr><td>Unbreakable Spirit — Part One<span class="note">First of a three-part, 39-episode trilogy. Twelve sessions already filmed.</span></td><td>$300K</td></tr>
+          <tr><td>The Filmanthropy Ledger<span class="note">$250K documentary · $500K docuseries</span></td><td>$250–500K</td></tr>
+          <tr><td>DePsy — seed<span class="note">Backbone of One Mind Show and StorylivingryX</span></td><td>$250K</td></tr>
+          <tr><td>Mental Health Reformation Consortium<span class="note">Research, think tank, alliance</span></td><td>$350K</td></tr>
+          <tr><td>StorylivingryX<span class="note">30% available, silent, no governance</span></td><td>$500K</td></tr>
+          <tr><td>A One Mind Show<span class="note">Workshop through Count Basie</span></td><td>$500K–1M</td></tr>
+          <tr class="total"><td>Entry tier, complete</td><td>$2.15–2.9M</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="rail">
+      <div class="rail-track">
+        <span class="tick" style="left:0"></span><span class="tick" style="left:33%"></span><span class="tick" style="left:66%"></span><span class="tick" style="left:100%"></span>
+        <span class="marker wide" style="left:0;width:34%"></span>
+      </div>
+      <div class="rail-labels"><span>$250K</span><span>$2.9M</span><span>$30M</span><span>$241M</span></div>
+    </div>
+  </div>
+  <div class="foot"><span>The ladder</span><span>06 / 16</span></div>
+</section>
+
+<!-- 07 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow"><span class="sub">The camera on the Moviement</span></div>
+    <div class="project-name"><span class="rn">i.</span>Unbreakable Spirit</div>
+    <h2>TV that matters, documenting it into existence in <em>real time</em>.</h2>
+    <div class="cols">
+      <div>
+        <p>A participatory docuseries built as a <strong>trilogy &mdash; three parts, thirteen episodes each, thirty-nine in all.</strong> The spine of Part One is twelve filmed sessions with Dr. Calvin Chatlos, Professor of Psychiatry at Rutgers RWJ &mdash; <strong>already shot.</strong></p>
+        <table class="ledger">
+          <tr><td>Part One &mdash; <em>Transforming Perceived Mental Illness Into a Blessing</em><span class="note">The founder's hero's journey. Finding the soul philanthropist who lights the ecosystem up. Twelve sessions in hand.</span></td><td>$300K</td></tr>
+          <tr><td>Part Two &mdash; <em>American Psyche</em><span class="note">The condition itself &mdash; what a country does with the minds it cannot categorize</span></td><td>$1M</td></tr>
+          <tr><td>Part Three &mdash; <em>Reformation</em><span class="note">The system changing, on camera, as it changes</span></td><td>$1.5M</td></tr>
+          <tr class="total"><td>39 episodes, complete</td><td>$2.8M</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>The thirteenth episode</h3>
+        <p>Every part runs twelve, then turns. <strong>The thirteenth episode of Part Three is not an ending &mdash; it is the catalyst for Parts Four, Five and Six.</strong></p>
+        <p>Then the same pattern again. <span class="dim">Twelve to build it, one to light the next one. The series is not a season order, it is an engine &mdash; and it runs as long as the Moviement does.</span></p>
+        <div class="bigline">Thirteen is where the show stops documenting the movement and starts causing it.</div>
+        <span class="pill hot">Footage in hand</span><span class="pill">Clinical co-lead attached</span><span class="pill">$71K per episode</span>
+        <div class="ask"><span class="num">$300K</span><span class="unit">Part One &middot; $2.8M for all thirty-nine</span></div>
+      </div>
+    </div>
+    <div class="rail"><div class="rail-track"><span class="marker" style="left:2%"></span></div>
+      <div class="rail-labels"><span>$250K</span><span>$2.9M</span><span>$241M</span></div></div>
+  </div>
+  <div class="foot"><span>Unbreakable Spirit</span><span>07 / 16</span></div>
+</section>
+
+<!-- 08 -->
+<section class="dark">
+  <div class="wrap">
+    <div class="eyebrow"><span class="sub">The room</span></div>
+    <div class="project-name"><span class="rn">ii.</span>A One Mind Show</div>
+    <h2>The audience is the <em>cast</em>.</h2>
+    <p>A traveling immersive theater piece where the room becomes the network. Campus by campus, grassroots, in service of mental health reformation.</p>
+    <p>Staged like a one-man show and run like a concert — except the instrument being mixed is the technology itself. A small writers' room, a creative team solving the social implementation of the tech, a director, and a booth.</p>
+    <p><strong>Pathway:</strong> workshop locally in Holmdel, prototype with students at Brookdale's theater, build toward the Count Basie in Red Bank. <span class="dim">Not small. Not unobtainable.</span></p>
+    <div class="ask"><span class="num">$500K–1M</span><span class="unit">To workshop, build the team, and stage it</span></div>
+    <div class="rail"><div class="rail-track"><span class="marker" style="left:9%"></span></div>
+      <div class="rail-labels"><span>$250K</span><span>$2.9M</span><span>$241M</span></div></div>
+  </div>
+  <div class="foot"><span>A One Mind Show</span><span>08 / 16</span></div>
+</section>
+
+<!-- 9 -->
+<section class="dark">
+  <div class="wrap">
+    <div class="eyebrow"><span class="sub">Storyliving as a Service</span></div>
+    <div class="project-name"><span class="rn">iii.</span>StorylivingryX</div>
+    <h2>The first instrument that logs <em>intention before outcome</em>.</h2>
+    <p>A card-based life game and the platform beneath it. Built with eXperience Technologies on X the GAME™. The deck is normalized, indexed and permanent; the play surface, multiplayer, and field visualizer are built.</p>
+    <p>The floor is a genuinely valuable social technology. <strong>The ceiling is a new experimental science:</strong> intention stated in text and timestamped before the draw, on hash-chained append-only logs. Pre-registration as a game mechanic — which makes the apparatus cryptographically falsifiable.</p>
+    <p class="dim">Testable and publishable without exotic physics: does resonance-based matching produce higher cooperation and completion than random or stated-preference matching? Nobody else has the machine.</p>
+    <div class="ask"><span class="num">$500K</span><span class="unit">30% silent — no control, no governance</span></div>
+    <div class="rail"><div class="rail-track"><span class="marker" style="left:6%"></span></div>
+      <div class="rail-labels"><span>$250K</span><span>$2.9M</span><span>$241M</span></div></div>
+  </div>
+  <div class="foot"><span>StorylivingryX</span><span>09 / 16</span></div>
+</section>
+
+<!-- 10 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow"><span class="sub">The backbone</span></div>
+    <div class="project-name"><span class="rn">iv.</span>DePsy</div>
+    <h2>The people whose lives built the knowledge should <em>own it</em>.</h2>
+    <p>A decentralized mental health operating system. Agent-centric by design: each person holds their own sovereign record rather than surrendering it to a single canonical state.</p>
+    <p><strong>DePsy done right is load-bearing for the rest of the slate</strong> — the substrate under A One Mind Show and under Storyliving as a Service. Funding it early makes two other projects cheaper.</p>
+    <p class="dim">Seed scope: a team of two to three, working to direction, with research depth ahead of build.</p>
+    <div class="ask"><span class="num">$250K</span><span class="unit">Early seed</span></div>
+    <div class="rail"><div class="rail-track"><span class="marker" style="left:1%"></span></div>
+      <div class="rail-labels"><span>$250K</span><span>$2.9M</span><span>$241M</span></div></div>
+  </div>
+  <div class="foot"><span>DePsy</span><span>10 / 16</span></div>
+</section>
+
+<!-- 11 -->
+<section class="dark">
+  <div class="wrap">
+    <div class="eyebrow"><span class="sub">The alliance</span></div>
+    <div class="project-name"><span class="rn">v.</span>The Consortium</div>
+    <h2>The stone was never the ingredient. It was the <em>invitation</em>.</h2>
+    <p>A multi-sector public-private alliance: clinicians, chaplains, peers, survivors, psychiatrists, storytellers, communities. Research arm and think tank.</p>
+    <p>Every piece already exists somewhere in New Jersey — a film boom, a mental-health reformation already organizing, a brand-new Faith Action Center at the State, a workforce mandate from the Governor down. <strong>Nobody has assembled them.</strong></p>
+    <div class="ask"><span class="num">$350K</span><span class="unit">Research, think tank, convening</span></div>
+    <div class="rail"><div class="rail-track"><span class="marker" style="left:3%"></span></div>
+      <div class="rail-labels"><span>$250K</span><span>$2.9M</span><span>$241M</span></div></div>
+  </div>
+  <div class="foot"><span>The Consortium</span><span>11 / 16</span></div>
+</section>
+
+<!-- 12 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow"><span class="sub">The precedent</span></div>
+    <div class="project-name"><span class="rn">vi.</span>The Filmanthropy Ledger</div>
+    <h2>A century of giving in film, <em>never counted</em>.</h2>
+    <p>Mary Pickford passed a bucket on her sets in 1921 and it became a house that still takes film people in. Danny Kaye's Paramount profits went to UNICEF in 1954. Spielberg refused every dollar of <em>Schindler's List</em> and founded the Righteous Persons Foundation. <em>Skater Girl</em> built a skatepark in Rajasthan before shooting a frame, and the children are still on it.</p>
+    <p>And the other ledger: <em>Patch Adams</em> grossed $202M telling the story of a free hospital that was never built. <em>The Ten Commandments</em> built the largest set in film history and buried it in the dunes.</p>
+    <p><strong>Not blame — design.</strong> The Ledger is the evidence base that makes everything else here a precedent rather than a proposal.</p>
+    <div class="ask"><span class="num">$250K</span><span class="unit">Documentary · $500K as a docuseries</span></div>
+    <div class="rail"><div class="rail-track"><span class="marker" style="left:1%"></span></div>
+      <div class="rail-labels"><span>$250K</span><span>$2.9M</span><span>$241M</span></div></div>
+  </div>
+  <div class="foot"><span>The Ledger</span><span>12 / 16</span></div>
+</section>
+
+<!-- 13 -->
+<section class="dark">
+  <div class="wrap">
+    <div class="eyebrow"><span class="sub">The feature &middot; a Social Effects production</span></div>
+    <div class="project-name"><span class="rn">vii.</span>The Moonshot</div>
+    <h2>The film that <em>builds the thing it is about</em>.</h2>
+    <div class="cols">
+      <div>
+        <p>A fictionalized feel-good drama about the Moviement &mdash; the people, the fight, and how it actually got done. <span class="dim">Patch Adams meets Fight Club meets Forrest Gump.</span></p>
+        <p><strong>And on the outside, the meta layer:</strong> the making of the film is itself the story of regenerative filmmaking, documented as it happens. The audience watches the movement in the film and the movement in the production, and by the end cannot tell which one built the village.</p>
+        <div class="bigline">Patch Adams cost about $90M in 1998 &mdash; roughly $180M today &mdash; to tell the story of a free hospital that was never built.</div>
+        <p><strong>This one costs $181M and an entire ecosystem and paradigm gets built.</strong> <span class="dim">The Ten Commandments raised the largest set in film history and buried it in the dunes. Nothing about this is new except the decision not to bury it.</span></p>
+      </div>
+      <div>
+        <h3>What the film is about</h3>
+        <div class="stat"><span class="n">1,202</span><span class="l">people held across New Jersey's four state psychiatric hospitals, July 2026</span></div>
+        <div class="stat"><span class="n">1 in 5</span><span class="l">on CEPP &mdash; Conditional Extension Pending Placement. A court has found them no longer dangerous. They stay because there is nowhere to go.</span></div>
+        <div class="stat"><span class="n">$336,938</span><span class="l">per person, per year &mdash; $923 a day &mdash; to hold someone a judge has already released</span></div>
+        <p><strong>240 people &times; $336,938 = $80,865,225 a year.</strong> Every year. Disability Rights New Jersey is suing the State over it.</p>
+        <div class="ask"><span class="num">$181M</span><span class="unit">$100M production &middot; $81M village</span></div>
+      </div>
+    </div>
+    <p class="src">Sources &mdash; Census: NJ DOH State Psychiatric Hospital Census, FY2027 report. Cost: FY2026 appropriation of $405M across the four hospitals &divide; July 2026 census. CEPP share: Disability Rights New Jersey court filing, cited in NJ DOH FY2024&ndash;2025 budget discussion points. Patch Adams: $90M budget, $202.3M worldwide gross.</p>
+  </div>
+  <div class="foot"><span>The Moonshot &mdash; the film</span><span>13 / 16</span></div>
+</section>
+
+<!-- 14 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow"><span class="sub">The Moonshot</span></div>
+    <div class="project-name"><span class="rn">vii.</span>The Set Stays Up</div>
+    <h2>One year of holding someone buys a home for the <em>rest of their life</em>.</h2>
+    <div class="cols">
+      <div>
+        <table class="ledger">
+          <tr><td>Land<span class="note">200 acres, working farmland</span></td><td>$4.0M</td></tr>
+          <tr><td>290 homes<span class="note">240 residents at $100K &middot; 50 staff at $120K. Real houses, not boxes &mdash; every person has their own front door.</span></td><td>$30.0M</td></tr>
+          <tr><td>Site infrastructure<span class="note">Roads, water, wastewater, power, stormwater, broadband</span></td><td>$13.1M</td></tr>
+          <tr><td>Community domes<span class="note">Shared kitchens, dining, clinic, workshop, laundry. Private space and common life, both.</span></td><td>$12.0M</td></tr>
+          <tr><td>The farm<span class="note">Barn, greenhouses, irrigation, cold storage, equipment</span></td><td>$5.0M</td></tr>
+          <tr><td>Design, engineering, permitting, legal, trust formation, contingency<span class="note">30% of hard cost</span></td><td>$19.2M</td></tr>
+          <tr><td>The picture<span class="note">Full feature production, post, and delivery</span></td><td>$100M</td></tr>
+          <tr class="total"><td>Total</td><td>$181M</td></tr>
+        </table>
+        <p class="src">Cost per person housed permanently: <strong>$346,937.</strong> One year of confinement: <strong>$336,938.</strong> A conventional feature of this size spends a large fraction of its budget on sets that are struck and landfilled at wrap. Here that line becomes permanent housing.</p>
+      </div>
+      <div>
+        <h3>Who holds it</h3>
+        <p><strong>A private irrevocable trust, with the land in a land trust.</strong> The State sits on the board of trustees alongside clinical, community, resident and philanthropic stakeholders.</p>
+        <p><strong>The State does not own it and cannot dissolve it.</strong> That is not a slight &mdash; it is the only structure that survives a change of governor. A state-owned asset is one budget cycle from being traded away. This one is not for sale, not convertible, and not repurposable by anyone, ever.</p>
+
+        <h3 style="margin-top:1.8em">What it returns</h3>
+        <p>Supportive housing with services runs roughly $60K per person per year against $337K. <strong>The village saves about $66M a year and repays its $81M in fifteen months.</strong> <span class="dim">Over ten years: $665M, and a village still standing.</span></p>
+        <p>And it earns. <strong>A standing village and working farm, minutes from more production capacity than New Jersey has ever had &mdash; location fees, production housing, standing-set revenue, all flowing back into the trust.</strong> <span class="dim">A village that earns does not need permission.</span></p>
+
+        <div class="twoway" style="margin-top:1.8em">
+          <div class="way">
+            <h4>The State as partner</h4>
+            <p class="rec">Capital &middot; a seat &middot; capacity</p>
+            <p>Contributes capital, takes a seat among the trustees, secures placement capacity at contracted rates. The outcome and the oversight, without the ownership, staffing, insurance or maintenance.</p>
+          </div>
+          <div class="way">
+            <h4>The State as customer</h4>
+            <p class="rec">Zero capital exposure</p>
+            <p>Private and philanthropic capital builds it; the State simply buys placements at about $60K against the $337K it spends now. No appropriation fight. <strong>This is already how New Jersey funds supportive housing for people on CEPP.</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:1.4em"><strong>We would like you at the table. We are building it either way.</strong></p>
+  </div>
+  <div class="foot"><span>The Moonshot &mdash; the set</span><span>14 / 16</span></div>
+</section>
+
+<!-- 15 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow"><span class="sub">How any of this gets funded</span></div>
+    <div class="project-name"><span class="rn">The model</span>Ways In</div>
+    <h2>Four ways in. No single source has to <em>carry it</em>.</h2>
+
+    <p class="lede" style="margin-bottom:1.6em">Any project here can be funded by any one of these routes, or by several at once. <strong>They are options, not assignments.</strong></p>
+
+    <div class="tiers">
+      <div class="tier">
+        <h4>Investment</h4>
+        <p class="rec">Recoupable</p>
+        <p>Film-standard waterfall: principal returned in full before anyone takes profit, then participation in points on the back end. StorylivingryX is offered as equity instead — 30% silent, no control, no governance.</p>
+      </div>
+      <div class="tier">
+        <h4>Philanthropy</h4>
+        <p class="rec">Non-recoupable · tax-deductible</p>
+        <p>Foundations, donor-advised funds, individual gifts, sponsorship. <strong>We hold fiscal sponsorship through the Human Faith Project</strong>, so a gift can be fully tax-deductible when that matters to the giver.</p>
+        <p class="who">humanfaithproject.org/donate</p>
+      </div>
+      <div class="tier">
+        <h4>Public</h4>
+        <p class="rec">Matched &amp; earned</p>
+        <p>Film tax credits, state arts funding, county economic development, workforce dollars. Money already appropriated — spent once on something permanent instead of annually on something rented.</p>
+      </div>
+      <div class="tier">
+        <h4>Direct gift</h4>
+        <p class="rec">No vehicle</p>
+        <p>Some givers prefer no structure at all: a straight gift to the founder and the work, with no return expected and no paperwork between the intention and the thing. That route is open too.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <span>Production Budget</span><b>+</b>
+      <span>NEA &amp; State Arts Grants</span><b>+</b>
+      <span>County Economic Development</span><b>+</b>
+      <span>Private Philanthropy</span><b>+</b>
+      <span>Corporate Partners</span>
+      <b class="eq">=</b><span class="out">Something That Stays</span>
+    </div>
+
+    <p><strong>Blending them is one option, not the requirement.</strong> A single philanthropist could fund the entire $241M alone. A single production could stack all five lines above. <span class="dim">The structure adapts to whoever shows up.</span></p>
+
+    <p style="margin-top:2em">New Jersey is about to have more film production than at any point in its history. <strong>Netflix at Fort Monmouth opens in 2028. Paramount 1888 Studios is under construction in Bayonne. Lionsgate is building in Newark. Fifty-eight Film Ready communities are waiting.</strong> <span class="dim">What if one of those productions, stacking its budget with grants, philanthropy, government funds and deliberate design, built something for New Jersey that would still be standing in fifty years?</span></p>
+  </div>
+  <div class="foot"><span>Ways In</span><span>15 / 16</span></div>
+</section>
+
+<!-- 16 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow"><span>The whole</span><span class="sub">Storylivingry Studio</span></div>
+    <h2>One check builds <em>all of it</em>.</h2>
+    <div class="cols">
+      <div>
+        <table class="ledger">
+          <tr><td>The Moonshot<span class="note">The feature, plus the village it builds — held in irrevocable trust</span></td><td>$181M</td></tr>
+          <tr><td>Land &amp; micro-sets<span class="note">A permanent home that is also a set. Parts Two &amp; Three.</span></td><td>$30M</td></tr>
+          <tr><td>Tech, Ledger, One Mind, the rest<span class="note">Built once at scale, reused across the slate</span></td><td>$30M</td></tr>
+          <tr class="total"><td>Storylivingry Studio</td><td>$241M</td></tr>
+        </table>
+      </div>
+      <div>
+        <p class="lede">Against $81M a year New Jersey already spends to hold 240 people a court has cleared to leave.</p>
+        <p>The entry tier — every instrument seeded — is <strong>$2.15M to $2.9M.</strong> The full slate below the studio line, including Parts Two and Three, is <strong>under $5M.</strong></p>
+        <p style="margin-top:1.4em"><strong>And the model is the second asset.</strong> This studio is built for one mission. The architecture underneath it — the practices, the ladder, the way a slate of instruments serves one banner — is not mission-specific. Other causes will want their own. <span class="dim">Licensing and consulting is the line of business that follows the proof.</span></p>
+      </div>
+    </div>
+    <p style="margin-top:2em;font-family:var(--mono);font-size:.76rem;letter-spacing:.12em">Bret Warshawsky · bret@bretwarshawsky.com · storylivingrystudio.info</p>
+  </div>
+  <div class="foot"><span>Bring your ingredient. The soup is already on.</span><span>16 / 16</span></div>
+</section>
+
+</div>
+</body>
+</html>
