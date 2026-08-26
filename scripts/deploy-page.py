@@ -279,10 +279,21 @@ def main():
         if not m:
             die("could not read the 'CDN requesting' line; verify the deploy by hand")
         n = int(m.group(1))
-        if n != len(expected):
-            die("Netlify uploaded %d files but only %d should have changed. "
+        # Only an upload count ABOVE the expectation is a problem: it means files
+        # we meant to leave alone were sent as new content. Below is fine and in
+        # fact safer -- Netlify already had that blob cached and reused it by
+        # digest. /netlify.toml oscillates here: our 157 b input differs from the
+        # regenerated copy that is live, so it always shows as CHANGED in the
+        # payload diff, but once the CDN has seen those exact input bytes it
+        # stops asking for them, and the count drops from 2 to 1.
+        if n > len(expected):
+            die("Netlify uploaded %d files but at most %d should have changed. "
                 "Roll back to %s." % (n, len(expected), rollback))
-        print("  -> upload count matches: %d file(s), everything else reused by digest" % n)
+        if n < len(expected):
+            print("  -> %d file(s) uploaded, fewer than the %d that differ: the rest "
+                  "were already cached by digest" % (n, len(expected)))
+        else:
+            print("  -> upload count matches: %d file(s), everything else reused by digest" % n)
 
         print("\nverifying")
         status, live = fetch(BASE_URL + page_url(target))
