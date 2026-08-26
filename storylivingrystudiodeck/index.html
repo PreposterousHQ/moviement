@@ -19,7 +19,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400;1,6..96,500&family=Alfa+Slab+One&family=Public+Sans:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Alfa+Slab+One&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#140F0A;
@@ -30,14 +30,14 @@
   --brass:#D9C27A;
   --ember:#C96A2E;
   --rule:rgba(239,231,211,.13);
-  --display:"Bodoni Moda",Didot,Georgia,serif;
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
   --slab:"Alfa Slab One",Georgia,serif;
   --body:"Public Sans",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,monospace;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--ink);color:var(--cream);font-family:var(--body);font-weight:300;text-rendering:optimizeLegibility}
+body{background:var(--ink);color:var(--cream);font-family:var(--body);font-weight:400;text-rendering:optimizeLegibility}
 /* Continuous scroll. No snap: two sections are legitimately taller than a
    viewport, and mandatory snap fights the reader on exactly those. */
 html{scroll-behavior:smooth}
@@ -61,13 +61,21 @@ section.dark{background:radial-gradient(ellipse 70% 55% at 50% 45%,rgba(217,194,
 .wrap{max-width:1080px;margin:0 auto;width:100%}
 
 
-/* Bodoni Moda is variable on the opsz axis. Left to 'auto' the browser picks
-   opsz 96 at headline sizes, where hairlines get so thin Windows drops them and letters
-   look gappy/broken. Pin to the text cut. */
-h1,h2,h2 em,.project-name,.ask .num,.stat .n,.practice h4,.bigline,.way h4{
+/* Fraunces replaces Bodoni Moda. A Didone's hairlines fall below one device pixel
+   on phone screens and get dropped rather than smoothed, which broke letters apart.
+   Fraunces is low-contrast by construction, so there are no hairlines to lose.
+   opsz pinned mid-range; SOFT rounds the terminals; WONK keeps the character. */
+h1,h2,h2 em,.project-name,.ask .num,.stat .n,.practice h4,.bigline,.way h4,
+.ledger .total td,h3{
   font-optical-sizing:none;
-  font-variation-settings:"opsz" 34;
+  font-variation-settings:"opsz" 48,"SOFT" 40,"WONK" 1;
 }
+.breath{min-height:56svh;justify-content:center;align-items:center;text-align:center;
+  background:radial-gradient(ellipse 60% 50% at 50% 50%,rgba(217,194,122,.05),transparent 70%),#0C0906}
+.breath .wrap{max-width:20ch}
+.breath p{font-family:var(--display);font-weight:600;
+  font-size:clamp(2rem,5.6vw,4.2rem);line-height:1.14;color:var(--cream);margin:0}
+.breath p em{font-style:italic;color:var(--brass)}
 .eyebrow{
   font-family:var(--mono);font-size:.66rem;letter-spacing:.26em;
   text-transform:uppercase;color:var(--brass);
@@ -128,6 +136,7 @@ strong{font-weight:600;color:var(--cream)}
 .ledger tr.total td{border-bottom:none;padding-top:1.2em;font-weight:600}
 .ledger tr.total td:last-child{color:var(--ember)}
 .ledger .note{display:block;font-size:.82em;color:var(--cream-dim);margin-top:.28em}
+.ledger .note strong{color:var(--cream);font-weight:500}
 
 .stat{border-left:2px solid var(--ember);padding-left:1.1em;margin-bottom:1.5em}
 .stat .n{font-family:var(--display);font-size:clamp(1.9rem,4vw,2.8rem);line-height:1;color:var(--cream);display:block}
@@ -214,7 +223,8 @@ strong{font-weight:600;color:var(--cream)}
     <div class="eyebrow"><span>Fractal Impact Entertainment</span><span class="sub">Est. 2026 · New Jersey</span></div>
     <h1>Storylivingry<br>Studio</h1>
     <p style="font-family:var(--mono);font-size:clamp(.7rem,1.6vw,.95rem);letter-spacing:.34em;text-transform:uppercase;color:var(--ember);margin:-.4em 0 1.4em">Mental Health Reformation</p>
-    <p class="lede">One studio, one mission: transforming perceived mental illness into a blessing. Seven instruments under a single banner, and every one of them fundable on its own.</p>
+    <p class="lede" style="font-family:var(--mono);font-size:clamp(.58rem,1.2vw,.68rem);letter-spacing:.26em;text-transform:uppercase;color:var(--brass);margin-bottom:.9em;max-width:none">One studio, one question</p>
+    <div class="bigline" style="margin-top:0;max-width:30ch">How quickly can we obsolete the current mental health paradigm and system in favour of a more beautiful, enlightened and appropriate understanding of, and response to, perceived mental illness?</div>
     <div class="rail">
       <div class="rail-cap">The slate, at scale</div>
       <div class="rail-track"><span class="marker wide" style="left:0;width:100%"></span></div>
@@ -222,6 +232,13 @@ strong{font-weight:600;color:var(--cream)}
     </div>
   </div>
   <div class="foot"><span>storylivingrystudio.info</span><span>01 / 16</span></div>
+</section>
+
+<!-- breath -->
+<section class="breath">
+  <div class="wrap">
+    <p>An ecosystem of seven instruments. Each one stands alone. <em>Together they compound.</em></p>
+  </div>
 </section>
 
 <!-- 02 -->
@@ -307,12 +324,12 @@ strong{font-weight:600;color:var(--cream)}
       </div>
       <div>
         <table class="ledger">
-          <tr><td>Unbreakable Spirit, Part One<span class="note">First of a three-part, 39-episode trilogy. Twelve sessions already filmed.</span></td><td>$300K</td></tr>
-          <tr><td>The Filmanthropy Ledger<span class="note">$250K documentary · $500K docuseries</span></td><td>$250–500K</td></tr>
-          <tr><td>DePsy seed<span class="note">Backbone of One Mind Show and StorylivingryX</span></td><td>$250K</td></tr>
-          <tr><td>Mental Health Reformation Consortium<span class="note">Research, think tank, alliance</span></td><td>$350K</td></tr>
-          <tr><td>StorylivingryX<span class="note">30% available, silent, no governance</span></td><td>$500K</td></tr>
-          <tr><td>A One Mind Show<span class="note">Workshop through Count Basie</span></td><td>$500K–1M</td></tr>
+          <tr><td>Unbreakable Spirit, Part One<span class="note"><strong>TV that matters. A revolutionary participatory docuseries.</strong></span></td><td>$300K</td></tr>
+          <tr><td>The Filmanthropy Ledger<span class="note"><strong>A century of giving in film, finally counted.</strong> The evidence base that makes all of this a precedent instead of a proposal.</span></td><td>$250–500K</td></tr>
+          <tr><td>DePsy seed<span class="note"><strong>Decentralizing and democratizing mental health, for the people, by the people.</strong> An operating system where the people whose lives built the knowledge finally own it.</span></td><td>$250K</td></tr>
+          <tr><td>Mental Health Reformation Consortium<span class="note"><strong>The alliance New Jersey already has and has never assembled.</strong> Clinicians, chaplains, peers, survivors and storytellers, in one room with a research arm.</span></td><td>$350K</td></tr>
+          <tr><td>StorylivingryX<span class="note"><strong>Gamified technology and a social network for building the Moviement.</strong> Collaboration, innovation, and the first instrument that logs intention before outcome.</span></td><td>$500K</td></tr>
+          <tr><td>A One Mind Show<span class="note"><strong>Live immersive theater where the audience is the cast.</strong> The Moviement assembling itself, one room and one campus at a time.</span></td><td>$500K–1M</td></tr>
           <tr class="total"><td>Entry tier, complete</td><td>$2.15–2.9M</td></tr>
         </table>
       </div>
@@ -339,8 +356,8 @@ strong{font-weight:600;color:var(--cream)}
         <p>A participatory docuseries built as a <strong>trilogy: three parts, thirteen episodes each, thirty-nine in all.</strong> The spine of Part One is twelve filmed sessions with Dr. Calvin Chatlos, Professor of Psychiatry at Rutgers RWJ. <strong>Already shot.</strong></p>
         <table class="ledger">
           <tr><td>Part One: <em>The Gift Universe</em><span class="note">Three arcs across thirteen. <em>Passion Is the Gateway Drug</em> &middot; <em>There's a Genius Born Every Minute</em> &middot; <em>Transforming Perceived Mental Illness Into a Blessing</em>. The founder's hero's journey, and finding the soul philanthropist who lights the ecosystem up. Twelve sessions in hand.</span></td><td>$300K</td></tr>
-          <tr><td>Part Two: <em>American Psyche</em><span class="note">The condition itself. What a country does with the minds it cannot categorize</span></td><td>$1M</td></tr>
-          <tr><td>Part Three: <em>Reformation</em><span class="note">The system changing, on camera, as it changes</span></td><td>$1.5M</td></tr>
+          <tr><td>Part Two: <em>Reformation</em><span class="note">The system changing, on camera, as it changes.</span></td><td>$1M</td></tr>
+          <tr><td>Part Three: <em>American Psyche</em><span class="note"><em>American Psycho</em> inverted. Ambition, drive and the will to build turned toward the soul instead of conquest. One man's story becomes a country's, and the Moviement is documented into existence on the road to the Moonshot.</span></td><td>$1.5M</td></tr>
           <tr class="total"><td>39 episodes, complete</td><td>$2.8M</td></tr>
         </table>
       </div>
@@ -570,7 +587,7 @@ strong{font-weight:600;color:var(--cream)}
     <div class="cols">
       <div>
         <table class="ledger">
-          <tr><td>The Moonshot<span class="note">The feature, plus the village it builds, held in irrevocable trust</span></td><td>$181M</td></tr>
+          <tr><td>The Moonshot<span class="note"><strong>The feature film that builds the thing it is about.</strong> A village, a farm and a paradigm, held in irrevocable trust.</span></td><td>$181M</td></tr>
           <tr><td>Land &amp; micro-sets<span class="note">A permanent home that is also a set. Parts Two &amp; Three.</span></td><td>$30M</td></tr>
           <tr><td>Tech, Ledger, One Mind, the rest<span class="note">Built once at scale, reused across the slate</span></td><td>$30M</td></tr>
           <tr class="total"><td>Storylivingry Studio</td><td>$241M</td></tr>
