@@ -42,6 +42,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.request
 
 APEX_SITE = "4db3dc98-0407-4718-a220-3e8fe22fe2c5"
@@ -94,6 +95,27 @@ def fetch(url, timeout=90):
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.status, r.read()
+
+
+def fetch_settled(url, want, tries=8, delay=4):
+    """Fetch until the CDN serves the bytes we just deployed.
+
+    Netlify prints 'Deploy is live!' before every edge has the new object,
+    so an immediate read can return the previous version. That is a
+    propagation race, not a bad deploy, and failing on the first read gives
+    a false alarm after the deploy has already succeeded. Retry briefly
+    before believing a mismatch.
+    """
+    status, data = None, None
+    for i in range(tries):
+        status, data = fetch(url)
+        if data == want:
+            if i:
+                print("  (settled after %d retr%s)" % (i, "y" if i == 1 else "ies"))
+            return status, data, True
+        if i < tries - 1:
+            time.sleep(delay)
+    return status, data, False
 
 
 def netlify_api(method, site):
@@ -345,8 +367,7 @@ def main():
             print("  -> upload count matches: %d file(s), everything else reused by digest" % n)
 
         print("\nverifying")
-        status, live = fetch(BASE_URL + page_url(target))
-        same = live == data
+        status, live, same = fetch_settled(BASE_URL + page_url(target), data)
         print("  %s  HTTP %s  %d bytes  %s"
               % (target, status, len(live),
                  "byte-identical to source" if same else "DIFFERS FROM SOURCE"))
