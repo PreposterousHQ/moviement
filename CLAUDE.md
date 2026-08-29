@@ -148,9 +148,21 @@ The usual task is: a new version of this one file is in `~/Downloads`.
       are noise, but they train the operator to ignore build alerts on a site
       where a real failure would then also go unnoticed.
 
-      **Immediate mitigation:** stop builds on the storylivingboard site
-      (unlink its repo, or set "stop builds" in its Netlify settings). It has
-      not built successfully from a push in a long time, so nothing is lost.
+      **Immediate mitigation: DONE (2026-08-29).** `stop_builds` is now set
+      on the storylivingboard site, so pushes to `main` no longer trigger it.
+      Its last successful publish (deploy `6a8cfe51414f1c00082262c6`,
+      2026-08-25) stays live and is unaffected.
+
+      ```
+      # state
+      netlify api getSite --data '{"site_id":"ba00e17b-07b8-4094-901b-f0f7e954de00"}'
+      # re-enable if the split below ever happens
+      netlify api updateSite --data '{"site_id":"ba00e17b-07b8-4094-901b-f0f7e954de00","body":{"build_settings":{"stop_builds":false}}}'
+      ```
+
+      UI equivalent: app.netlify.com -> project `storylivingboard` ->
+      Project configuration -> Build & deploy -> Continuous deployment ->
+      Build settings -> **Stop builds**.
 
 - [ ] **Split `storylivingboard/` into its own repo.** The real fix for the
       entanglement: one repo should own one deploy target. Point the
