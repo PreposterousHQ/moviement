@@ -54,11 +54,13 @@ everything.
 | `/nj/` | |
 | `/unbreakablespirit/` | Uses the `mhrc-ai` Netlify function |
 | `/storylivingboard/` | Also the web root of the separate storylivingboard site |
-| `/storylivingrystudiodeck/` | Investor deck (see below) |
+| `/storylivingrystudiodeck/` | Investor deck (see below). The file lives here. |
+| `/deck` | **Alias** for the deck. A 200 rewrite, not a copy and not a redirect. |
 | `/cringe/` | **Committed but never deployed.** Leave offline unless asked. |
 
-There is no `_redirects` file and no catch-all rule. New folders at the repo
-root become live paths with no configuration.
+There is a root `_redirects` file holding the two `/deck` alias rules and
+nothing else. There is no catch-all rule. New folders at the repo root become
+live paths with no configuration.
 
 ## The deck: `/storylivingrystudiodeck/`
 
@@ -123,6 +125,16 @@ The usual task is: a new version of this one file is in `~/Downloads`.
   `storylivingboard/netlify.toml` -- that file contains no `base` key, so
   looking for it there turns up nothing.
 
+- **`/_redirects` never appears in `listSiteFiles` and 404s over HTTP.**
+  Netlify consumes it into routing rules rather than serving it, and unlike
+  `/netlify.toml` it is not even listed in the manifest. Two consequences:
+  a deploy payload rebuilt from the manifest alone would **silently drop it**
+  and break `/deck`; and there is no manifest sha1 to verify it landed, so it
+  is verified by behaviour instead (does `/deck` return 200).
+  `scripts/deploy-page.py` handles this: every path in its `UNSERVABLE` set is
+  seeded from the repo on every deploy whether or not the manifest lists it.
+  **The repo copy at the root is therefore load-bearing. Do not delete it.**
+
 ## Cleanup backlog
 
 - [x] **Done.** `.gitattributes` at the repo root sets `*.html text eol=lf`.
@@ -185,17 +197,37 @@ The usual task is: a new version of this one file is in `~/Downloads`.
       page from a checkout.
 - [ ] Decide the fate of `/cringe/` — deploy with a noindex tag, or delete.
 
-## Planned, not yet approved
+## The `/deck` alias (done 2026-08-29)
 
-**Move the deck from `/storylivingrystudiodeck` to `/deck`.** When this
-happens, the old path must keep working, because the long URL has already been
-shared. Add to a root `_redirects`:
+The deck is reachable at **both** `/deck` and `/storylivingrystudiodeck/`.
+This was done as an **alias, not a move**. Specifically:
+
+- There is **one copy of the file**, still at
+  `/storylivingrystudiodeck/index.html`. There is no `/deck/` folder and no
+  second copy to keep in sync.
+- `/deck` is a **200 rewrite**, not a 301. Neither URL bounces to the other;
+  the address bar stays on whichever one was requested. Links already shared
+  at the long path keep working exactly as before.
+- The deck's `<head>` now points `canonical` and `og:url` at
+  `https://moviement.productions/deck`, so the short URL is the one that gets
+  indexed and unfurled. (Indexing is moot while the `noindex` tag stands, but
+  the canonical is what link unfurlers read.)
+
+Root `_redirects` in full:
 
 ```
-/storylivingrystudiodeck/*  /deck/:splat  301
-/storylivingrystudiodeck    /deck         301
+/deck      /storylivingrystudiodeck/index.html   200
+/deck/     /storylivingrystudiodeck/index.html   200
 ```
 
-Also update inside the deck's own `<head>`: the `canonical` link and the
-`og:url` both hardcode the current path. **Do not start this without being
-asked.**
+**Rules match top-down and the first match wins.** Anything added later must
+go **below** these two lines, or it can shadow the alias. A broad rule placed
+above them would capture `/deck` before they are ever reached.
+
+Both paths were verified serving identical bytes with `num_redirects=0`.
+
+### Not done, and deliberately so
+
+The deck was **not moved** and the long path was **not** 301'd away. If a real
+move is ever wanted, the old path must keep working, because the long URL has
+already been shared. **Do not start that without being asked.**
