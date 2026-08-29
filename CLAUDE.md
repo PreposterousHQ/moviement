@@ -1,17 +1,25 @@
 # moviement.productions
 
 Plain static HTML site. No framework, no build step, no package.json.
-Every page is a self-contained `index.html` in its own folder at the repo root.
+Every page is an `index.html` in its own folder at the repo root. Only `/nj/`
+and the deck are truly self-contained single files: `/unbreakablespirit/` also
+carries 13 images, and `/storylivingboard/` carries `board-ai.js`,
+`scene-default.png`, a context file and its own Netlify function.
 
 ## Which site this is
 
 This repo (`C:\PreposterousGit\moviement`) serves the **apex domain
 moviement.productions**. Confirm via `.netlify/state.json` for the site ID.
 
-**Naming trap:** the Netlify site named `storylivingboard` is built from the
-repo named `Preposterous`, has no custom domain, and serves only
-`storylivingboard.netlify.app`. The repo name points at the wrong site. If a
-task mentions moviement.productions, this repo is the one.
+**Naming trap:** the Netlify site named `storylivingboard` has no custom
+domain and serves only `storylivingboard.netlify.app`. It is built from **this
+same repo** (`PreposterousHQ/moviement`, branch `main`, base directory
+`storylivingboard`), not from the repo named `Preposterous`. One repo therefore
+feeds two Netlify sites with opposite deploy models. See the entanglement note
+in the backlog. If a task mentions moviement.productions, this repo is the one.
+
+Verify with `netlify api listSites` and read `build_settings.repo_url` /
+`build_settings.base`; do not infer either from a `netlify.toml`.
 
 ## Deploy model — read this before deploying anything
 
@@ -92,22 +100,77 @@ The usual task is: a new version of this one file is in `~/Downloads`.
 ## Known quirks — do not investigate these again
 
 - **`netlify.toml` always shows as modified.** Netlify regenerates it on every
-  deploy (150 b in, 864 b out). Not cruft, not a problem.
+  deploy (157 b in, 864 b out). Not cruft, not a problem.
 - **`storylivingboard/index.html` reads ~2 KB larger on disk than live.**
   Checkout writes CRLF, the deployed file is LF. Byte-identical after
-  stripping CR. Git sees no modification.
-- **Builds on `storylivingboard.netlify.app` report as cancelled.** That site
-  has `base = "storylivingboard"`, so Netlify skips builds when nothing under
-  that directory changed. Working as designed; the skip is just reported like
-  a failure.
+  stripping CR. Git sees no modification. Blob 123,964 b = live 123,964 b;
+  working tree 125,985 b. **The root page reverses this** -- see the backlog.
+- **Builds on `storylivingboard.netlify.app` fail with state `error`.** Not
+  "cancelled" -- Netlify cancels the build but records it as a failure, so it
+  shows red in the UI and sends a failure notification. The full message is:
+
+  ```
+  Failed during stage 'checking build content for changes':
+  Canceled build due to no content change
+  ```
+
+  That site has base directory `storylivingboard`, so Netlify skips the build
+  when nothing under that directory changed. A deck deploy never changes it,
+  because the deck lives outside that directory, so **every push made while
+  working on the deck produces a guaranteed red build.** Working as designed.
+
+  The base directory is set in the **Netlify UI build settings**, not in
+  `storylivingboard/netlify.toml` -- that file contains no `base` key, so
+  looking for it there turns up nothing.
 
 ## Cleanup backlog
 
-- [ ] Add `.gitattributes` with `*.html text eol=lf` to end the CRLF/LF
-      confusion permanently.
-- [ ] Consider connecting the apex site to git so deploys are reproducible.
-      **Tradeoff:** that would end the additive-only safety property, since
-      undeployed commits would then ship on push. Do not do this casually.
+- [x] **Done.** `.gitattributes` at the repo root sets `*.html text eol=lf`.
+      Stored blobs were already LF, so it changed no history and
+      `git add --renormalize .` is a no-op; it only affects future checkouts.
+- [ ] **Leave the apex unlinked.** Connecting it to git would make deploys
+      reproducible, but it ends the additive-only safety property, since
+      undeployed commits would then ship on push. The concrete cost is the
+      root-page drift below: the first push-deploy would silently rewrite
+      about 1,035 line endings on `/`. Do not do this casually.
+
+- [ ] **Two-site entanglement (the root cause of the recurring noise).**
+      One repo, two Netlify sites, opposite deploy models:
+
+      | | apex | storylivingboard |
+      |---|---|---|
+      | Site | `mhrc-unbreakable-spirit` | `storylivingboard` |
+      | Repo | none (manual deploy only) | `PreposterousHQ/moviement`, base `storylivingboard` |
+      | Trigger | `netlify deploy --prod` | every push to `main` |
+
+      Every push fires a build on storylivingboard that is guaranteed to fail,
+      because the deck lives outside that site's base directory. The failures
+      are noise, but they train the operator to ignore build alerts on a site
+      where a real failure would then also go unnoticed.
+
+      **Immediate mitigation:** stop builds on the storylivingboard site
+      (unlink its repo, or set "stop builds" in its Netlify settings). It has
+      not built successfully from a push in a long time, so nothing is lost.
+
+- [ ] **Split `storylivingboard/` into its own repo.** The real fix for the
+      entanglement: one repo should own one deploy target. Point the
+      storylivingboard site at the new repo. The apex serves its own copy of
+      `/storylivingboard/` from its own manifest, so the live apex path is
+      unaffected. Deferred, not urgent once builds are stopped.
+
+- [ ] **Root-page CRLF reversal. Never ship `/` from a checkout.**
+      The `storylivingboard` CRLF quirk runs the *other* way on the root page:
+      live carries CRLF and the blob is LF, about 1,035 line endings apart.
+
+      | path | blob | worktree | live |
+      |---|---|---|---|
+      | `index.html` | 668,561 | 669,596 | 669,596 |
+      | `storylivingboard/index.html` | 123,964 | 125,985 | 123,964 |
+
+      Live `/` was deployed from a CRLF working tree once, so tracked and live
+      genuinely differ. Harmless under additive-only deploys, which rebuild
+      from live bytes. It would matter immediately if anyone deployed the root
+      page from a checkout.
 - [ ] Decide the fate of `/cringe/` — deploy with a noindex tag, or delete.
 
 ## Planned, not yet approved
