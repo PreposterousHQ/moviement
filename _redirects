@@ -1,6 +1,10 @@
-# Short alias for the Storylivingry Studio deck.
-# 200 = rewrite, not redirect: both URLs serve the same file and neither
-# bounces, so links already shared at the long path keep working unchanged.
-# There is only one copy of the file, at /storylivingrystudiodeck/index.html.
+# Short aliases for the Storylivingry Studio deck.
+# 200 = rewrite, not redirect: every URL below serves the same file and none
+# of them bounce, so links already shared keep working unchanged.
+# There is only ONE copy of the file, at /storylivingrystudiodeck/index.html.
+# Rules match top-down, first match wins. Add anything new BELOW these.
+# Canonical and og:url inside the page both point at /intro.
+/intro     /storylivingrystudiodeck/index.html   200
+/intro/    /storylivingrystudiodeck/index.html   200
 /deck      /storylivingrystudiodeck/index.html   200
 /deck/     /storylivingrystudiodeck/index.html   200
