@@ -66,12 +66,18 @@ folders at the repo root become live paths with no configuration.
 ## The deck: `/storylivingrystudiodeck/`
 
 Single self-contained `index.html`. Inline CSS, Google Fonts via CDN, no
-assets, no dependencies. Nothing else on the site references it.
+external assets, no dependencies. Nothing else on the site references it.
+Three images (the cover logo, the Fuller portrait, a small footer mark) are
+embedded as base64 WebP, which is why the file is ~226 KB rather than ~47 KB.
+It is still one file: there is nothing to upload alongside it.
 
-It carries `<meta name="robots" content="noindex, nofollow">` **on purpose** —
-it contains funding figures and named collaborators. Do not remove it without
-being asked. Full OG/Twitter card tags are present because the URL gets pasted
-into email.
+**The deck is indexable (since 2026-09-01).** It now carries
+`<meta name="robots" content="index, follow, max-image-preview:large,
+max-snippet:-1">`. The previous `noindex, nofollow` was **deliberately lifted**,
+not lost in an edit: do not "restore" it. It had been set because the deck
+contains funding figures and named collaborators, so that content is now
+public and search-visible **on purpose**. Full OG/Twitter card tags are
+present because the URL gets pasted into email.
 
 House rules for the deck's content:
 
@@ -84,6 +90,9 @@ House rules for the deck's content:
   than a viewport and mandatory snap fought the reader on exactly those.
 - Numbered footers `NN / 16`. If a section is added or removed, either
   renumber all of them or leave the new one unnumbered as an interstitial.
+- **There are 17 `<section>` tags, not 16:** sixteen numbered plus one
+  unnumbered end card. Pass `--sections 17`. The footer numbering still runs
+  to 16 and that is correct; the end card is the interstitial case above.
 
 ### Standard deck update
 
@@ -244,9 +253,9 @@ files, not one:** `_redirects` gains the rules, and the deck's `<head>` must be
 edited to match, or the page keeps advertising the old URL from every alias.
 Check both whenever the preferred URL changes.
 
-(Indexing is moot while the `noindex` tag stands, but the canonical is what
-link unfurlers read, so it is what gets shown when the URL is pasted into
-email or chat.)
+Since the deck became indexable this is no longer only cosmetic: the canonical
+is what search engines consolidate on, as well as what link unfurlers read when
+the URL is pasted into email or chat.
 
 ### Not done, and deliberately so
 
