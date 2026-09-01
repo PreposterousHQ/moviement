@@ -55,12 +55,13 @@ everything.
 | `/unbreakablespirit/` | Uses the `mhrc-ai` Netlify function |
 | `/storylivingboard/` | Also the web root of the separate storylivingboard site |
 | `/storylivingrystudiodeck/` | Investor deck (see below). The file lives here. |
-| `/deck` | **Alias** for the deck. A 200 rewrite, not a copy and not a redirect. |
+| `/intro` | **Canonical URL** for the deck. A 200 rewrite, not a copy and not a redirect. |
+| `/deck` | **Alias** for the deck. Same rewrite. Still works; no longer canonical. |
 | `/cringe/` | **Committed but never deployed.** Leave offline unless asked. |
 
-There is a root `_redirects` file holding the two `/deck` alias rules and
-nothing else. There is no catch-all rule. New folders at the repo root become
-live paths with no configuration.
+There is a root `_redirects` file holding the four deck alias rules (`/intro`,
+`/intro/`, `/deck`, `/deck/`) and nothing else. There is no catch-all rule. New
+folders at the repo root become live paths with no configuration.
 
 ## The deck: `/storylivingrystudiodeck/`
 
@@ -197,34 +198,55 @@ The usual task is: a new version of this one file is in `~/Downloads`.
       page from a checkout.
 - [ ] Decide the fate of `/cringe/` — deploy with a noindex tag, or delete.
 
-## The `/deck` alias (done 2026-08-29)
+## The deck aliases: `/intro` (canonical), `/deck` (done 2026-09-01)
 
-The deck is reachable at **both** `/deck` and `/storylivingrystudiodeck/`.
-This was done as an **alias, not a move**. Specifically:
+The deck is reachable at **three** URLs: `/intro`, `/deck`, and
+`/storylivingrystudiodeck/`. All are **aliases, not moves**. Specifically:
 
 - There is **one copy of the file**, still at
-  `/storylivingrystudiodeck/index.html`. There is no `/deck/` folder and no
-  second copy to keep in sync.
-- `/deck` is a **200 rewrite**, not a 301. Neither URL bounces to the other;
+  `/storylivingrystudiodeck/index.html`. There is no `/intro/` or `/deck/`
+  folder and no second copy to keep in sync.
+- Every alias is a **200 rewrite**, not a 301. No URL bounces to any other;
   the address bar stays on whichever one was requested. Links already shared
-  at the long path keep working exactly as before.
-- The deck's `<head>` now points `canonical` and `og:url` at
-  `https://moviement.productions/deck`, so the short URL is the one that gets
-  indexed and unfurled. (Indexing is moot while the `noindex` tag stands, but
-  the canonical is what link unfurlers read.)
+  at `/deck` or at the long path keep working exactly as before.
+- **`/intro` is the canonical URL** (since 2026-09-01). `/deck` and
+  `/storylivingrystudiodeck/` are working aliases and are staying that way.
+  `/deck` was canonical from 2026-08-29 until then.
 
 Root `_redirects` in full:
 
 ```
+/intro     /storylivingrystudiodeck/index.html   200
+/intro/    /storylivingrystudiodeck/index.html   200
 /deck      /storylivingrystudiodeck/index.html   200
 /deck/     /storylivingrystudiodeck/index.html   200
 ```
 
 **Rules match top-down and the first match wins.** Anything added later must
-go **below** these two lines, or it can shadow the alias. A broad rule placed
-above them would capture `/deck` before they are ever reached.
+go **below** these four lines, or it can shadow an alias. A broad rule placed
+above them would capture `/intro` before they are ever reached.
 
-Both paths were verified serving identical bytes with `num_redirects=0`.
+All five paths were verified serving byte-identical content with no redirect.
+
+### The page's canonical is hardcoded: change it whenever the preferred URL changes
+
+The deck's `<head>` carries `canonical` and `og:url` as **literal absolute
+URLs**, currently `https://moviement.productions/intro`:
+
+```html
+<link rel="canonical" href="https://moviement.productions/intro">
+<meta property="og:url" content="https://moviement.productions/intro">
+```
+
+Nothing derives these from the request, because a 200 rewrite serves the same
+bytes at every alias. **Adding a new preferred URL is therefore always two
+files, not one:** `_redirects` gains the rules, and the deck's `<head>` must be
+edited to match, or the page keeps advertising the old URL from every alias.
+Check both whenever the preferred URL changes.
+
+(Indexing is moot while the `noindex` tag stands, but the canonical is what
+link unfurlers read, so it is what gets shown when the URL is pasted into
+email or chat.)
 
 ### Not done, and deliberately so
 
