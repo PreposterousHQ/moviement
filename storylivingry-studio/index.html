@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mind Map NJ AWARE Interagency Strategic Vision</title>
+<title>Storylivingry as a Service</title>
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-<meta name="description" content="Interactive map of the Stone Synergy Soup NJ Consortium pillars: Faith, Mental Health, Workplace, Campus, Film Industry, and A.W.A.R.E.">
+<meta name="description" content="Storylivingry as a Service: the Storylivingry Studio slate as one holonic map. Work, infrastructure, and funding.">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'Georgia', serif;
   background: radial-gradient(ellipse at 30% 20%, #1a0e2e 0%, #0d0d1a 55%, #050508 100%);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,8 +36,12 @@ body {
   width: 900px;
   height: 900px;
   flex-shrink: 0;
+  /* Scale is set by fitStage() below from the viewport, not fixed here. The ring's
+     centre is CY = 405, 45px above the box centre; fitStage() shifts by that much
+     (scaled) so the ring, not the box, sits at the viewport centre. */
+  transform-origin: 50% 50%;
   transform: scale(0.8);
-  margin: -95px auto 0;
+  margin: 0 auto;
 }
 
 #svg-lines {
@@ -1614,12 +1618,13 @@ var EPISODES = [
 var _AC = '<svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="13" width="28" height="17" rx="2" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.12)"/><rect x="3" y="5" width="28" height="9" rx="1.5" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.22)"/><line x1="10" y1="5" x2="13" y2="14" stroke="white" stroke-width="2.5"/><line x1="18" y1="5" x2="21" y2="14" stroke="white" stroke-width="2.5"/><line x1="26" y1="5" x2="29" y2="14" stroke="white" stroke-width="2.5"/></svg>';
 var _AA = [-90,-60,-30,0,30,60,90,120,150,180,210,240];
 /* ── The Studio root ring ─────────────────────────────────────────────────
-   Twelve slots, always. Ten roots in three colour bands plus two empty
-   placeholders drawn like Act II's Coming Soon nodes: neutral colour, no
-   panel, no drill. Angles are assigned by index below, never stored here,
-   so the ring geometry does not change as slots fill.
-   open/href per the node contract above. Storyliving as a Service is the
-   platform, not a node. 'Copy to come.' marks placeholder copy.           */
+   Twelve slots, always, as three bands of four: WORK 1-4, INFRASTRUCTURE
+   5-8, FUNDING 9-12. A band's empty slot sits last in that band, drawn like
+   Act II's Coming Soon nodes: neutral colour, no panel, no drill. Angles are
+   assigned by slot index below, never stored here, so the ring geometry does
+   not change as slots fill. open/href per the node contract above.
+   Storyliving as a Service is the platform, not a node. 'Copy to come.'
+   marks placeholder copy.                                                  */
 var PILLARS = [
   {
     id: 'unbreakable-spirit',
@@ -1706,6 +1711,13 @@ var PILLARS = [
     links: []
   },
   {
+    id: 'slot-8', placeholder: true, tokens: [],
+    name: 'Coming Soon',
+    label: '<span style="display:block;font-size:8.5px;font-weight:800;line-height:1;letter-spacing:0.14em;margin-bottom:4px;white-space:nowrap">OPEN SLOT</span><span style="display:block;font-size:10px;font-weight:700;text-transform:none;line-height:1.15;white-space:normal;word-break:normal">Coming Soon</span>',
+    icon: _AC, color: '#4B6483', glowColor: 'rgba(75,100,131,0.5)',
+    bullets: ['— Coming soon —'], links: []
+  },
+  {
     id: 'emergence-fund',
     tokens: ['emergence-fund'],
     name: 'The Emergence Fund',
@@ -1742,13 +1754,6 @@ var PILLARS = [
     links: []
   },
   {
-    id: 'slot-11', placeholder: true, tokens: [],
-    name: 'Coming Soon',
-    label: '<span style="display:block;font-size:8.5px;font-weight:800;line-height:1;letter-spacing:0.14em;margin-bottom:4px;white-space:nowrap">OPEN SLOT</span><span style="display:block;font-size:10px;font-weight:700;text-transform:none;line-height:1.15;white-space:normal;word-break:normal">Coming Soon</span>',
-    icon: _AC, color: '#4B6483', glowColor: 'rgba(75,100,131,0.5)',
-    bullets: ['— Coming soon —'], links: []
-  },
-  {
     id: 'slot-12', placeholder: true, tokens: [],
     name: 'Coming Soon',
     label: '<span style="display:block;font-size:8.5px;font-weight:800;line-height:1;letter-spacing:0.14em;margin-bottom:4px;white-space:nowrap">OPEN SLOT</span><span style="display:block;font-size:10px;font-weight:700;text-transform:none;line-height:1.15;white-space:normal;word-break:normal">Coming Soon</span>',
@@ -1756,7 +1761,7 @@ var PILLARS = [
     bullets: ['— Coming soon —'], links: []
   }
 ];
-// Twelve angles, fixed by slot index: the first slot is at the top.
+// Twelve angles, fixed by slot index: slot 1 is at the top.
 PILLARS.forEach(function(p, i) { p.angle = (360 / 12) * i - 90; });
 
 var ACTS_DATA = [
@@ -1772,6 +1777,21 @@ var ACTS_INFO = [
 ];
 
 var CX = 450, CY = 405, ORBIT = 295, CTR_R = 104, PLR_R = 72;
+
+/* ── Viewport fit ──────────────────────────────────────────────────────────
+   The whole 900x900 stage fits inside min(innerWidth, innerHeight) minus a
+   margin, recomputed on load and on every resize. Nothing else about the
+   layout changes: the stage still lays out at 900x900 and is scaled visually. */
+var STAGE = 900, STAGE_MARGIN = 24;
+function fitStage() {
+  var app = document.getElementById('app');
+  if (!app) return;
+  var s = (Math.min(window.innerWidth, window.innerHeight) - 2 * STAGE_MARGIN) / STAGE;
+  var shift = (STAGE / 2 - CY) * s;   // bring the ring centre (CY) to the box centre
+  app.style.transform = 'translateY(' + shift.toFixed(2) + 'px) scale(' + s.toFixed(4) + ')';
+}
+fitStage();
+window.addEventListener('resize', fitStage);
 
 PILLARS.forEach(function(p) {
   var r = p.angle * Math.PI / 180;
@@ -2019,7 +2039,7 @@ function openProfileModal(p) {
 document.getElementById('center').addEventListener('click', function() {
   var drill = currentDrill();
   if (!drill) {
-    // Stone Synergy Soup Holon — add ingredient
+    // Studio holon — add ingredient
     closePanel();
     openPotModal();
     return;
@@ -2268,7 +2288,7 @@ function exportIngredients() {
   var data = JSON.stringify({ version: 1, exported: new Date().toISOString(), ingredients: ingredients }, null, 2);
   var a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
-  a.download = 'stone-synergy-soup-ingredients.json';
+  a.download = 'storylivingry-as-a-service-ingredients.json';
   a.click();
 }
 
@@ -3676,7 +3696,7 @@ function renderWall() {
   }
   PILLARS.forEach(function(p) { collectFrom(p.id, p.color); });
 
-  var html = '<div class="wall-masthead">Video Wall — Stone Synergy Soup</div>';
+  var html = '<div class="wall-masthead">Video Wall — Storylivingry as a Service</div>';
   if (!videos.length) {
     html += '<div class="wall-empty"><div style="font-size:48px;opacity:0.12">►</div><div>No videos in your holons yet.<br>Add YouTube links to nodes and they’ll appear here.</div></div>';
   } else {
@@ -3750,7 +3770,7 @@ window.addEventListener('load', function() {
   </div>
 </div>
 <div id="view-tray">
-  <button id="spotify-btn" class="view-btn" title="Stone Synergy Soup playlist" onclick="toggleSpotify()">&#9835;</button>
+  <button id="spotify-btn" class="view-btn" title="Storylivingry as a Service playlist" onclick="toggleSpotify()">&#9835;</button>
   <button id="ai-universal-btn" class="view-btn" title="Ask MHRC Mind" style="font-size:15px;">&#10022;</button>
   <div id="view-tray-inner">
     <div class="tray-divider" id="spotify-divider" style="display:none;"></div>
