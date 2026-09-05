@@ -65,16 +65,90 @@ ${buildMapSummary(mapState)}
 Keep replies conversational. 2–4 paragraphs unless asked for more. No bullet walls. Speak from inside the work.`;
 }
 
-const CORS = {
-  'Access-Control-Allow-Origin':  '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Content-Type':                 'application/json',
-};
+// ---------------------------------------------------------------------------
+// Access control. This endpoint spends the Anthropic key, so it answers only
+// the page that carries it: the production origin, or a local dev server.
+// A request with no Origin header at all (curl, scripts) is refused too —
+// every browser POST carries one, so nothing legitimate is lost.
+// ---------------------------------------------------------------------------
+const ALLOWED_ORIGINS = new Set([
+  'https://moviement.productions',
+  'https://www.moviement.productions',
+]);
+
+function originAllowed(origin) {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+  // `netlify dev` and plain static servers, any port.
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+}
+
+function corsFor(origin) {
+  return {
+    'Access-Control-Allow-Origin':  origin,
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Vary':                         'Origin',
+    'Content-Type':                 'application/json',
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Rate limit: 20 requests per IP per 10 minutes, sliding window, in memory.
+// Module scope lives as long as the warm function instance and no longer —
+// a cold start forgets, and parallel instances do not share. That is the
+// trade for having no external store: the limit is per instance, not global,
+// which is still enough to stop one script from draining the key.
+// ---------------------------------------------------------------------------
+const RL_LIMIT     = 20;
+const RL_WINDOW_MS = 10 * 60 * 1000;
+const hits         = new Map(); // ip -> [timestamps within the window]
+
+function clientIp(event) {
+  const h = event.headers || {};
+  return h['x-nf-client-connection-ip']
+      || (h['x-forwarded-for'] || '').split(',')[0].trim()
+      || 'unknown';
+}
+
+// Returns 0 if allowed, otherwise the number of seconds until the window opens.
+function rateLimited(ip) {
+  const now    = Date.now();
+  const recent = (hits.get(ip) || []).filter(function(t) { return now - t < RL_WINDOW_MS; });
+  if (recent.length >= RL_LIMIT) {
+    hits.set(ip, recent);
+    return Math.ceil((recent[0] + RL_WINDOW_MS - now) / 1000);
+  }
+  recent.push(now);
+  hits.set(ip, recent);
+  // Keep a long-lived instance from accumulating every IP it has ever seen.
+  if (hits.size > 5000) {
+    for (const [k, v] of hits) {
+      if (!v.some(function(t) { return now - t < RL_WINDOW_MS; })) hits.delete(k);
+    }
+  }
+  return 0;
+}
 
 exports.handler = async function(event) {
+  const origin = (event.headers && (event.headers.origin || event.headers.Origin)) || '';
+  if (!originAllowed(origin)) {
+    return { statusCode: 403, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Forbidden' }) };
+  }
+  const CORS = corsFor(origin);
+
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: CORS, body: '' };
   if (event.httpMethod !== 'POST')    return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Method not allowed' }) };
+
+  const retryIn = rateLimited(clientIp(event));
+  if (retryIn) {
+    return {
+      statusCode: 429,
+      headers: Object.assign({ 'Retry-After': String(retryIn) }, CORS),
+      body: JSON.stringify({ error: 'Too many requests. Try again in a few minutes.' }),
+    };
+  }
+
   if (!process.env.ANTHROPIC_API_KEY) return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured' }) };
 
   let body;
