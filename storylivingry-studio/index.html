@@ -1374,8 +1374,8 @@ body {
 </div>
 
 <script>
-/* The twelve Part One episodes. Formerly the root ring; now the children of the
-   'unbreakable-spirit' root (see loadChildren). Left exactly as they were. */
+/* The twelve Part One episodes: the ring of the 'unbreakable' world (see HOLONS).
+   Left exactly as they were in unbreakablespirit/index.html. */
 var EPISODES = [
   {
     id: 'ep1',
@@ -1625,13 +1625,13 @@ var _AA = [-90,-60,-30,0,30,60,90,120,150,180,210,240];
    not change as slots fill. open/href per the node contract above.
    Storyliving as a Service is the platform, not a node. 'Copy to come.'
    marks placeholder copy.                                                  */
-var PILLARS = [
+var STUDIO_RING = [
   {
     id: 'unbreakable-spirit',
     tokens: ['unbreakable-spirit'],
     name: 'Unbreakable Spirit',
     band: 'WORK',
-    open: 'nest',
+    open: 'nest', holon: 'unbreakable',
     label: '<span style="display:block;font-size:8.5px;font-weight:800;line-height:1;letter-spacing:0.14em;margin-bottom:4px;white-space:nowrap">WORK</span><span style="display:block;font-size:10px;font-weight:700;text-transform:none;line-height:1.15;white-space:normal;word-break:normal">Unbreakable Spirit</span>',
     icon: '<svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="13" width="28" height="17" rx="2" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.12)"/><rect x="3" y="5" width="28" height="9" rx="1.5" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.22)"/><line x1="10" y1="5" x2="13" y2="14" stroke="white" stroke-width="2.5"/><line x1="18" y1="5" x2="21" y2="14" stroke="white" stroke-width="2.5"/><line x1="26" y1="5" x2="29" y2="14" stroke="white" stroke-width="2.5"/></svg>',
     color: '#F59E0B', glowColor: 'rgba(245,158,11,0.65)',
@@ -1703,7 +1703,7 @@ var PILLARS = [
     tokens: ['consortium'],
     name: 'The Consortium',
     band: 'INFRASTRUCTURE',
-    open: 'link', href: 'https://stonesynergysoup.com/Mind-Map-NJ-AWARE-Interagency-Strategic-Vision',
+    open: 'nest', holon: 'consortium',
     label: '<span style="display:block;font-size:8.5px;font-weight:800;line-height:1;letter-spacing:0.14em;margin-bottom:4px;white-space:nowrap">INFRASTRUCTURE</span><span style="display:block;font-size:10px;font-weight:700;text-transform:none;line-height:1.15;white-space:normal;word-break:normal">The Consortium</span>',
     icon: '<svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="17" cy="8" r="4" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.22)"/><circle cx="7" cy="26" r="4" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.22)"/><circle cx="27" cy="26" r="4" stroke="white" stroke-width="2" fill="rgba(255,255,255,0.22)"/><line x1="17" y1="12" x2="9" y2="22.5" stroke="white" stroke-width="2"/><line x1="17" y1="12" x2="25" y2="22.5" stroke="white" stroke-width="2"/><line x1="11" y1="26" x2="23" y2="26" stroke="white" stroke-width="2"/></svg>',
     color: '#3B82F6', glowColor: 'rgba(59,130,246,0.65)',
@@ -1761,8 +1761,10 @@ var PILLARS = [
     bullets: ['— Coming soon —'], links: []
   }
 ];
-// Twelve angles, fixed by slot index: slot 1 is at the top.
-PILLARS.forEach(function(p, i) { p.angle = (360 / 12) * i - 90; });
+// PILLARS is whatever ring the active holon shows; applyHolon() assigns it and the
+// angles (by slot index, slot 1 at the top, 360/ring.length apart).
+var PILLARS = STUDIO_RING;
+PILLARS.forEach(function(p, i) { p.angle = (360 / PILLARS.length) * i - 90; });
 
 var ACTS_DATA = [
   PILLARS,
@@ -1864,6 +1866,9 @@ function setLineHighlight(id, on) {
      href: string                       target for 'link'. Single click navigates
                                         this window to it. Never an iframe.
    'panel' = single click opens the panel, double click does nothing.
+     holon: string                      with open:'nest': drilling into this node enters
+                                        the named world (see HOLONS) instead of its
+                                        child map.
      tokens: string[]                   closed-vocabulary identifiers for this node:
                                         person names on episodes, slate ids on roots.
                                         Stored only; nothing reads it yet (phase two:
@@ -1893,7 +1898,7 @@ function renderPillars() {
     el.appendChild(inner);
     if (p.placeholder) { el.style.cursor = 'default'; }
     el.addEventListener('click', function() { if (p.placeholder) return; openNode(p, function() { openPanel(p); }); });
-    el.addEventListener('dblclick', function(e) { e.stopPropagation(); if (!p.placeholder && nodeOpen(p) === 'nest') drillInto(p); });
+    el.addEventListener('dblclick', function(e) { e.stopPropagation(); if (!p.placeholder && nodeOpen(p) === 'nest') { if (p.holon) drillIntoHolon(p.holon); else drillInto(p); } });
     el.addEventListener('mouseenter', function() { setLineHighlight(p.id, true); });
     el.addEventListener('mouseleave', function() { setLineHighlight(p.id, false); });
     app.appendChild(el);
@@ -2039,7 +2044,8 @@ function openProfileModal(p) {
 document.getElementById('center').addEventListener('click', function() {
   var drill = currentDrill();
   if (!drill) {
-    // Studio holon — add ingredient
+    // The world's centre: add an ingredient, if this world has a pot
+    if (!(HOLON && HOLON.features.ingredients)) return;
     closePanel();
     openPotModal();
     return;
@@ -2346,8 +2352,366 @@ document.addEventListener('keydown', function(e) {
 });
 
 // â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/* ── HOLONS: worlds ────────────────────────────────────────────────────────
+   A holon is a world this page can show: everything that used to be a page-
+   level literal, in one object. applyHolon(h) puts it on screen;
+   drillIntoHolon(id) pushes it on holonStack and applies it; goBack() pops
+   node drills first, then worlds, so Back always returns to the parent.
+   Shape:
+     { id, name,
+       centre: { image, label, caption },
+       masthead, mastheadSub, footer, titleTag, production, wallMasthead,
+       ring: [ ...nodes ],                        angle by slot index unless stated
+       features: { acts, views: ['orbit','mycelium','novel','wall'],
+                   callingSheet, ingredients, ai, media },
+       acts?: [ { act, title } ],  actsData?: [ ring, ...more rings ],
+       callingSheet?: { title, source: 'ring' | 'episodes' },
+       ai?: { persona, contextFile },
+       children?: { parentId: [ ...child nodes ] },  seeded when nothing is saved
+       tokens: [] }
+   Ingredients are per world: the studio keeps the original key, every other
+   world gets 'sls_ingredients_v1:<id>'.                                     */
+var HOLONS = {};
+function defineHolon(h) { HOLONS[h.id] = h; return h; }
+
+defineHolon({
+  id: 'studio', name: 'Storylivingry Studio',
+  centre: { image: 'img/artifact.png', label: 'Storylivingry Studio', caption: 'Click to add ingredient' },
+  masthead: 'Storylivingry as a Service', mastheadSub: 'The Slate',
+  footer: 'Storylivingry as a Service', titleTag: 'Storylivingry as a Service',
+  production: 'A Civil Rights Moviement for the Soul',
+  wallMasthead: 'Video Wall — Storylivingry as a Service',
+  ring: STUDIO_RING,
+  features: { acts: false, views: ['orbit', 'mycelium', 'novel', 'wall'], callingSheet: true, ingredients: true, ai: true, media: true },
+  acts: [{ act: 'Storylivingry Studio', title: 'The Slate' }],
+  callingSheet: { title: 'Studio Calling Sheet', source: 'ring' },
+  ai: { persona: 'MHRC Mind', contextFile: 'netlify/functions/context/movement.md' },
+  tokens: []
+});
+
+/* The Unbreakable Spirit world: the literals of unbreakablespirit/index.html.
+   Its child tree below was exported from the page (sls-data-export.json,
+   2026-09-05) and is seeded only where nothing has been saved. */
+var UNBREAKABLE_CHILDREN = {
+  "ep1": [
+    {
+      "id": "cn_d1_ep1",
+      "title": "Theme",
+      "body": "",
+      "link": ""
+    },
+    {
+      "id": "cn_d2_ep1",
+      "title": "Theme",
+      "body": "",
+      "link": ""
+    },
+    {
+      "id": "cn_d3_ep1",
+      "title": "Theme",
+      "body": "",
+      "link": ""
+    },
+    {
+      "id": "cn_d4_ep1",
+      "title": "Theme",
+      "body": "",
+      "link": ""
+    },
+    {
+      "id": "cn_d5_ep1",
+      "title": "Theme",
+      "body": "",
+      "link": ""
+    }
+  ],
+  "cn_d5_ep1": [
+    {
+      "id": "cn_d1_cn_d5_ep1",
+      "title": "Theme",
+      "body": "",
+      "link": ""
+    },
+    {
+      "id": "cn_d2_cn_d5_ep1",
+      "title": "Theme",
+      "body": "",
+      "link": ""
+    },
+    {
+      "id": "cn_d3_cn_d5_ep1",
+      "title": "Theme",
+      "body": "",
+      "link": ""
+    },
+    {
+      "id": "cn_d4_cn_d5_ep1",
+      "title": "Theme",
+      "body": "",
+      "link": ""
+    },
+    {
+      "id": "cn_d5_cn_d5_ep1",
+      "title": "Theme",
+      "body": "",
+      "link": ""
+    }
+  ]
+};
+defineHolon({
+  id: 'unbreakable', name: 'Unbreakable Spirit',
+  centre: { image: 'img/stone-soup-nj.png', label: 'Stone Synergy Soup', caption: 'Click to add ingredient' },
+  masthead: 'Holonic Mind Map', mastheadSub: 'Mental Health Reformation Consortium',
+  footer: 'Stone Synergy Soup', titleTag: 'Mind Map NJ AWARE Interagency Strategic Vision',
+  production: 'A Civil Rights Moviement for the Soul',
+  wallMasthead: 'Video Wall — Stone Synergy Soup',
+  ring: EPISODES,
+  features: { acts: true, views: ['orbit', 'mycelium', 'novel', 'wall'], callingSheet: true, ingredients: true, ai: true, media: true },
+  acts: [
+    { act: 'ACT I: Unbreakable Spirit', title: 'I Have a Team' },
+    { act: 'ACT II: Coming Soon',       title: 'Coming Soon' },
+    { act: 'ACT III: Coming Soon',      title: 'Coming Soon' }
+  ],
+  actsData: [EPISODES, ACTS_DATA[1], ACTS_DATA[2]],
+  callingSheet: { title: 'Moviement Calling Sheet', source: 'episodes' },
+  ai: { persona: 'MHRC Mind', contextFile: 'netlify/functions/context/movement.md' },
+  children: UNBREAKABLE_CHILDREN,
+  tokens: []
+});
+
+/* The Consortium world: the map at stonesynergysoup.com, verbatim. Six pillars
+   with their own angles; orbit only, ingredients on, no sheet, no acts, no AI. */
+var CONSORTIUM_RING = [
+  {
+    id: 'aware',
+    label: 'NJ A.W.A.R.E. → NJ Consortium',
+    icon: '🎯',
+    color: '#3B82F6',
+    glowColor: 'rgba(59,130,246,0.65)',
+    angle: -90,
+    bullets: [
+      'Bridging NJ A.W.A.R.E. (Awareness, Wellness, Advocacy, Recovery & Education) into the broader NJ Consortium framework',
+      'Peer-led recovery ecosystem connecting individuals with lived experience to community care networks',
+      'Building a regional coalition that amplifies mental health awareness and advocacy across New Jersey',
+    ],
+    links: []
+  },
+  {
+    id: 'fac',
+    label: 'NJ Faith Action Center (FAC)',
+    icon: '🕊️',
+    color: '#8B5CF6',
+    glowColor: 'rgba(139,92,246,0.65)',
+    angle: -30,
+    intro: {
+      headerText: 'New Jersey Department of State — NJ Faith Action Center',
+      headerUrl: 'https://www.nj.gov/state/fac/index.shtml',
+      tagline: 'Strengthening Communities Through Faith in Action',
+      description: 'Connecting faith-based organizations with the resources, partnerships, and support needed to serve communities more effectively.'
+    },
+    bullets: [
+      'FAC Advisory Councils, Regional Faith Networks, FAC Academy, Dr. Semaj Y. Vanzant, Sr., Executive Director — <a class="panel-link-inline" href="https://www.nj.gov/state/fac/index.shtml" target="_blank" rel="noopener">NJ Faith Action Center</a>',
+      'Synergy with NJ A.W.A.R.E., We Are Monmouth &amp; NAMI FaithNet — Pathways to Hope. Together WE expand FAC impact on the spiritual side of mental health in NJ Communities.',
+      'Together WE connect chaplains &amp; clergy with first responders and behavioral health professionals to better serve the spiritual &amp; religious side of mental health in the community.',
+      'People helping people — <a class="panel-link-inline" href="https://www.youtube.com/watch?v=f7Stz-jbyMw" target="_blank" rel="noopener">Dr. Dale Caldwell NJ FAITH ACTION CENTER Ocean Grove, NJ 4/29/26</a>',
+    ],
+    links: []
+  },
+  {
+    id: 'mentalhealth',
+    label: 'NJ Mental Health',
+    icon: '🧠',
+    color: '#10B981',
+    glowColor: 'rgba(16,185,129,0.65)',
+    angle: 30,
+    bullets: [
+      'Engage FAC (Faith Action Center) in community mental health through the NJ AWARE Coalition &amp; interagency collaboration',
+      'Expand workforce development with PEER SUPPORT Services in NJ',
+      'Reduce costs &amp; improve outcomes with an interconnected Stone Synergy Soup Strategy on Mental Health Reformation in NJ',
+    ],
+    links: []
+  },
+  {
+    id: 'workplace',
+    label: 'Workplace Mental Health',
+    icon: '💼',
+    color: '#F59E0B',
+    glowColor: 'rgba(245,158,11,0.65)',
+    angle: 90,
+    bullets: [
+      'Expand on the article: The Employee Mental Health Business Imperative (ROI-NJ Op-Ed)',
+      'Integrate latest research from NJBIZ, McKinsey, Mental Health America &amp; NAMI into NJBIA 2027 program with Dr. Caldwell as moderator.',
+      'Connect workplace wellness with FAC &amp; workforce development to include staff at hospitals, mental health agencies, police departments, colleges &amp; universities, &amp; houses of spiritual worship as well as business organizations.',
+    ],
+    links: [
+      { text: 'Employee Mental Health Business Imperative — ROI-NJ', url: 'https://www.roi-nj.com/2025/07/10/opinion/op-ed/the-employee-mental-health-business-imperative-op-ed/' }
+    ]
+  },
+  {
+    id: 'campus',
+    label: 'College & University Campus',
+    icon: '🎭',
+    color: '#06B6D4',
+    glowColor: 'rgba(6,182,212,0.65)',
+    angle: 150,
+    bullets: [
+      'Advance student mental health through theater, media &amp; the creative arts in concert with NJ Film Academy starting with Brookdale Community College',
+      'Establish Stone Synergy Soup centers on campus serving as creative spiritual mental health tools within the campus culture and curriculum',
+      'Initiate student entrepreneurship opportunities in mental health media production &amp; Filmanthropy by Design in collaboration with NJ Take 2.',
+    ],
+    links: []
+  },
+  {
+    id: 'film',
+    label: 'NJ Film Industry',
+    icon: '🎬',
+    color: '#EF4444',
+    glowColor: 'rgba(239,68,68,0.65)',
+    angle: 210,
+    bullets: [
+      'Collaborate with NJEDA &amp; NJ Motion Picture &amp; Television Commission',
+      'Support NJ Take 2 Upcycling Program',
+      'Pilot Filmanthropy by Design service on the college campus with NJ Film Academy',
+      'Launch Civil Rights MOVIEment for the Soul™ in concert with college student mental health &amp; the faith-based film market research showing an unprecedented boom in 2026',
+    ],
+    links: [
+      { text: 'NJ Take 2 Upcycling Program', url: 'https://www.nj.gov/njfilm/nj-take-2.shtml' }
+    ]
+  }
+];
+defineHolon({
+  id: 'consortium', name: 'The Consortium',
+  centre: { image: 'img/stone-soup-nj.png', label: 'Stone Synergy Soup', caption: 'Click to add ingredient' },
+  masthead: 'Mind Map NJ AWARE Interagency Strategic Vision', mastheadSub: '',
+  footer: 'Stone Synergy Soup', titleTag: 'Mind Map NJ AWARE Interagency Strategic Vision',
+  production: '', wallMasthead: '',
+  ring: CONSORTIUM_RING,
+  features: { acts: false, views: ['orbit'], callingSheet: false, ingredients: true, ai: false, media: false },
+  tokens: []
+});
+
+var HOLON = null;
+var holonStack = [];
+
+function renderCallingSheet(h) {
+  var cs = h.callingSheet, inner = document.querySelector('.cs-rows-inner');
+  if (!cs || !inner) return;
+  var titleEl = document.querySelector('.cs-title');
+  if (titleEl && titleEl.firstChild && titleEl.firstChild.nodeType === 3) titleEl.firstChild.nodeValue = cs.title;
+  var src = cs.source === 'episodes' ? EPISODES : h.ring.filter(function(p) { return !p.placeholder; });
+  var rows = src.map(function(p) {
+    var icon = (p.icon || '').replace('width="34" height="34"', 'width="15" height="15"');
+    var name = cs.source === 'episodes' ? 'Episode: ' + p.name
+             : (p.band ? p.band.charAt(0) + p.band.slice(1).toLowerCase() + ': ' : '') + p.name;
+    return '<div class="cs-row"><div class="cs-dot" style="background:' + p.color + '">' + icon + '</div><div class="cs-name">' + escHtml(name) + '</div></div>';
+  }).join('');
+  inner.innerHTML = rows + rows;   // doubled so the loop scroll is seamless
+  inner.dataset.dirty = '1';
+}
+
+function applyHolon(h, initial) {
+  HOLON = h;
+  var f = h.features;
+  // chrome
+  document.title = h.titleTag;
+  document.querySelector('#header h1').textContent = h.footer;
+  var prod = document.getElementById('act-field-prod'); if (prod) prod.textContent = h.production || '';
+  // centre
+  var cb = document.querySelector('.center-bg');
+  cb.style.backgroundImage = "url('" + h.centre.image + "')";
+  document.getElementById('center').title = h.centre.label || '';
+  var bowl = document.getElementById('pot-modal-bowl'); if (bowl) bowl.style.backgroundImage = "url('" + h.centre.image + "')";
+  var hint = cb.querySelector('.center-hint-bar');
+  if (hint) { hint.textContent = h.centre.caption || ''; hint.style.display = f.ingredients ? '' : 'none'; }
+  // ring + acts
+  PILLARS = h.ring;
+  ACTS_DATA = h.actsData || [h.ring];
+  ACTS_INFO = h.acts || [];
+  currentAct = 0;
+  ACTS_DATA.forEach(function(ring) {
+    ring.forEach(function(p, i) {
+      // A node that states its angle keeps it (the episodes and the map's pillars
+      // do); anything else takes its slot: 360/ring.length apart, slot 1 at the top.
+      if (p.angle === undefined) p.angle = (360 / ring.length) * i - 90;
+      var r = p.angle * Math.PI / 180; p.x = CX + ORBIT * Math.cos(r); p.y = CY + ORBIT * Math.sin(r);
+    });
+  });
+  if (!initial) {
+    document.querySelectorAll('.pillar, .pillar-resonate-ring').forEach(function(el) { el.remove(); });
+    clearSVGLines();
+    drawLines();
+    renderPillars();
+    renderPillarRings();
+    updatePillarHints();
+  }
+  // clapper + act tabs
+  var hasClapper = !!(h.acts && h.acts.length);
+  ['act-info-inner', 'act-info-toggle'].forEach(function(id) { var el = document.getElementById(id); if (el) el.style.display = hasClapper ? '' : 'none'; });
+  if (hasClapper) {
+    document.getElementById('act-field-act').textContent = h.acts[0].act;
+    document.getElementById('act-field-title').textContent = h.acts[0].title;
+  }
+  document.querySelectorAll('.act-tab').forEach(function(b, i) { b.style.display = f.acts ? '' : 'none'; b.classList.toggle('active', i === 0); });
+  var atl = document.getElementById('act-tab-label'); if (atl) atl.style.display = f.acts ? '' : 'none';
+  // views + media
+  var views = f.views || ['orbit'];
+  document.querySelectorAll('.view-btn[data-view]').forEach(function(b) { b.style.display = views.indexOf(b.dataset.view) > -1 ? '' : 'none'; });
+  var media = f.media !== false;
+  ['spotify-btn', 'yt-btn'].forEach(function(id) { var el = document.getElementById(id); if (el) el.style.display = media ? '' : 'none'; });
+  if (typeof vizView !== 'undefined' && vizView !== 'orbit' && views.indexOf(vizView) === -1) setVizView('orbit');
+  // calling sheet
+  var lp = document.getElementById('left-panel'); if (lp) lp.style.display = f.callingSheet ? '' : 'none';
+  if (f.callingSheet) renderCallingSheet(h);
+  // ai
+  var ab = document.getElementById('ai-universal-btn');
+  if (ab) { ab.style.display = f.ai ? '' : 'none'; if (h.ai) ab.title = 'Ask ' + h.ai.persona; }
+  var pn = document.getElementById('ai-persona-name'); if (pn && h.ai) pn.textContent = h.ai.persona;
+  // ingredients, per world
+  ING_KEY = h.id === 'studio' ? 'sls_ingredients_v1' : 'sls_ingredients_v1:' + h.id;
+  if (!initial) { ingredients = loadIngredients(); renderMapDots(); }
+}
+
+function resetWorldView() {
+  closePanel();
+  drillStack = []; novelDrillStack = [];
+  document.querySelectorAll('.pillar, .c-node, .resonate-ring, .pillar-resonate-ring, #child-empty-hint, .ing-dot').forEach(function(n) { n.remove(); });
+  var ab = document.getElementById('add-child-btn'); if (ab) ab.remove();
+  clearSVGLines();
+  var center = document.getElementById('center');
+  center.classList.remove('drill-mode'); center.classList.remove('drill-mode-photo');
+  center.querySelector('.center-bg').innerHTML =
+    '<div class="steam-wrap"><div class="steam-wisp"></div><div class="steam-wisp"></div><div class="steam-wisp"></div></div>' +
+    '<div class="center-hint-bar"></div>';
+  setCoStar(null);
+  document.getElementById('calling-sheet').classList.remove('drill-back');
+  if (typeof vizView !== 'undefined' && vizView !== 'orbit') setVizView('orbit');
+}
+
+function drillIntoHolon(id) {
+  var h = HOLONS[id]; if (!h) return;
+  holonStack.push(id);
+  resetWorldView();
+  applyHolon(h, false);
+  document.getElementById('back-btn').style.display = 'block';
+}
+
+function goBack() {
+  if (drillStack.length) { drillOut(); return; }
+  if (holonStack.length > 1) {
+    holonStack.pop();
+    resetWorldView();
+    applyHolon(HOLONS[holonStack[holonStack.length - 1]], false);
+    document.getElementById('back-btn').style.display = holonStack.length > 1 ? 'block' : 'none';
+  }
+}
+
 drawLines();
 renderPillars();
+// The studio ring above is the initial render, exactly as before. The rest of the
+// studio world's chrome lives further down the document, so it is applied once the
+// DOM is complete; initial=true leaves the already-rendered ring alone.
+holonStack = ['studio'];
+document.addEventListener('DOMContentLoaded', function() { applyHolon(HOLONS.studio, true); });
 // Calling sheet smooth scroll
 (function() {
   var inner = document.querySelector('.cs-rows-inner');
@@ -2358,7 +2722,7 @@ renderPillars();
   inner.parentElement.addEventListener('mouseleave', function() { paused = false; });
   var halfH;
   function tick() {
-    if (!halfH) halfH = inner.scrollHeight / 2;
+    if (!halfH || inner.dataset.dirty) { halfH = inner.scrollHeight / 2; pos = 0; inner.dataset.dirty = ''; }
     if (!paused) {
       pos += 0.4;
       if (pos >= halfH) pos = 0;
@@ -2466,16 +2830,14 @@ function renderPillarRings() {
 
 function loadChildren() {
   try { childData = JSON.parse(localStorage.getItem('sls_children') || '{}'); } catch(e) { childData = {}; }
-  // Unbreakable Spirit's children are the twelve Part One episodes, moved down one
-  // level from the old root ring. Seeded in memory only when nothing has been saved
-  // for that holon. The child renderer reads title/image where the episodes carry
-  // name/photo, so copies expose both; EPISODES itself is never modified.
-  if (!childData['unbreakable-spirit'] || !childData['unbreakable-spirit'].length) {
-    childData['unbreakable-spirit'] = EPISODES.map(function(ep) {
-      var c = {}; for (var k in ep) c[k] = ep[k];
-      c.title = ep.name; c.image = ep.photo; return c;
+  // Any world that ships a child tree seeds it the same way: only where nothing is saved.
+  Object.keys(HOLONS).forEach(function(hid) {
+    var ch = HOLONS[hid].children; if (!ch) return;
+    Object.keys(ch).forEach(function(pid) {
+      if (childData[pid] && childData[pid].length) return;
+      childData[pid] = ch[pid].map(function(c) { var o = {}; for (var k in c) o[k] = c[k]; return o; });
     });
-  }
+  });
 }
 function saveChildren() {
   localStorage.setItem('sls_children', JSON.stringify(childData));
@@ -2624,10 +2986,10 @@ function drillOut() {
     center.classList.remove('drill-mode-photo');
     center.querySelector('.center-bg').innerHTML =
       '<div class="steam-wrap"><div class="steam-wisp"></div><div class="steam-wisp"></div><div class="steam-wisp"></div></div>'+
-      '<div class="center-hint-bar">Click to add ingredient</div>';
+      '<div class="center-hint-bar">' + escHtml(HOLON.centre.caption) + '</div>';
     setCoStar(null);
     renderMapDots();
-    document.getElementById('back-btn').style.display = 'none';
+    document.getElementById('back-btn').style.display = holonStack.length > 1 ? 'block' : 'none';
     document.getElementById('calling-sheet').classList.remove('drill-back');
   } else {
     enterDrillFrame(frame);
@@ -3601,7 +3963,7 @@ function renderNovelView() {
   var frame = novelDrillStack.length ? novelDrillStack[novelDrillStack.length - 1] : null;
   html += '<div class="novel-masthead">';
   if (!frame) {
-    html += '<div class="novel-masthead-title">Storylivingry as a Service</div><div class="novel-masthead-sub">The Slate</div>';
+    html += '<div class="novel-masthead-title">' + escHtml(HOLON.masthead) + '</div><div class="novel-masthead-sub">' + escHtml(HOLON.mastheadSub || '') + '</div>';
   } else {
     html += '<div class="novel-masthead-title" style="color:' + frame.color + '">Chapter</div><div class="novel-masthead-sub">' + escHtml(frame.name) + '</div>';
   }
@@ -3613,8 +3975,9 @@ function renderNovelView() {
       var safeId = p.id.replace(/'/g, '');
       var safeName = p.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
       var safeColor = p.color.replace(/'/g,'');
-      var pOpen = p.placeholder ? '' : (nodeOpen(p) === 'link' && p.href)
-        ? 'window.location.assign(\'' + p.href.replace(/'/g, '') + '\')'
+      var pOpen = p.placeholder ? ''
+        : (nodeOpen(p) === 'link' && p.href) ? 'window.location.assign(\'' + p.href.replace(/'/g, '') + '\')'
+        : (nodeOpen(p) === 'nest' && p.holon) ? 'drillIntoHolon(\'' + p.holon.replace(/'/g, '') + '\')'
         : 'novelDrillIn({id:\'' + safeId + '\',name:\'' + safeName + '\',color:\'' + safeColor + '\'}, true)';
       html += '<div class="novel-panel" style="border-top-color:' + p.color + ';color:' + p.color + ';" onclick="' + pOpen + '">';
       html += '<div class="novel-caption-bar" style="background:' + p.color + '">Episode</div>';
@@ -3696,7 +4059,7 @@ function renderWall() {
   }
   PILLARS.forEach(function(p) { collectFrom(p.id, p.color); });
 
-  var html = '<div class="wall-masthead">Video Wall — Storylivingry as a Service</div>';
+  var html = '<div class="wall-masthead">' + escHtml(HOLON.wallMasthead || 'Video Wall') + '</div>';
   if (!videos.length) {
     html += '<div class="wall-empty"><div style="font-size:48px;opacity:0.12">►</div><div>No videos in your holons yet.<br>Add YouTube links to nodes and they’ll appear here.</div></div>';
   } else {
@@ -3747,7 +4110,7 @@ window.addEventListener('load', function() {
   </div>
 </div>
 <div id="act-info-panel">
-  <button id="back-btn" onclick="drillOut()" style="display:none;align-self:center;margin-right:6px;background:rgba(10,10,28,0.88);border:1px solid rgba(255,255,255,0.22);border-radius:22px;color:rgba(255,255,255,0.8);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:9px 20px;font-family:inherit;backdrop-filter:blur(8px);">&#8592; Back</button>
+  <button id="back-btn" onclick="goBack()" style="display:none;align-self:center;margin-right:6px;background:rgba(10,10,28,0.88);border:1px solid rgba(255,255,255,0.22);border-radius:22px;color:rgba(255,255,255,0.8);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:9px 20px;font-family:inherit;backdrop-filter:blur(8px);">&#8592; Back</button>
   <button id="act-info-toggle" onclick="toggleActInfo()" title="Toggle clapboard">&#8249;</button>
   <div id="act-info-inner">
     <div id="act-clapper-arm"></div>
@@ -3783,7 +4146,7 @@ window.addEventListener('load', function() {
     <button class="view-btn" data-view="novel" title="Graphic Novel — panel view" onclick="setVizView('novel')" style="font-size:13px;">&#9635;</button>
     <button class="view-btn" data-view="wall" title="Video Wall — all videos" onclick="setVizView('wall')" style="font-size:13px;">&#10697;</button>
     <div class="tray-divider"></div>
-    <span style="font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.22);padding:0 2px;pointer-events:none;">Act</span>
+    <span id="act-tab-label" style="font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.22);padding:0 2px;pointer-events:none;">Act</span>
     <button class="act-tab active" id="act-btn-0" onclick="setAct(0)">I</button>
     <button class="act-tab" id="act-btn-1" onclick="setAct(1)">II</button>
     <button class="act-tab" id="act-btn-2" onclick="setAct(2)">III</button>
@@ -3984,7 +4347,7 @@ window.addEventListener('load', function() {
   <div class="ai-panel-header">
     <div class="ai-panel-title">
       <span>&#10022;</span>
-      <span>MHRC Mind</span>
+      <span id="ai-persona-name">MHRC Mind</span>
       <span class="ai-mode-badge" id="ai-mode-badge">Universal</span>
     </div>
     <div class="ai-header-btns">
@@ -4194,7 +4557,7 @@ window.addEventListener('load', function() {
   function injectHolonBtn(pillar) {
     var existing = document.getElementById('ai-holon-trigger');
     if (existing) existing.remove();
-    if (!pillar) return;
+    if (!pillar || !(HOLON && HOLON.features && HOLON.features.ai)) return;
 
     var btn = document.createElement('button');
     btn.id = 'ai-holon-trigger';
