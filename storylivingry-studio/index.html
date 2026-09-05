@@ -1379,6 +1379,7 @@ body {
 var EPISODES = [
   {
     id: 'ep1',
+    weight: 2,
     tokens: ['Dale Caldwell'],
     name: 'Dr. Dale G. Caldwell',
     photo: 'img/dale-caldwell.jpg',
@@ -1399,6 +1400,7 @@ var EPISODES = [
   },
   {
     id: 'ep2',
+    weight: 2,
     tokens: ['David Stout'],
     name: 'Dr. David M. Stout',
     photo: 'img/david-stout.webp',
@@ -1516,6 +1518,7 @@ var EPISODES = [
   },
   {
     id: 'ep8',
+    weight: 1,
     tokens: ['Raymond Chambers'],
     name: 'Raymond G. Chambers',
     photo: 'img/ray-chambers.jpg',
@@ -1575,6 +1578,7 @@ var EPISODES = [
   },
   {
     id: 'ep11',
+    weight: 1,
     tokens: ['Niurca Evangelista'],
     name: 'Niurca Evangelista',
     photo: 'img/niurca-evangelista.jpg',
@@ -1869,6 +1873,8 @@ function setLineHighlight(id, on) {
      holon: string                      with open:'nest': drilling into this node enters
                                         the named world (see HOLONS) instead of its
                                         child map.
+     weight: number                     resonance count carried over from the live
+                                        page. Stored only; nothing reads it yet.
      tokens: string[]                   closed-vocabulary identifiers for this node:
                                         person names on episodes, slate ids on roots.
                                         Stored only; nothing reads it yet (phase two:
@@ -1910,7 +1916,7 @@ var currentId = null;
 function openPanel(p) {
   currentId = p.id;
   document.querySelectorAll('.pillar').forEach(function(el) { el.classList.remove('active'); });
-  document.getElementById('pillar-' + p.id).classList.add('active');
+  var pillarEl = document.getElementById('pillar-' + p.id); if (pillarEl) pillarEl.classList.add('active');
 
   document.getElementById('panel-icon').innerHTML = p.icon;
   document.getElementById('panel-title').textContent = p.name || p.label;
@@ -2041,10 +2047,15 @@ function openProfileModal(p) {
   panelEl.appendChild(backDiv);
 }
 
+document.getElementById('center').addEventListener('dblclick', function(e) {
+  if (!currentDrill() && HOLON && HOLON.centre.node) { e.stopPropagation(); closePanel(); drillInto(HOLON.centre.node); }
+});
 document.getElementById('center').addEventListener('click', function() {
   var drill = currentDrill();
   if (!drill) {
-    // The world's centre: add an ingredient, if this world has a pot
+    // The world's centre. A world that names a centre node makes the pot that node:
+    // click opens its panel, double click (below) drills into its children.
+    if (HOLON && HOLON.centre.node) { openPanel(HOLON.centre.node); return; }
     if (!(HOLON && HOLON.features.ingredients)) return;
     closePanel();
     openPotModal();
@@ -2056,6 +2067,7 @@ document.getElementById('center').addEventListener('click', function() {
     for (var _pi = 0; _pi < PILLARS.length; _pi++) {
       if (PILLARS[_pi].id === drill.id) { pillar = PILLARS[_pi]; break; }
     }
+    if (!pillar && HOLON && HOLON.centre.node && HOLON.centre.node.id === drill.id) pillar = HOLON.centre.node;
     if (pillar) { openPanel(pillar); }
     return;
   }
@@ -2359,7 +2371,9 @@ document.addEventListener('keydown', function(e) {
    node drills first, then worlds, so Back always returns to the parent.
    Shape:
      { id, name,
-       centre: { image, label, caption },
+       centre: { image, label, caption, node? },  node: the centre resolves to this
+                                                  ring-shaped node: click = its panel,
+                                                  double click = its children
        masthead, mastheadSub, footer, titleTag, production, wallMasthead,
        ring: [ ...nodes ],                        angle by slot index unless stated
        features: { acts, views: ['orbit','mycelium','novel','wall'],
@@ -2392,7 +2406,8 @@ defineHolon({
 /* The Unbreakable Spirit world: the literals of unbreakablespirit/index.html.
    Its child tree below is the live page's sss_children, exported from
    moviement.productions/unbreakablespirit/ on 2026-09-05 (32 parents). The one
-   node that carried a base64 image now points at img/one-mind-show.jpg. Seeded
+   node that carried a base64 image now points at img/one-mind-show.jpg. The live
+   page's sss_resonances are folded in as `weight` on the nodes they name. Seeded
    only where nothing has been saved. */
 var UNBREAKABLE_CHILDREN = {
   "ep1": [
@@ -2401,7 +2416,8 @@ var UNBREAKABLE_CHILDREN = {
       "title": "Positive Sum",
       "body": "Positive-sum is the belief — and the design principle — that my win and your win aren't in competition. In a zero-sum world there's one pie and one wolf: for me to have more, you must have less, and anyone \"defective\" gets pushed aside. In a positive-sum world the pie grows when we share it — value is created, not just divided — so no one has to be discarded for everyone to thrive. It's the difference between fighting over the soup and everyone bringing an ingredient until there's enough for the whole village. Positive-sum isn't optimism; it's an operating system. It's the recipe rule that turns a pile of separate efforts into Stone Soup.",
       "links": [],
-      "bullets": []
+      "bullets": [],
+      "weight": 11
     },
     {
       "id": "cn_d2_ep1",
@@ -2423,19 +2439,22 @@ var UNBREAKABLE_CHILDREN = {
         "Sing Sing Filmanthropy Example and Fractal Impact Entertainment Model of Episode Production and who owns and stewards each production",
         "Relates to Lunim",
         "Your presence is your statement. You are the gift, not just offering them."
-      ]
+      ],
+      "weight": 1
     },
     {
       "id": "cn_1782792929612",
       "title": "Filmanthropy by Design",
       "body": "The history of giving in film, AI and what's next with Regenerative Filmmaking.",
-      "link": "https://socialeffectsnj.com/"
+      "link": "https://socialeffectsnj.com/",
+      "weight": 1
     },
     {
       "id": "cn_1782793025432",
       "title": "Practical Moonshot",
       "body": "The pieces already exist\nNothing in what follows has to be invented. Every component has already been done, once, by someone, and documented. The only thing that has never been done is to do them all together, in one production, by design.",
-      "link": "https://socialeffectsnj.com/moonshot.html"
+      "link": "https://socialeffectsnj.com/moonshot.html",
+      "weight": 1
     },
     {
       "id": "cn_1782795122293",
@@ -2591,7 +2610,8 @@ var UNBREAKABLE_CHILDREN = {
       "title": "From Dale",
       "body": "\"It's that zero-sum game again… here we have things from God's green earth that are regulated, but the pharmaceuticals can create fake stuff. Step back and think about that — we're regulating what's natural and letting them create poisons. And that's been the society, because it's zero-sum: I gotta make as much money as I possibly can. We have a trillionaire, and yet nobody reaches the people who don't know where the next [meal] is.\"",
       "links": [],
-      "bullets": []
+      "bullets": [],
+      "weight": 1
     },
     {
       "id": "cn_d2_cn_d1_ep1",
@@ -2782,7 +2802,8 @@ var UNBREAKABLE_CHILDREN = {
       "id": "cn_d4_ep1",
       "title": "Legendary Benefit Concerts",
       "body": "How Legendary Benefit Concerts Were Manifested: Speed, Conviction, and Synchronicity\n\n\nEvery landmark benefit concert in history was ignited not by infrastructure but by a single, publicly convicted individual moved by moral urgency — and each came together with astonishing speed once that conviction existed. Geldof had no charity and no concert experience when a BBC famine report compelled him to act, yet Band Aid's single was recorded in 24 hours and Live Aid reached ~1.9 billion people within roughly ten weeks of planning; \n\nBelafonte's idea became We Are the World in 28 days; Harrison built the Concert for Bangladesh in five or six weeks; Yauch's Himalayan spiritual awakening became the Tibetan Freedom Concerts; Farm Aid grew from a single offhand Dylan remark in six weeks. \n\nThe pattern is consistent: conviction came first and magnetized the money, stars, and logistics rather than waiting for them — and the compressed timeline was itself an asset, forcing decisions and generating urgency (\"the fact that we didn't have the time probably made it possible\"). Just as decisive were real synchronicities no rolodex could have planned — We Are the World worked only because the American Music Awards had already gathered the stars in LA; Farm Aid existed because of one sentence from the Live Aid stage; the entire Tibet movement traced to a chance meeting with a 23-year-old activist at a party in Kathmandu; 12-12-12 got Madison Square Garden only because an NHL lockout freed the date. The organizers themselves reached for the language of miracle (Sting on Geldof: \"all of us were just passengers on his coattails\"). The deepest lesson, and the one most load-bearing for the moviement, is Yauch's: the truest success wasn't the gate but the permanent apparatus — Students for a Free Tibet growing several-fold — built so the burst of energy converted into a lasting movement. \n\nThe honest caveat is a both/and: conviction preceded the resources, but every catalyst was also an industry insider who could pick up a phone — so the principle is conviction magnetizes resources, not that it replaces them.",
-      "link": "https://docs.google.com/document/d/1954HZ-HhGNfGVTfY5a90ehRks-DC-ROWF9BFPe9SARc/edit?tab=t.0#heading=h.5fom75w7nrh"
+      "link": "https://docs.google.com/document/d/1954HZ-HhGNfGVTfY5a90ehRks-DC-ROWF9BFPe9SARc/edit?tab=t.0#heading=h.5fom75w7nrh",
+      "weight": 2
     }
   ],
   "cn_d4_ep1": [
@@ -2828,7 +2849,8 @@ var UNBREAKABLE_CHILDREN = {
       "id": "cn_d2_cn_d1_cn_d4_ep1",
       "title": "Every great movement begins where the young gather.",
       "body": "Every great movement begins where the young gather. Abolition, civil rights, SNCC — the energy was always students, and the carrier was always culture. The Tibetan Freedom Concerts proved it again in our own era: a generation that might never have encountered Tibet's struggle walked through a door music opened, and stayed to organize. Erin Potts called them \"message concerts,\" not benefit concerts — the goal was never to raise money but to raise action — and the truest measure of their success wasn't the gate, it was Students for a Free Tibet multiplying across hundreds of campuses, the burst of energy converting into permanent infrastructure. As co-founder Adam Yauch put it, change comes only through mass public awareness — and the deepest work begins the day after the music fades. That is the lineage Dr. Caldwell is naming. A movement carried by culture, powered by students, animated by justice rather than charity — the exact architecture that freed nations and won rights, now turned toward the soul. We are at that stage again. The mental health moviement is the next one through the door.",
-      "link": ""
+      "link": "",
+      "weight": 1
     },
     {
       "id": "cn_d3_cn_d1_cn_d4_ep1",
@@ -3417,9 +3439,19 @@ var UNBREAKABLE_CHILDREN = {
     }
   ]
 };
+/* The thirteenth episode is the pot itself in this world. It has no ring slot on the
+   live page; its children were authored there under the id 'ep13'. */
+var EP13 = {
+  id: 'ep13', tokens: [],
+  name: 'The Thirteenth Episode',
+  label: '<span style="display:block;font-size:16px;font-weight:800;line-height:1;letter-spacing:0.05em;margin-bottom:2px">EPISODE</span><span style="display:block;font-size:11px;font-weight:700;text-transform:none;line-height:1.2">The Thirteenth</span>',
+  icon: _AC, color: '#D4A044', glowColor: 'rgba(212,160,68,0.65)',
+  bullets: ['The thirteenth episode of Part Three is not an ending.', 'Copy to come.'],
+  links: []
+};
 defineHolon({
   id: 'unbreakable', name: 'Unbreakable Spirit',
-  centre: { image: 'img/stone-soup-nj.png', label: 'Stone Synergy Soup', caption: 'Click to add ingredient' },
+  centre: { image: 'img/stone-soup-nj.png', label: 'Stone Synergy Soup', caption: 'Click to add ingredient', node: EP13 },
   masthead: 'Holonic Mind Map', mastheadSub: 'Mental Health Reformation Consortium',
   footer: 'Stone Synergy Soup', titleTag: 'Mind Map NJ AWARE Interagency Strategic Vision',
   production: 'A Civil Rights Moviement for the Soul',
