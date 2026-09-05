@@ -496,9 +496,18 @@ body {
 
 /* â”€â”€ Left panel toggle â”€â”€ */
 #left-panel { transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); }
+/* ── Breadcrumb: Studio › World › Node …, top left, always on ── */
+#breadcrumb { position: fixed; top: 16px; left: 22px; z-index: 60; display: flex; align-items: center; gap: 7px;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: rgba(255,255,255,0.45); max-width: calc(100vw - 44px); flex-wrap: wrap; }
+#breadcrumb button { background: none; border: 0; padding: 0; font: inherit; letter-spacing: inherit; text-transform: inherit;
+  color: rgba(255,255,255,0.55); cursor: pointer; }
+#breadcrumb button:hover { color: rgba(212,160,68,1); }
+#breadcrumb button.crumb-here { color: rgba(240,236,226,0.92); cursor: default; }
+#breadcrumb .crumb-sep { color: rgba(212,160,68,0.6); }
 #left-panel.panel-hidden { transform: translateX(calc(-272px - 44px)); }
 #panel-reveal-tab {
-  position: fixed; top: 20px; left: 0; z-index: 55;
+  position: fixed; top: 52px; left: 0; z-index: 55;
   background: rgba(6,8,30,0.94);
   border: 1.5px solid rgba(212,160,68,0.65); border-left: none;
   border-radius: 0 8px 8px 0;
@@ -958,14 +967,14 @@ body {
 }
 #left-panel {
   position: fixed;
-  top: 20px;
+  top: 52px;
   left: 22px;
   width: 272px;
   display: flex;
   flex-direction: column;
   gap: 18px;
   z-index: 50;
-  max-height: calc(100vh - 118px);
+  max-height: calc(100vh - 150px);
   overflow: hidden;
 }
 #mhr-image {
@@ -1264,6 +1273,7 @@ body {
   setTimeout(function() { try { input.focus(); } catch(e) {} }, 200);
 })();
 </script>
+<div id="breadcrumb"></div>
 <div id="left-panel"><div id="calling-sheet">
   <div class="cs-title">Moviement Calling Sheet<div style="display:flex;gap:5px;align-items:center"><button class="cs-info-btn" id="cs-info-btn" title="What is a Calling Sheet?">i</button><button class="cs-hide-btn" id="cs-hide-btn" title="Hide panel" onclick="toggleLeftPanel()">&#8249;</button></div></div>
   <div class="cs-rows"><div class="cs-rows-inner">
@@ -1870,9 +1880,10 @@ function setLineHighlight(id, on) {
      href: string                       target for 'link'. Single click navigates
                                         this window to it. Never an iframe.
    'panel' = single click opens the panel, double click does nothing.
-     holon: string                      with open:'nest': drilling into this node enters
-                                        the named world (see HOLONS) instead of its
-                                        child map.
+     holon: string                      with open:'nest': a single click enters the named
+                                        world (see HOLONS); there is no double click and
+                                        no panel on the node. The node's panel content is
+                                        the world's centre panel (holon.centre.node).
      weight: number                     resonance count carried over from the live
                                         page. Stored only; nothing reads it yet.
      tokens: string[]                   closed-vocabulary identifiers for this node:
@@ -1903,8 +1914,12 @@ function renderPillars() {
 
     el.appendChild(inner);
     if (p.placeholder) { el.style.cursor = 'default'; }
-    el.addEventListener('click', function() { if (p.placeholder) return; openNode(p, function() { openPanel(p); }); });
-    el.addEventListener('dblclick', function(e) { e.stopPropagation(); if (!p.placeholder && nodeOpen(p) === 'nest') { if (p.holon) drillIntoHolon(p.holon); else drillInto(p); } });
+    el.addEventListener('click', function() {
+      if (p.placeholder) return;
+      if (nodeOpen(p) === 'nest' && p.holon) { drillIntoHolon(p.holon); return; }   // a world: one click, no panel here
+      openNode(p, function() { openPanel(p); });
+    });
+    el.addEventListener('dblclick', function(e) { e.stopPropagation(); if (!p.placeholder && !p.holon && nodeOpen(p) === 'nest') drillInto(p); });
     el.addEventListener('mouseenter', function() { setLineHighlight(p.id, true); });
     el.addEventListener('mouseleave', function() { setLineHighlight(p.id, false); });
     app.appendChild(el);
@@ -2371,9 +2386,10 @@ document.addEventListener('keydown', function(e) {
    node drills first, then worlds, so Back always returns to the parent.
    Shape:
      { id, name,
-       centre: { image, label, caption, node? },  node: the centre resolves to this
-                                                  ring-shaped node: click = its panel,
-                                                  double click = its children
+       centre: { image, label, caption, node? },  node: the world's own panel. Clicking
+                                                  the centre opens it; double click
+                                                  drills into its children. Absent only
+                                                  on the root world, whose centre is the pot.
        masthead, mastheadSub, footer, titleTag, production, wallMasthead,
        ring: [ ...nodes ],                        angle by slot index unless stated
        features: { acts, views: ['orbit','mycelium','novel','wall'],
@@ -2387,6 +2403,7 @@ document.addEventListener('keydown', function(e) {
    world gets 'sls_ingredients_v1:<id>'.                                     */
 var HOLONS = {};
 function defineHolon(h) { HOLONS[h.id] = h; return h; }
+function ringNode(id) { for (var i = 0; i < STUDIO_RING.length; i++) if (STUDIO_RING[i].id === id) return STUDIO_RING[i]; return null; }
 
 defineHolon({
   id: 'studio', name: 'Storylivingry Studio',
@@ -3446,8 +3463,10 @@ var EP13 = {
   name: 'The Thirteenth Episode',
   label: '<span style="display:block;font-size:16px;font-weight:800;line-height:1;letter-spacing:0.05em;margin-bottom:2px">EPISODE</span><span style="display:block;font-size:11px;font-weight:700;text-transform:none;line-height:1.2">The Thirteenth</span>',
   icon: _AC, color: '#D4A044', glowColor: 'rgba(212,160,68,0.65)',
-  bullets: ['The thirteenth episode of Part Three is not an ending.', 'Copy to come.'],
-  links: []
+  // The Unbreakable Spirit ring node's copy comes first: entering the world moved its
+  // panel here.
+  bullets: ringNode('unbreakable-spirit').bullets.concat(['The thirteenth episode of Part Three is not an ending.', 'Copy to come.']),
+  links: ringNode('unbreakable-spirit').links
 };
 defineHolon({
   id: 'unbreakable', name: 'Unbreakable Spirit',
@@ -3572,7 +3591,7 @@ var CONSORTIUM_RING = [
 ];
 defineHolon({
   id: 'consortium', name: 'The Consortium',
-  centre: { image: 'img/stone-soup-nj.png', label: 'Stone Synergy Soup', caption: 'Click to add ingredient' },
+  centre: { image: 'img/stone-soup-nj.png', label: 'Stone Synergy Soup', caption: 'Click to add ingredient', node: ringNode('consortium') },
   masthead: 'Mind Map NJ AWARE Interagency Strategic Vision', mastheadSub: '',
   footer: 'Stone Synergy Soup', titleTag: 'Mind Map NJ AWARE Interagency Strategic Vision',
   production: '', wallMasthead: '',
@@ -3660,6 +3679,7 @@ function applyHolon(h, initial) {
   // ingredients, per world
   ING_KEY = h.id === 'studio' ? 'sls_ingredients_v1' : 'sls_ingredients_v1:' + h.id;
   if (!initial) { ingredients = loadIngredients(); renderMapDots(); }
+  renderBreadcrumb();
 }
 
 function resetWorldView() {
@@ -3678,12 +3698,72 @@ function resetWorldView() {
   if (typeof vizView !== 'undefined' && vizView !== 'orbit') setVizView('orbit');
 }
 
+/* ── One level back, and the breadcrumb ────────────────────────────────────
+   backOneLevel(): close the panel if open, else undrill a node, else leave the
+   world for its parent. Never while a modal is open. Escape and a true click
+   on empty background both call it. The breadcrumb shows the same levels and
+   jumps to any of them.                                                        */
+function anyModalOpen() {
+  return !!document.querySelector('#pot-modal.open, #story-modal.open, #child-modal.open, #cs-modal.open, #ai-panel.ai-open');
+}
+function backOneLevel() {
+  if (anyModalOpen()) return false;
+  if (document.getElementById('panel').classList.contains('open')) { closePanel(); return true; }
+  if (drillStack.length) { drillOut(); return true; }
+  if (holonStack.length > 1) { goBack(); return true; }
+  return false;
+}
+// Capture phase: runs before the modal handlers. With a modal open this does nothing
+// and the modal's own handler closes it.
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && !anyModalOpen()) backOneLevel(); }, true);
+
+var BG_IGNORE = '.pillar, .c-node, #center, .ing-dot, .resonate-ring, #panel, #left-panel, #panel-reveal-tab, #view-tray, ' +
+  '#act-info-panel, #breadcrumb, #ai-panel, #ai-backdrop, #pot-modal, #story-modal, #child-modal, #cs-modal, ' +
+  '#spotify-player, #yt-player, #novel-view, #wall-view, canvas, button, a, input, textarea, select, label';
+var bgDown = null;
+document.addEventListener('mousedown', function(e) {
+  bgDown = (e.button === 0 && e.target.closest && !e.target.closest(BG_IGNORE)) ? { x: e.clientX, y: e.clientY } : null;
+}, true);
+document.addEventListener('mouseup', function(e) {
+  if (!bgDown) return;
+  var d = bgDown; bgDown = null;
+  if (e.target.closest && e.target.closest(BG_IGNORE)) return;
+  if (Math.abs(e.clientX - d.x) > 4 || Math.abs(e.clientY - d.y) > 4) return;   // a drag, not a click
+  if (anyModalOpen()) return;
+  backOneLevel();
+}, true);
+
+function renderBreadcrumb() {
+  var el = document.getElementById('breadcrumb'); if (!el) return;
+  var segs = [];
+  holonStack.forEach(function(id, i) { segs.push({ label: i === 0 ? 'Studio' : HOLONS[id].name, world: i, node: -1 }); });
+  drillStack.forEach(function(f, j) { segs.push({ label: f.name || f.title || f.id, world: holonStack.length - 1, node: j }); });
+  el.innerHTML = '';
+  segs.forEach(function(sg, i) {
+    if (i) { var sep = document.createElement('span'); sep.className = 'crumb-sep'; sep.textContent = '\u203A'; el.appendChild(sep); }
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = sg.label;
+    if (i === segs.length - 1) { b.className = 'crumb-here'; b.disabled = true; }
+    else b.addEventListener('click', function() { jumpTo(sg.world, sg.node); });
+    el.appendChild(b);
+  });
+}
+function jumpTo(worldIdx, nodeIdx) {
+  closePanel();
+  if (worldIdx < holonStack.length - 1) {
+    holonStack = holonStack.slice(0, worldIdx + 1);
+    resetWorldView();
+    applyHolon(HOLONS[holonStack[holonStack.length - 1]], false);
+  } else {
+    while (drillStack.length > nodeIdx + 1) drillOut();
+  }
+  renderBreadcrumb();
+}
+
 function drillIntoHolon(id) {
   var h = HOLONS[id]; if (!h) return;
   holonStack.push(id);
   resetWorldView();
   applyHolon(h, false);
-  document.getElementById('back-btn').style.display = 'block';
 }
 
 function goBack() {
@@ -3692,7 +3772,6 @@ function goBack() {
     holonStack.pop();
     resetWorldView();
     applyHolon(HOLONS[holonStack[holonStack.length - 1]], false);
-    document.getElementById('back-btn').style.display = holonStack.length > 1 ? 'block' : 'none';
   }
 }
 
@@ -3932,7 +4011,6 @@ function enterDrillFrame(frame) {
       '<div class="drill-center-name" style="color:'+frame.color+';font-size:15px;padding:0 12px;text-align:center;line-height:1.3">'+escHtml(frame.name)+'</div>';
   }
   document.getElementById('calling-sheet').classList.add('drill-back');
-  document.getElementById('back-btn').style.display = 'block';
   if (ADMIN_MODE) {
     var oldAb = document.getElementById('add-child-btn'); if (oldAb) oldAb.remove();
     var ab = document.createElement('button');
@@ -3943,6 +4021,7 @@ function enterDrillFrame(frame) {
   }
   closePanel();
   renderChildMap(frame);
+  renderBreadcrumb();
 }
 
 function drillInto(p) {
@@ -3980,11 +4059,11 @@ function drillOut() {
       '<div class="center-hint-bar">' + escHtml(HOLON.centre.caption) + '</div>';
     setCoStar(null);
     renderMapDots();
-    document.getElementById('back-btn').style.display = holonStack.length > 1 ? 'block' : 'none';
     document.getElementById('calling-sheet').classList.remove('drill-back');
   } else {
     enterDrillFrame(frame);
   }
+  renderBreadcrumb();
 }
 
 function resolveNode(child) {
@@ -5101,7 +5180,6 @@ window.addEventListener('load', function() {
   </div>
 </div>
 <div id="act-info-panel">
-  <button id="back-btn" onclick="goBack()" style="display:none;align-self:center;margin-right:6px;background:rgba(10,10,28,0.88);border:1px solid rgba(255,255,255,0.22);border-radius:22px;color:rgba(255,255,255,0.8);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;padding:9px 20px;font-family:inherit;backdrop-filter:blur(8px);">&#8592; Back</button>
   <button id="act-info-toggle" onclick="toggleActInfo()" title="Toggle clapboard">&#8249;</button>
   <div id="act-info-inner">
     <div id="act-clapper-arm"></div>
