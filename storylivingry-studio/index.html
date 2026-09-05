@@ -1965,7 +1965,7 @@ function openPanel(p) {
     linksEl.style.display = 'none';
   }
 
-  ['panel-child-edit','panel-also-in','panel-admin-section','panel-resonate-wrap','panel-readmore','panel-profile-back','panel-child-image'].forEach(function(id) {
+  ['panel-child-edit','panel-also-in','panel-admin-section','panel-resonate-wrap','panel-readmore','panel-profile-back','panel-child-image','panel-ingredients'].forEach(function(id) {
     var el = document.getElementById(id); if (el) el.remove();
   });
   var pEl = document.getElementById('panel');
@@ -2012,6 +2012,20 @@ function openPanel(p) {
     } else { rWrapP.appendChild(rBtnP); }
   })(p.id, p.name);
   pEl.appendChild(rWrapP);
+  // The world panel is where the pot lives now that the centre opens the panel: in
+  // any world with ingredients on, its own panel carries the way in. The Studio root
+  // has no centre node, so its centre still opens the pot directly.
+  if (HOLON && HOLON.centre.node === p && HOLON.features.ingredients) {
+    var ingWrap = document.createElement('div');
+    ingWrap.id = 'panel-ingredients';
+    ingWrap.style.cssText = 'text-align:center;margin-top:14px;';
+    var ingBtn = document.createElement('button');
+    ingBtn.className = 'resonate-btn';
+    ingBtn.textContent = '+ Add ingredient';
+    ingBtn.onclick = function() { closePanel(); openPotModal(); };
+    ingWrap.appendChild(ingBtn);
+    pEl.appendChild(ingWrap);
+  }
   pEl.classList.add('open');
   setCoStar(p.name);
 }
@@ -4299,7 +4313,7 @@ function showChildPanel(frame, child) {
     linksEl.innerHTML = linksHtml;
   } else { linksEl.style.display = 'none'; }
 
-  ['panel-child-edit','panel-also-in','panel-admin-section','panel-resonate-wrap','panel-readmore','panel-profile-back','panel-child-image'].forEach(function(id) {
+  ['panel-child-edit','panel-also-in','panel-admin-section','panel-resonate-wrap','panel-readmore','panel-profile-back','panel-child-image','panel-ingredients'].forEach(function(id) {
     var el = document.getElementById(id); if (el) el.remove();
   });
 
